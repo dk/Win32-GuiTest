@@ -167,7 +167,7 @@ DESCRIPTION
           # Moves to x=200, y=100 in pixel coordinates.
           MouseMoveAbsPix(200, 100); 
 
-    FindWindowLike($window,$titleregex,$classregex,$childid)
+    FindWindowLike($window,$titleregex,$classregex,$childid,$maxlevel)
         Finds the window handles of the windows matching the specified
         parameters and returns them as a list.
 

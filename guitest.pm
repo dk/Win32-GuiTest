@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.5 2004/03/18 23:44:20 ctrondlp Exp $
+# $Id: guitest.pm,v 1.6 2004/03/21 08:22:11 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -305,7 +305,7 @@ Move the mouse cursor to the screen pixel indicated as parameter.
   # Moves to x=200, y=100 in pixel coordinates.
   MouseMoveAbsPix(200, 100); 
 
-=item FindWindowLike($window,$titleregex,$classregex,$childid) 
+=item FindWindowLike($window,$titleregex,$classregex,$childid,$maxlevel) 
 
 Finds the window handles of the windows matching the specified parameters and
 returns them as a list. 
