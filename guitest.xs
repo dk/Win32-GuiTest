@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.16 2004/12/11 16:20:54 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.17 2004/12/23 18:49:44 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -17,7 +17,6 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "dibsect.h"
-/* #include "afxwin.h" */
 
 
 #ifdef __cplusplus
@@ -64,9 +63,7 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call,
 		g_hDLL = (HINSTANCE)hModule;
 		break;
 	case DLL_THREAD_ATTACH:
-		break;
 	case DLL_THREAD_DETACH:
-		break;
 	case DLL_PROCESS_DETACH:
 		break;
 	}
@@ -135,10 +132,9 @@ int TabCtrl_GetItemText(HWND hwnd, int iItem, char *lpString, size_t sizeStr)
 	return (int)strlen(lpString);
 }
 		
-#define pCW ((CWPSTRUCT*)lParam)
-
 // Hook procedure, does most of the work for various 32bit custom control
 // routines
+#define pCW ((CWPSTRUCT*)lParam)
 LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 {	
 	//// List Views ////
@@ -303,23 +299,31 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(g_hHook, code, wParam, lParam);
 }
 
-// The following several routines all inject "ourself" into a remote process
-// and performs some work.
-int GetLVItemText(HWND hWnd, int iItem, char *lpString)
-{	
+// Sets up the hook, global control/hook handles, and registers appropriate
+// window message.
+HHOOK SetHook(HWND hWnd, UINT &uMsg, char *lpMsgId)
+{
 	g_hWnd = hWnd;
 
 	// Hook the thread, that "owns" our control
 	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
 				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL) {
+	
+	if (uMsg == NULL)
+		uMsg = RegisterWindowMessage(lpMsgId);
+
+	return g_hHook;	
+}
+
+// The following several routines all inject "ourself" into a remote process
+// and performs some work.
+int GetLVItemText(HWND hWnd, int iItem, char *lpString)
+{	
+	if (SetHook(hWnd, WM_LV_GETTEXT, "WM_LV_GETTEXT_RM") == NULL) {
 		*lpString = NUL;
 		return 0;
 	}
 	
-	if (WM_LV_GETTEXT == NULL)
-		WM_LV_GETTEXT = RegisterWindowMessage("WM_LV_GETTEXT_RM");
-
 	// By the time SendMessage returns, 
 	// g_szBuffer already contains the text.
 	SendMessage(hWnd, WM_LV_GETTEXT, iItem, 0);
@@ -330,16 +334,9 @@ int GetLVItemText(HWND hWnd, int iItem, char *lpString)
 
 BOOL SelLVItem(HWND hWnd, int iItem, BOOL bMulti)
 {
-	g_hWnd = hWnd;
-
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL)
+	if (SetHook(hWnd, WM_LV_SELBYINDEX, "WM_LV_SELBYINDEX_RM") == NULL)
 		return FALSE;
 	
-	if (WM_LV_SELBYINDEX == NULL)
-		WM_LV_SELBYINDEX = RegisterWindowMessage("WM_LV_SELBYINDEX_RM");
-
 	SendMessage(hWnd, WM_LV_SELBYINDEX, iItem, bMulti);
 
 	return g_bRetVal;
@@ -347,16 +344,9 @@ BOOL SelLVItem(HWND hWnd, int iItem, BOOL bMulti)
 
 BOOL SelLVItemText(HWND hWnd, char *lpItem, BOOL bMulti)
 {
-	g_hWnd = hWnd;
-
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-	 			g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL)
+	if (SetHook(hWnd, WM_LV_SELBYTEXT, "WM_LV_SELBYTEXT_RM") == NULL) 
 		return FALSE;
 	
-	if (WM_LV_SELBYTEXT == NULL)
-		WM_LV_SELBYTEXT = RegisterWindowMessage("WM_LV_SELBYTEXT_RM");
-
 	lstrcpy(g_szBuffer, lpItem);
 	SendMessage(hWnd, WM_LV_SELBYTEXT, 0, bMulti);
 
@@ -365,16 +355,9 @@ BOOL SelLVItemText(HWND hWnd, char *lpItem, BOOL bMulti)
 
 BOOL IsLVItemSel(HWND hWnd, char *lpItem)
 {
-	g_hWnd = hWnd;
-
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-	 			g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL)
+	if (SetHook(hWnd, WM_LV_ISSEL, "WM_LV_ISSEL_RM") == NULL)
 		return FALSE;
 	
-	if (WM_LV_ISSEL == NULL)
-		WM_LV_ISSEL = RegisterWindowMessage("WM_LV_ISSEL_RM");
-
 	lstrcpy(g_szBuffer, lpItem);
 	SendMessage(hWnd, WM_LV_ISSEL, 0, 0);
 
@@ -387,16 +370,9 @@ int GetLVItemCount(HWND hWnd)
 }
 
 BOOL SelTVItemPath(HWND hWnd, char *lpPath)
-{	
-	g_hWnd = hWnd;
-
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL)
+{
+	if (SetHook(hWnd, WM_TV_SELBYPATH, "WM_TV_SELBYPATH_RM") == NULL)	
 		return FALSE;
-	
-	if (WM_TV_SELBYPATH == NULL)
-		WM_TV_SELBYPATH = RegisterWindowMessage("WM_TV_SELBYPATH_RM");
 	
 	lstrcpy(g_szBuffer, lpPath);
 	SendMessage(hWnd, WM_TV_SELBYPATH, 0, 0);
@@ -405,15 +381,8 @@ BOOL SelTVItemPath(HWND hWnd, char *lpPath)
 
 int GetTVSelPath(HWND hWnd, char *lpPath)
 {
-	g_hWnd = hWnd;
-
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL)
+	if (SetHook(hWnd, WM_TV_GETSELPATH, "WM_TV_GETSELPATH_RM") == NULL)
 		return FALSE;
-	
-	if (WM_TV_GETSELPATH == NULL)
-		WM_TV_GETSELPATH = RegisterWindowMessage("WM_TV_GETSELPATH_RM");
 	
 	SendMessage(hWnd, WM_TV_GETSELPATH, 0, 0);
 	lstrcpy(lpPath, g_szBuffer);
@@ -423,18 +392,11 @@ int GetTVSelPath(HWND hWnd, char *lpPath)
 
 int GetTCItemText(HWND hWnd, int iItem, char *lpString)
 {	
-	g_hWnd = hWnd;
-
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL) {
+	if (SetHook(hWnd, WM_TC_GETTEXT, "WM_TC_GETTEXT_RM") == NULL) {
 		*lpString = NUL;
 		return 0;
 	}
 	
-	if (WM_TC_GETTEXT == NULL)
-		WM_TC_GETTEXT = RegisterWindowMessage("WM_TC_GETTEXT_RM");
-
 	SendMessage(hWnd, WM_TC_GETTEXT, iItem, 0);
 	lstrcpy(lpString, g_szBuffer);
 
@@ -443,15 +405,8 @@ int GetTCItemText(HWND hWnd, int iItem, char *lpString)
 
 BOOL SelTCItem(HWND hWnd, int iItem)
 {	
-	g_hWnd = hWnd;
-
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL)
+	if (SetHook(hWnd, WM_TC_SELBYINDEX, "WM_TC_SELBYINDEX_RM") == NULL)
 		return FALSE;
-	
-	if (WM_TC_SELBYINDEX == NULL)
-		WM_TC_SELBYINDEX = RegisterWindowMessage("WM_TC_SELBYINDEX_RM");
 	
 	SendMessage(hWnd, WM_TC_SELBYINDEX, iItem, 0);
 	return g_bRetVal;
@@ -459,16 +414,8 @@ BOOL SelTCItem(HWND hWnd, int iItem)
 
 BOOL SelTCItemText(HWND hWnd, char *szText)
 {	
-	g_hWnd = hWnd;
-
-	// Hook the thread, that "owns" our control
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL)
+	if (SetHook(hWnd, WM_TC_SELBYTEXT, "WM_TC_SELBYTEXT_RM") == NULL)
 		return FALSE;
-	
-	if (WM_TC_SELBYTEXT == NULL)
-		WM_TC_SELBYTEXT = RegisterWindowMessage("WM_TC_SELBYTEXT_RM");
 	
 	lstrcpy(g_szBuffer, szText);
 	SendMessage(hWnd, WM_TC_SELBYTEXT, 0, 0);
@@ -478,16 +425,9 @@ BOOL SelTCItemText(HWND hWnd, char *szText)
 
 BOOL IsTCItemSel(HWND hWnd, char *lpItem)
 {
-	g_hWnd = hWnd;
-
-	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
-	 			g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	if (g_hHook == NULL)
+	if (SetHook(hWnd, WM_TC_ISSEL, "WM_TC_ISSEL_RM") == NULL)
 		return FALSE;
 	
-	if (WM_TC_ISSEL == NULL)
-		WM_TC_ISSEL = RegisterWindowMessage("WM_TC_ISSEL_RM");
-
 	lstrcpy(g_szBuffer, lpItem);
 	SendMessage(hWnd, WM_TC_ISSEL, 0, 0);
 
@@ -1515,6 +1455,34 @@ PPCODE:
         XPUSHs(sv_2mortal(GetTextHelper(hWnd, i, CB_GETLBTEXTLEN, CB_GETLBTEXT)));
     }
 
+BOOL
+SelComboItem(hWnd, iItem)
+	HWND hWnd;
+	int iItem;
+CODE:
+	RETVAL = (SendMessage(hWnd, CB_SETCURSEL, iItem, 0) != CB_ERR);
+OUTPUT:
+	RETVAL
+
+BOOL
+SelComboItemText(hWnd, lpItem)
+	HWND hWnd;
+	char *lpItem;
+CODE:
+    int nelems = SendMessage(hWnd, CB_GETCOUNT, 0, 0);
+	int i;
+	RETVAL = FALSE;
+	for (i = 0; i < nelems; i++) {
+		SV *sv = GetTextHelper(hWnd, i, CB_GETLBTEXTLEN, CB_GETLBTEXT);
+		char *txt = sv_2pvbyte_nolen(sv);
+		if (lstrcmpi(txt, lpItem) == 0) {
+			RETVAL = (SendMessage(hWnd, CB_SETCURSEL, i, 0) != CB_ERR);
+			break;
+		}
+	}
+OUTPUT:
+	RETVAL
+	
 void 
 GetListContents(hWnd)
     HWND hWnd;

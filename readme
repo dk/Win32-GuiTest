@@ -441,6 +441,12 @@ DESCRIPTION
     ($l,$t,$r,$b) = GetClientRect(hWnd) *
         See corresponding Windows functions.
 
+    SelComboItem($window, $index)
+        Selects an item in the combo box based off an index (zero-based).
+
+    SelComboItemText($window, $txt)
+        Selects an item in the combo box based off text (case insensitive).
+
     $txt = GetComboText(hwnd,index)
     $txt = GetListText(hwnd,index)
     @lst = GetComboContents(hWnd)
@@ -475,7 +481,7 @@ DESCRIPTION
             Returns a list of the contents of the specified list view.
 
     SelListViewItem($window, $idx, [$multi_select])
-            Selects an item in the list view based off an index.
+            Selects an item in the list view based off an index (zero-based).
 
                 # Select first item, clears out any previous selections.
                 SelListViewItem($win, 0);
@@ -497,7 +503,7 @@ DESCRIPTION
             Returns a list of a tab control's labels.
 
     SelTabItem($window, $idx)
-            Selects a tab based off an index.
+            Selects a tab based off an index (zero-based).
 
     SelTabItemText($window, $txt)
             Selects a tab based off text label (case insensitive).

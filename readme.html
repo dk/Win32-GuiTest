@@ -671,6 +671,18 @@ Returns screen resolution
 See corresponding Windows functions.
 </dd>
 <p></p>
+<dt><strong><a name="item_selcomboitem">SelComboItem($window, $index)</a></strong><br />
+</dt>
+<dd>
+Selects an item in the combo box based off an index (zero-based).
+</dd>
+<p></p>
+<dt><strong><a name="item_selcomboitemtext">SelComboItemText($window, $txt)</a></strong><br />
+</dt>
+<dd>
+Selects an item in the combo box based off text (case insensitive).
+</dd>
+<p></p>
 <dt><strong><a name="item_getcombotext">$txt = <code>GetComboText(hwnd,index)</code></a></strong><br />
 </dt>
 <dt><strong><a name="item_getlisttext">$txt = <code>GetListText(hwnd,index)</code></a></strong><br />
@@ -729,7 +741,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 </dt>
 <dd>
 <pre>
-    Selects an item in the list view based off an index.</pre>
+    Selects an item in the list view based off an index (zero-based).</pre>
 </dd>
 <dd>
 <pre>
@@ -767,7 +779,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 </dt>
 <dd>
 <pre>
-    Selects a tab based off an index.</pre>
+    Selects a tab based off an index (zero-based).</pre>
 </dd>
 <dt><strong><a name="item_seltabitemtext">SelTabItemText($window, $txt)</a></strong><br />
 </dt>

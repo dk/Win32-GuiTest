@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.27 2004/12/11 16:20:54 ctrondlp Exp $
+# $Id: guitest.pm,v 1.28 2004/12/23 18:49:44 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -121,7 +121,8 @@ require AutoLoader;
         GetSubMenu GetMenuItemIndex GetMenuItemId GetMenuItemCount GetMenuItemInfo 
         GetListViewContents SelListViewItem SelListViewItemText IsListViewItemSel
 	GetTabItems SelTabItem SelTabItemText IsTabItemSel
-        SelTreeViewItemPath GetTreeViewSelPath MouseMoveWheel
+        SelTreeViewItemPath GetTreeViewSelPath MouseMoveWheel 
+        SelComboItem SelComboItemText
     )],
     VARS => [ qw(
         $debug
@@ -919,6 +920,16 @@ Returns screen resolution
 
 See corresponding Windows functions.
 
+=cut
+
+=item SelComboItem($window, $index)
+
+Selects an item in the combo box based off an index (zero-based).
+
+=item SelComboItemText($window, $txt)
+
+Selects an item in the combo box based off text (case insensitive).
+
 =item $txt = GetComboText(hwnd,index)
 
 =item $txt = GetListText(hwnd,index)
@@ -961,7 +972,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 
 =item SelListViewItem($window, $idx, [$multi_select])
 
-    Selects an item in the list view based off an index.
+    Selects an item in the list view based off an index (zero-based).
 
 	# Select first item, clears out any previous selections.
 	SelListViewItem($win, 0);
@@ -995,7 +1006,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 
 =item SelTabItem($window, $idx)
 
-    Selects a tab based off an index.
+    Selects a tab based off an index (zero-based).
 
 =cut
 
