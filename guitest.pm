@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.24 2004/11/17 20:59:09 ctrondlp Exp $
+# $Id: guitest.pm,v 1.25 2004/11/17 21:07:32 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -1102,7 +1102,7 @@ several thing that need to be done. For some of them you only need Perl
 and the latest source of the module from CVS for others you'll also need to 
 have a C++ compiler.
 
-To get the lates source code you need a CVS client and then do the following:
+To get the latest source code you need a CVS client and then do the following:
 
  cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest login
  cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest co Win32-GuiTest
@@ -1173,10 +1173,8 @@ Here are a few items where help would be welcome.
  Add more calls to the C++ backend
  Fix current calls
 
- 32bit custom controls
+ 32bit custom controls (some already implemented)
  Possibly Java interfaces
- Mouse wheel support
- Read ListView controls
  Retreive the list of the menu of a given window.
 
 =head1 VERSION
@@ -1206,7 +1204,7 @@ Ernesto Guisado (erngui@acm.org), http://triumvir.org
 Jarek Jurasz (jurasz@imb.uni-karlsruhe.de), http://www.uni-karlsruhe.de/~gm07 wrote 
 DibSect and some other pieces (see C<Changes> for details).
 
-Dennis K. Paulsen (ctrondlpaulsden@yahoo.com) wrote various pieces (See C<Changes> for
+Dennis K. Paulsen (ctrondlp@cpan.org) wrote various pieces (See C<Changes> for
 details).
 
 =head1 CREDITS
