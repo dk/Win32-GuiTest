@@ -1,5 +1,5 @@
-3#
-# $Id: guitest.pm,v 1.20 2004/11/14 02:35:33 ctrondlp Exp $
+#
+# $Id: guitest.pm,v 1.21 2004/11/15 17:27:59 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -74,9 +74,9 @@ I've created a Yahoo Group for the module that you can join at
 
 Also, an initial version of a script recording application has been written to use with this 
 module.  A copy of it may be found with this distribution (Recorder\Win32GuiTest.exe)
-or can be obtained at http://dkp.itgo.com
+or can be obtained at http://sourceforge.net/projects/winguitest
 
-If the documentation of the functions is not satisfactory, you can 
+If the documentation of these functions is not satisfactory, you can 
 try running a search on http://msdn.microsoft.com/ using the name of the function. 
 Some of these functions are described there.
 
@@ -284,7 +284,7 @@ Also equivalent low-level functions are available:
         SendRButtonUp()
         SendRButtonDown()
         SendMouseMoveRel(x,y)
-    SendMouseMoveAbs(x,y)
+        SendMouseMoveAbs(x,y)
 
 =cut
 
@@ -411,7 +411,7 @@ sub DbgShow {
 
 =item GetWindowID($window)
 
-    Returns the Id of the specified window.
+    Returns the control Id of the specified window.
 
 =cut
 
