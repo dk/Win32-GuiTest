@@ -61,8 +61,10 @@ DESCRIPTION
     I've created a Yahoo Group for the module that you can join at
     http://groups.yahoo.com/group/perlguitest/join
 
-  Functions
+    Also, a script recording application has been written to use with this
+    module. A copy of it can be found at http://dkp.itgo.com
 
+  Functions
     $debug
         When set enables the verbose mode.
 
@@ -375,8 +377,8 @@ DESCRIPTION
            }
 
     HWND WindowFromPoint(x, y)
-  DibSect
 
+  DibSect
     A class to manage a Windows DIB section. Currently limited in
     functionality to 24-bit images. Pulled from old code into GuiTest when I
     (jurasz@imb.uni-karlsruhe.de) needed to create several grayscale screen

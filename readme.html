@@ -1,125 +1,150 @@
-<HTML>
-<HEAD>
-<TITLE>Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.</TITLE>
-<LINK REV="made" HREF="mailto:">
-</HEAD>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.</title>
+<link rev="made" href="mailto:" />
+</head>
 
-<BODY>
+<body style="background-color: white">
 
-<A NAME="__index__"></A>
+<p><a name="__index__"></a></p>
 <!-- INDEX BEGIN -->
 
-<UL>
+<ul>
 
-	<LI><A HREF="#name">NAME</A></LI>
-	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
-	<LI><A HREF="#installation">INSTALLATION</A></LI>
-	<LI><A HREF="#description">DESCRIPTION</A></LI>
-	<UL>
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#installation">INSTALLATION</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
 
-		<LI><A HREF="#functions">Functions</A></LI>
-		<LI><A HREF="#dibsect">DibSect</A></LI>
-	</UL>
+		<li><a href="#functions">Functions</a></li>
+		<li><a href="#dibsect">DibSect</a></li>
+	</ul>
 
-	<LI><A HREF="#version">VERSION</A></LI>
-	<LI><A HREF="#changes">CHANGES</A></LI>
-	<LI><A HREF="#copyright">COPYRIGHT</A></LI>
-	<LI><A HREF="#authors">AUTHORS</A></LI>
-	<LI><A HREF="#credits">CREDITS</A></LI>
-</UL>
+	<li><a href="#version">VERSION</a></li>
+	<li><a href="#changes">CHANGES</a></li>
+	<li><a href="#copyright">COPYRIGHT</a></li>
+	<li><a href="#authors">AUTHORS</a></li>
+	<li><a href="#credits">CREDITS</a></li>
+</ul>
 <!-- INDEX END -->
 
-<HR>
-<P>
-<H1><A NAME="name">NAME</A></H1>
-<P>Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.</P>
-<P>
-<HR>
-<H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<PRE>
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
   use Win32::GuiTest qw(FindWindowLike GetWindowText 
-    SetForegroundWindow SendKeys);</PRE>
-<PRE>
-  $Win32::GuiTest::debug = 0; # Set to &quot;1&quot; to enable verbose mode</PRE>
-<PRE>
+    SetForegroundWindow SendKeys);</pre>
+<pre>
+  $Win32::GuiTest::debug = 0; # Set to &quot;1&quot; to enable verbose mode</pre>
+<pre>
   my @windows = FindWindowLike(0, &quot;^Microsoft Excel&quot;, &quot;^XLMAIN\$&quot;);
   for (@windows) {
       print &quot;$_&gt;\t'&quot;, GetWindowText($_), &quot;'\n&quot;;
       SetForegroundWindow($_);
       SendKeys(&quot;%fn~a{TAB}b{TAB}{BS}{DOWN}&quot;);
-  }</PRE>
-<P>
-<HR>
-<H1><A NAME="installation">INSTALLATION</A></H1>
-<PRE>
+  }</pre>
+<p>
+</p>
+<hr />
+<h1><a name="installation">INSTALLATION</a></h1>
+<pre>
     // This batch file comes with MS Visual Studio.  Running
     // it first might help with various compilation problems.
-    vcvars32.bat</PRE>
-<PRE>
+    vcvars32.bat</pre>
+<pre>
     perl makefile.pl
     nmake
     nmake test
-    nmake install</PRE>
-<P>If you are using ActivePerl 5.6 
+    nmake install</pre>
+<p>If you are using ActivePerl 5.6 
 (http://www.activestate.com/Products/ActivePerl/index.html) 
 you can install the binary package I am including instead. You will need 
 to enter PPM (Perl Package Manager) from the command-line. Once you have 
 extracted the files I send you to a directory of your machine, enter PPM
- and do like this:</P>
-<PRE>
+ and do like this:</p>
+<pre>
     C:\TEMP&gt;ppm
     PPM interactive shell (2.0) - type 'help' for available commands.
     PPM&gt; install C:\temp\win32-guitest.ppd
     Install package 'C:\temp\win32-guitest.ppd?' (y/N): Y
     Retrieving package 'C:\temp\win32-guitest.ppd'...
     Writing C:\Perl\site\lib\auto\Win32\GuiTest\.packlist
-    PPM&gt;</PRE>
-<P>I extracted them to 'c:\temp', please use the directory where you extracted 
-the files instead.</P>
-<P>
-<HR>
-<H1><A NAME="description">DESCRIPTION</A></H1>
-<P>Most GUI test scripts I have seen/written for Win32 use some variant of Visual
+    PPM&gt;</pre>
+<p>I extracted them to 'c:\temp', please use the directory where you extracted 
+the files instead.</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Most GUI test scripts I have seen/written for Win32 use some variant of Visual
 Basic (e.g. MS-VB or MS-Visual Test). The main reason is the availability of
-the SendKeys function.</P>
-<P>A nice way to drive Win32 programs from a test script is to use OLE Automation
+the SendKeys function.</p>
+<p>A nice way to drive Win32 programs from a test script is to use OLE Automation
 (ActiveX Scripting), but not all Win32 programs support this interface. That is
-where SendKeys comes handy.</P>
-<P>Some time ago Al Williams published a Delphi version in Dr. Dobb's
+where SendKeys comes handy.</p>
+<p>Some time ago Al Williams published a Delphi version in Dr. Dobb's
 (http://www.ddj.com/ddj/1997/careers1/wil2.htm). I ported it to C and
-packaged it using h2xs...</P>
-<P>The tentative name for this module is Win32::GuiTest (mostly because I plan to
-include more GUI testing functions).</P>
-<P>I've created a Yahoo Group for the module that you can join at
-   <A HREF="http://groups.yahoo.com/group/perlguitest/join">http://groups.yahoo.com/group/perlguitest/join</A></P>
-<P>
-<H2><A NAME="functions">Functions</A></H2>
-<DL>
-<DT><STRONG><A NAME="item_%24debug">$debug</A></STRONG><BR>
-<DD>
+packaged it using h2xs...</p>
+<p>The tentative name for this module is Win32::GuiTest (mostly because I plan to
+include more GUI testing functions).</p>
+<p>I've created a Yahoo Group for the module that you can join at
+   <a href="http://groups.yahoo.com/group/perlguitest/join">http://groups.yahoo.com/group/perlguitest/join</a></p>
+<p>Also, a script recording application has been written to use with this 
+module.  A copy of it can be found at <a href="http://dkp.itgo.com">http://dkp.itgo.com</a></p>
+<p>
+</p>
+<h2><a name="functions">Functions</a></h2>
+<dl>
+<dt><strong><a name="item__24debug">$debug</a></strong><br />
+</dt>
+<dd>
 When set enables the verbose mode.
-<P></P>
-<DT><STRONG><A NAME="item_SendKeys"><CODE>SendKeys($keys[,$delay])</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_sendkeys"><code>SendKeys($keys[,$delay])</code></a></strong><br />
+</dt>
+<dd>
 Sends keystrokes to the active window as if typed at the keyboard using the
 optional delay between keystrokes (default is 50 ms and should be OK for
 most uses).
-<P>The keystrokes to send are specified in KEYS. There are several
+</dd>
+<dd>
+<p>The keystrokes to send are specified in KEYS. There are several
 characters that have special meaning. This allows sending control codes 
-and modifiers:</P>
-<PRE>
+and modifiers:</p>
+</dd>
+<dd>
+<pre>
         ~ means ENTER
         + means SHIFT 
         ^ means CTRL 
-        % means ALT</PRE>
-<P>The parens allow character grouping. You may group several characters, so
-that a specific keyboard modifier applies to all of them.</P>
-<P>E.g. <A HREF="#item_SendKeys"><CODE>SendKeys(``ABC'')</CODE></A> is equivalent to <A HREF="#item_SendKeys"><CODE>SendKeys(``+(abc)'')</CODE></A></P>
-<P>The curly braces are used to quote special characters (SendKeys(``{+}{{}'')
-sends a '+' and a '{'). You can also use them to specify certain named actions:</P>
-<PRE>
-        Name          Action</PRE>
-<PRE>
+        % means ALT</pre>
+</dd>
+<dd>
+<p>The parens allow character grouping. You may group several characters, so
+that a specific keyboard modifier applies to all of them.</p>
+</dd>
+<dd>
+<p>E.g. <a href="#item_sendkeys"><code>SendKeys(``ABC'')</code></a> is equivalent to <a href="#item_sendkeys"><code>SendKeys(``+(abc)'')</code></a></p>
+</dd>
+<dd>
+<p>The curly braces are used to quote special characters (SendKeys(``{+}{{}'')
+sends a '+' and a '{'). You can also use them to specify certain named actions:</p>
+</dd>
+<dd>
+<pre>
+        Name          Action</pre>
+</dd>
+<dd>
+<pre>
         {BACKSPACE}   Backspace
         {BS}          Backspace
         {BKSP}        Backspace
@@ -151,19 +176,27 @@ sends a '+' and a '{'). You can also use them to specify certain named actions:<
         {SPACEBAR}    Spacebar
         {LWI}         Left Windows Key
         {RWI}         Right Windows Key 
-        {APP}         Open Context Menu Key</PRE>
-<P>All these named actions take an optional integer argument, like in {RIGHT 5}. 
+        {APP}         Open Context Menu Key</pre>
+</dd>
+<dd>
+<p>All these named actions take an optional integer argument, like in {RIGHT 5}. 
 For all of them, except PAUSE, the argument means a repeat count. For PAUSE
-it means the number of milliseconds SendKeys should pause before proceding.</P>
-<P>In this implementation, SendKeys always returns after sending the keystrokes.
+it means the number of milliseconds SendKeys should pause before proceding.</p>
+</dd>
+<dd>
+<p>In this implementation, SendKeys always returns after sending the keystrokes.
 There is no way to tell if an application has processed those keys when the
-function returns.</P>
-<P></P>
-<DT><STRONG><A NAME="item_SendMouse"><CODE>SendMouse($command)</CODE></A></STRONG><BR>
-<DD>
+function returns.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_sendmouse"><code>SendMouse($command)</code></a></strong><br />
+</dt>
+<dd>
 This function emulates mouse input.  The COMMAND parameter is a string
 containing one or more of the following substrings:
-<PRE>
+</dd>
+<dd>
+<pre>
         {LEFTDOWN}    left button down
         {LEFTUP}      left button up
         {MIDDLEDOWN}  middle button down
@@ -174,12 +207,18 @@ containing one or more of the following substrings:
         {MIDDLECLICK} middle button single click
         {RIGHTCLICK}  right button single click
         {ABSx,y}      move to absolute coordinate ( x, y )
-        {RELx,y}      move to relative coordinate ( x, y )</PRE>
-<P>Note: Absolute mouse coordinates range from 0 to 65535.
+        {RELx,y}      move to relative coordinate ( x, y )</pre>
+</dd>
+<dd>
+<p>Note: Absolute mouse coordinates range from 0 to 65535.
       Relative coordinates can be positive or negative.
-      If you need pixel coordinates you can use MouseMoveAbsPix.</P>
-<P>Also equivalent low-level functions are available:</P>
-<PRE>
+      If you need pixel coordinates you can use MouseMoveAbsPix.</p>
+</dd>
+<dd>
+<p>Also equivalent low-level functions are available:</p>
+</dd>
+<dd>
+<pre>
     SendLButtonUp()
         SendLButtonDown()
         SendMButtonUp()
@@ -187,356 +226,497 @@ containing one or more of the following substrings:
         SendRButtonUp()
         SendRButtonDown()
         SendMouseMoveRel(x,y)
-    SendMouseMoveAbs(x,y)</PRE>
-<P></P>
-<DT><STRONG><A NAME="item_MouseMoveAbsPix"><CODE>MouseMoveAbsPix($x,$y)</CODE></A></STRONG><BR>
-<DD>
+    SendMouseMoveAbs(x,y)</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_mousemoveabspix"><code>MouseMoveAbsPix($x,$y)</code></a></strong><br />
+</dt>
+<dd>
 Move the mouse cursor to the screen pixel indicated as parameter.
-<PRE>
+</dd>
+<dd>
+<pre>
   # Moves to x=200, y=100 in pixel coordinates.
-  MouseMoveAbsPix(200, 100);</PRE>
-<P></P>
-<DT><STRONG><A NAME="item_FindWindowLike"><CODE>FindWindowLike($window,$titleregex,$classregex,$childid,$maxlevel)</CODE></A></STRONG><BR>
-<DD>
+  MouseMoveAbsPix(200, 100);</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_findwindowlike"><code>FindWindowLike($window,$titleregex,$classregex,$childid,$maxlevel)</code></a></strong><br />
+</dt>
+<dd>
 Finds the window handles of the windows matching the specified parameters and
 returns them as a list.
-<P>You may specify the handle of the window to search under. The routine 
+</dd>
+<dd>
+<p>You may specify the handle of the window to search under. The routine 
 searches through all of this windows children and their children recursively.
 If 'undef' then the routine searches through all windows. There is also a 
 regexp used to match against the text in the window caption and another regexp
 used to match against the text in the window class. If you pass a child ID 
 number, the functions will only match windows with this id. In each case 
-undef matches everything.</P>
-<P></P>
-<DT><STRONG><A NAME="item_PushButton"><CODE>PushButton($button[,$delay])</CODE></A></STRONG><BR>
-<DD>
+undef matches everything.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_pushbutton"><code>PushButton($button[,$delay])</code></a></strong><br />
+</dt>
+<dd>
 Equivalent to
-<PRE>
-    PushChildButton(GetForegroundWindow, BUTTON, DELAY)</PRE>
-<P></P>
-<DT><STRONG><A NAME="item_PushChildButton"><CODE>PushChildButton($parent,$button[,$delay])</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<dd>
+<pre>
+    PushChildButton(GetForegroundWindow, BUTTON, DELAY)</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_pushchildbutton"><code>PushChildButton($parent,$button[,$delay])</code></a></strong><br />
+</dt>
+<dd>
 Allows generating a mouse click on a particular button.
-<P>parent - the parent window of the button</P>
-<P>button - either the text in a button (e.g. ``Yes'') or the control ID
-of a button.</P>
-<P>delay - the time (0.25 means 250 ms) to wait between the mouse down
-and the mouse up event. This is useful for debugging.</P>
-<P></P>
-<DT><STRONG><A NAME="item_WaitWindowLike"><CODE>WaitWindowLike($parent,$wndtitle,$wndclass,$wndid,$depth,$wait)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<dd>
+<p>parent - the parent window of the button</p>
+</dd>
+<dd>
+<p>button - either the text in a button (e.g. ``Yes'') or the control ID
+of a button.</p>
+</dd>
+<dd>
+<p>delay - the time (0.25 means 250 ms) to wait between the mouse down
+and the mouse up event. This is useful for debugging.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_waitwindowlike"><code>WaitWindowLike($parent,$wndtitle,$wndclass,$wndid,$depth,$wait)</code></a></strong><br />
+</dt>
+<dd>
 Function which allows one to wait for a window to appear
 vs. using hard waits (e.g. sleep 2).
-<P>parent   - Where to start (parent window)</P>
-<P>wndtitle - Regexp for the window title</P>
-<P>wndclass - Regexp for the window class name</P>
-<P>wndid    - Numeric Window or Control ID</P>
-<P>depth    - How deep should we search before we stop</P>
-<P>wait     - How many seconds should we wait before giving up</P>
-<P></P>
-<DT><STRONG><A NAME="item_WaitWindow"><CODE>WaitWindow($wndtitle,[$wait])</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<dd>
+<p>parent   - Where to start (parent window)</p>
+</dd>
+<dd>
+<p>wndtitle - Regexp for the window title</p>
+</dd>
+<dd>
+<p>wndclass - Regexp for the window class name</p>
+</dd>
+<dd>
+<p>wndid    - Numeric Window or Control ID</p>
+</dd>
+<dd>
+<p>depth    - How deep should we search before we stop</p>
+</dd>
+<dd>
+<p>wait     - How many seconds should we wait before giving up</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_waitwindow"><code>WaitWindow($wndtitle,[$wait])</code></a></strong><br />
+</dt>
+<dd>
 Minimal version of WaitWindowLike. Only requires the window title
 regexp. You can also specify the wait timeout in seconds.
-<P>wndtitle - Regexp for the window title</P>
-<P>wait     - How many seconds should we wait before giving up</P>
-<P></P>
-<DT><STRONG><A NAME="item_MenuSelect"><CODE>MenuSelect($menupath,$window,$menu)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<dd>
+<p>wndtitle - Regexp for the window title</p>
+</dd>
+<dd>
+<p>wait     - How many seconds should we wait before giving up</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_menuselect"><code>MenuSelect($menupath,$window,$menu)</code></a></strong><br />
+</dt>
+<dd>
 Allows selecting a menu programmatically.
-<P>Simple Examples:
+</dd>
+<dd>
+<p>Simple Examples:
     # Exit foreground application through application menu.
-    MenuSelect(``&amp;File|E&amp;xit'');</P>
-<PRE>
+    MenuSelect(``&amp;File|E&amp;xit'');</p>
+</dd>
+<dd>
+<pre>
     # Exit foreground application through system menu
-    MenuSelect(&quot;&amp;Close&quot;, 0, GetSystemMenu(GetForegroundWindow(), FALSE));</PRE>
-<P></P>
-<DT><STRONG><A NAME="item_MouseClick">MouseClick($window [,$parent] [,$x_offset] [,$y_offset] [,$button] [,$delay])</A></STRONG><BR>
-<DD>
+    MenuSelect(&quot;&amp;Close&quot;, 0, GetSystemMenu(GetForegroundWindow(), FALSE));</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_mouseclick">MouseClick($window [,$parent] [,$x_offset] [,$y_offset] [,$button] [,$delay])</a></strong><br />
+</dt>
+<dd>
 Allows one to easily interact with an application through mouse emulation.
-<P>window = Regexp for a Window caption / Child caption, or just a Child ID.</P>
-<P>parent = Handle to parent window.  Default is foreground window.  Use
-<A HREF="#item_GetDesktopWindow"><CODE>GetDesktopWindow()</CODE></A> return value for this if clicking on an application
-title bar.</P>
-<P>x_offset = Offset for X axis.  Default is 0.</P>
-<P>y_offset = Offset for Y axis.  Default is 0.</P>
-<P>button = {LEFT}, {MIDDLE}, {RIGHT}.  Default is {LEFT}</P>
-<P>delay = Default is 0.  0.50 = 500 ms.  Delay between button down and
-button up.</P>
-<P>Simple Examples:</P>
-<PRE>
+</dd>
+<dd>
+<p>window = Regexp for a Window caption / Child caption, or just a Child ID.</p>
+</dd>
+<dd>
+<p>parent = Handle to parent window.  Default is foreground window.  Use
+<a href="#item_getdesktopwindow"><code>GetDesktopWindow()</code></a> return value for this if clicking on an application
+title bar.</p>
+</dd>
+<dd>
+<p>x_offset = Offset for X axis.  Default is 0.</p>
+</dd>
+<dd>
+<p>y_offset = Offset for Y axis.  Default is 0.</p>
+</dd>
+<dd>
+<p>button = {LEFT}, {MIDDLE}, {RIGHT}.  Default is {LEFT}</p>
+</dd>
+<dd>
+<p>delay = Default is 0.  0.50 = 500 ms.  Delay between button down and
+button up.</p>
+</dd>
+<dd>
+<p>Simple Examples:</p>
+</dd>
+<dd>
+<pre>
     # Click on CE button if its parent window is in foreground.
-    MouseClick('^CE$');</PRE>
-<PRE>
+    MouseClick('^CE$');</pre>
+</dd>
+<dd>
+<pre>
     # Right click on CE button if its parent window is in foreground
-    MouseClick('^CE$', undef, undef, undef, '{RIGHT}');</PRE>
-<PRE>
+    MouseClick('^CE$', undef, undef, undef, '{RIGHT}');</pre>
+</dd>
+<dd>
+<pre>
     # Click on 8 button window under the specified parent window; where
     # [PARENTHWND] will be replaced by a parent handle variable.
-    MouseClick('8', [PARENTHWND]);</PRE>
-<PRE>
+    MouseClick('8', [PARENTHWND]);</pre>
+</dd>
+<dd>
+<pre>
     # Click on Calculator parent window itself
-    MouseClick('Calculator', GetDesktopWindow());</PRE>
-<P></P>
-<DT><STRONG><A NAME="item_WMGetText">$text = <CODE>WMGetText($hwnd)</CODE> *</A></STRONG><BR>
-<DD>
+    MouseClick('Calculator', GetDesktopWindow());</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_wmgettext">$text = <code>WMGetText($hwnd)</code> *</a></strong><br />
+</dt>
+<dd>
 Sends a WM_GETTEXT to a window and returns its contents
-<P></P>
-<DT><STRONG><A NAME="item_WMSetText">$set = <CODE>WMSetText(hwnd,text)</CODE> *</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_wmsettext">$set = <code>WMSetText(hwnd,text)</code> *</a></strong><br />
+</dt>
+<dd>
 Sends a WM_SETTEXT to a window setting its contents
-<P></P>
-<DT><STRONG><A NAME="item_GetCursorPos">($x,$y) = <CODE>GetCursorPos()</CODE> *</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getcursorpos">($x,$y) = <code>GetCursorPos()</code> *</a></strong><br />
+</dt>
+<dd>
 Retrieves the cursor's position,in screen coordinates as (x,y) array.
-<P></P>
-<DT><STRONG><A NAME="item_GetCaretPos"><CODE>GetCaretPos()</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getcaretpos"><code>GetCaretPos()</code></a></strong><br />
+</dt>
+<dd>
 Retrieves the caret's position, in client coordinates as (x,y) array. (Like Windows function)
-<P></P>
-<DT><STRONG><A NAME="item_SetFocus">HWND <CODE>SetFocus(hWnd)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_setfocus">HWND <code>SetFocus(hWnd)</code></a></strong><br />
+</dt>
+<dd>
 Sets the keyboard focus to the specified window
-<P></P>
-<DT><STRONG><A NAME="item_GetDesktopWindow">HWND <CODE>GetDesktopWindow()</CODE> *</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getdesktopwindow">HWND <code>GetDesktopWindow()</code> *</a></strong><br />
+</dt>
+<dd>
 Returns a handle to the desktop window
-<P></P>
-<DT><STRONG><A NAME="item_GetWindow">HWND <CODE>GetWindow(hwnd,uCmd)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetWindowText">SV * <CODE>GetWindowText(hwnd)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetClassName">$class = <CODE>GetClassName(hwnd)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetParent">HWND <CODE>GetParent(hwnd)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetWindowLong">long <CODE>GetWindowLong(hwnd,index)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_SetForegroundWindow">BOOL <CODE>SetForegroundWindow(hWnd)</CODE> *</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getwindow">HWND <code>GetWindow(hwnd,uCmd)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_getwindowtext">SV * <code>GetWindowText(hwnd)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_getclassname">$class = <code>GetClassName(hwnd)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_getparent">HWND <code>GetParent(hwnd)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_getwindowlong">long <code>GetWindowLong(hwnd,index)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_setforegroundwindow">BOOL <code>SetForegroundWindow(hWnd)</code> *</a></strong><br />
+</dt>
+<dd>
 See corresponding Windows functions.
-<P></P>
-<DT><STRONG><A NAME="item_GetChildWindows">@wnds = <CODE>GetChildWindows(hWnd)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getchildwindows">@wnds = <code>GetChildWindows(hWnd)</code></a></strong><br />
+</dt>
+<dd>
 Like EnumChildWindows
-<P></P>
-<DT><STRONG><A NAME="item_IsChild">BOOL <CODE>IsChild(hWndParent,hWnd)</CODE> *</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_ischild">BOOL <code>IsChild(hWndParent,hWnd)</code> *</a></strong><br />
+</dt>
+<dd>
 See corresponding Windows function.
-<P></P>
-<DT><STRONG><A NAME="item_GetChildDepth">$depth = <CODE>GetChildDepth(hAncestor,hChild)</CODE></A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_SendMessage">$res = <CODE>SendMessage(hwnd,msg,wParam,lParam)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_PostMessage">$res = <CODE>PostMessage(hwnd,msg,wParam,lParam)</CODE> *</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getchilddepth">$depth = <code>GetChildDepth(hAncestor,hChild)</code></a></strong><br />
+</dt>
+<dt><strong><a name="item_sendmessage">$res = <code>SendMessage(hwnd,msg,wParam,lParam)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_postmessage">$res = <code>PostMessage(hwnd,msg,wParam,lParam)</code> *</a></strong><br />
+</dt>
+<dd>
 See corresponding Windows functions.
-<P></P>
-<DT><STRONG><A NAME="item_CheckButton"><CODE>CheckButton(hwnd)</CODE></A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_UnCheckButton"><CODE>UnCheckButton(hwnd)</CODE></A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GrayOutButton"><CODE>GrayOutButton(hwnd)</CODE></A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_IsCheckedButton">BOOL <CODE>IsCheckedButton(hwnd)</CODE></A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_IsGrayedButton">BOOL <CODE>IsGrayedButton(hwnd)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_checkbutton"><code>CheckButton(hwnd)</code></a></strong><br />
+</dt>
+<dt><strong><a name="item_uncheckbutton"><code>UnCheckButton(hwnd)</code></a></strong><br />
+</dt>
+<dt><strong><a name="item_grayoutbutton"><code>GrayOutButton(hwnd)</code></a></strong><br />
+</dt>
+<dt><strong><a name="item_ischeckedbutton">BOOL <code>IsCheckedButton(hwnd)</code></a></strong><br />
+</dt>
+<dt><strong><a name="item_isgrayedbutton">BOOL <code>IsGrayedButton(hwnd)</code></a></strong><br />
+</dt>
+<dd>
 The names say it.
-<P></P>
-<DT><STRONG><A NAME="item_IsWindow">BOOL <CODE>IsWindow(hwnd)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_ScreenToClient">($x,$y) = <CODE>ScreenToClient(hwnd,x,y)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_ClientToScreen">($x,$y) = <CODE>ClientToScreen(hwnd,x,y)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG>($x,$y) = <CODE>GetCaretPos(hwnd)</CODE> *A</STRONG><BR>
-<DD>
-<DT><STRONG>HWND <CODE>SetFocus(hWnd)</CODE> *A</STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetFocus">HWND <CODE>GetFocus(hwnd)</CODE> *A</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetActiveWindow">HWND <CODE>GetActiveWindow(hwnd)</CODE> *A</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetForegroundWindow">HWND <CODE>GetForegroundWindow()</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_SetActiveWindow">HWND <CODE>SetActiveWindow(hwnd)</CODE> *A</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_EnableWindow">BOOL <CODE>EnableWindow(hwnd,fEnable)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_IsWindowEnabled">BOOL IsWindowEnabled(hwnd)*</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_IsWindowVisible">BOOL IsWindowVisible(hwnd)*</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_ShowWindow">BOOL <CODE>ShowWindow(hwnd,nCmdShow)</CODE> *A</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_iswindow">BOOL <code>IsWindow(hwnd)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_screentoclient">($x,$y) = <code>ScreenToClient(hwnd,x,y)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_clienttoscreen">($x,$y) = <code>ClientToScreen(hwnd,x,y)</code> *</a></strong><br />
+</dt>
+<dt><strong>($x,$y) = <code>GetCaretPos(hwnd)</code> *A</strong><br />
+</dt>
+<dt><strong>HWND <code>SetFocus(hWnd)</code> *A</strong><br />
+</dt>
+<dt><strong><a name="item_getfocus">HWND <code>GetFocus(hwnd)</code> *A</a></strong><br />
+</dt>
+<dt><strong><a name="item_getactivewindow">HWND <code>GetActiveWindow(hwnd)</code> *A</a></strong><br />
+</dt>
+<dt><strong><a name="item_getforegroundwindow">HWND <code>GetForegroundWindow()</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_setactivewindow">HWND <code>SetActiveWindow(hwnd)</code> *A</a></strong><br />
+</dt>
+<dt><strong><a name="item_enablewindow">BOOL <code>EnableWindow(hwnd,fEnable)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_iswindowenabled">BOOL IsWindowEnabled(hwnd)*</a></strong><br />
+</dt>
+<dt><strong><a name="item_iswindowvisible">BOOL IsWindowVisible(hwnd)*</a></strong><br />
+</dt>
+<dt><strong><a name="item_showwindow">BOOL <code>ShowWindow(hwnd,nCmdShow)</code> *A</a></strong><br />
+</dt>
+<dd>
 See corresponding Windows functions.
-<P></P>
-<DT><STRONG><A NAME="item_ScreenToNorm">($x,$y) = <CODE>ScreenToNorm(x,y)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_screentonorm">($x,$y) = <code>ScreenToNorm(x,y)</code></a></strong><br />
+</dt>
+<dd>
 Returns normalised coordinates of given point (0-FFFF as a fraction of screen 
 resolution)
-<P></P>
-<DT><STRONG><A NAME="item_NormToScreen">($x,$y) = <CODE>NormToScreen(x,y)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_normtoscreen">($x,$y) = <code>NormToScreen(x,y)</code></a></strong><br />
+</dt>
+<dd>
 The opposite transformation
-<P></P>
-<DT><STRONG><A NAME="item_GetScreenRes">($x,$y) = <CODE>GetScreenRes()</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getscreenres">($x,$y) = <code>GetScreenRes()</code></a></strong><br />
+</dt>
+<dd>
 Returns screen resolution
-<P></P>
-<DT><STRONG><A NAME="item_GetWindowRect">($l,$t,$r,$b) = <CODE>GetWindowRect(hWnd)</CODE> *</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetClientRect">($l,$t,$r,$b) = <CODE>GetClientRect(hWnd)</CODE> *</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getwindowrect">($l,$t,$r,$b) = <code>GetWindowRect(hWnd)</code> *</a></strong><br />
+</dt>
+<dt><strong><a name="item_getclientrect">($l,$t,$r,$b) = <code>GetClientRect(hWnd)</code> *</a></strong><br />
+</dt>
+<dd>
 See corresponding Windows functions.
-<P></P>
-<DT><STRONG><A NAME="item_GetComboText">$txt = <CODE>GetComboText(hwnd,index)</CODE></A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetListText">$txt = <CODE>GetListText(hwnd,index)</CODE></A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetComboContents">@lst = <CODE>GetComboContents(hWnd)</CODE></A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_GetListContents">@lst = <CODE>GetListContents(hWnd)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_getcombotext">$txt = <code>GetComboText(hwnd,index)</code></a></strong><br />
+</dt>
+<dt><strong><a name="item_getlisttext">$txt = <code>GetListText(hwnd,index)</code></a></strong><br />
+</dt>
+<dt><strong><a name="item_getcombocontents">@lst = <code>GetComboContents(hWnd)</code></a></strong><br />
+</dt>
+<dt><strong><a name="item_getlistcontents">@lst = <code>GetListContents(hWnd)</code></a></strong><br />
+</dt>
+<dd>
 Fetch the contents of the list and combo boxes.
-<P></P>
-<DT><STRONG><A NAME="item_IsKeyPressed"><CODE>IsKeyPressed($key)</CODE></A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_iskeypressed"><code>IsKeyPressed($key)</code></a></strong><br />
+</dt>
+<dd>
 Wrapper around the GetAsyncKeyState API function. Returns TRUE if the user presses the 
 specified key.
-<PRE>
+</dd>
+<dd>
+<pre>
     IsKeyPressed(&quot;ESC&quot;);
     IsKeyPressed(&quot;A&quot;);
-    IsKeyPressed(&quot;DOWN&quot;);</PRE>
-<P></P>
-<DT><STRONG><A NAME="item_SendRawKey"><CODE>SendRawKey($virtualkey,$flags)</CODE></A></STRONG><BR>
-<DD>
+    IsKeyPressed(&quot;DOWN&quot;);</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_sendrawkey"><code>SendRawKey($virtualkey,$flags)</code></a></strong><br />
+</dt>
+<dd>
 Wrapper around keybd_event. Allows sending low-level keys. The first argument is any of the VK_* constants. The second argument can be 0, KEYEVENTF_EXTENDEDKEY, KEYEVENTF_KEYUP or a combination of them.
-<PRE>
+</dd>
+<dd>
+<pre>
     KEYEVENTF_EXTENDEDKEY - Means it is an extended key (i.e. to distinguish between arrow keys on the numeric keypad and elsewhere). 
-    KEYEVENTF_KEYUP       - Means keyup. Unspecified means keydown.</PRE>
-<PRE>
+    KEYEVENTF_KEYUP       - Means keyup. Unspecified means keydown.</pre>
+</dd>
+<dd>
+<pre>
    #Example
-   use Win32::GuiTest qw/:FUNC :VK/;</PRE>
-<PRE>
+   use Win32::GuiTest qw/:FUNC :VK/;</pre>
+</dd>
+<dd>
+<pre>
    while (1) {
        SendRawKey(VK_DOWN, KEYEVENTF_EXTENDEDKEY); 
        SendKeys &quot;{PAUSE 200}&quot;;
-   }</PRE>
-<P></P>
-<DT><STRONG><A NAME="item_WindowFromPoint">HWND WindowFromPoint(x, y)</A></STRONG><BR>
-<DD>
-</DL>
-<P>
-<H2><A NAME="dibsect">DibSect</A></H2>
-<P>A class to manage a Windows DIB section. Currently limited in functionality to 
-24-bit images. Pulled from old code into GuiTest when I (<A HREF="mailto:jurasz@imb.uni-karlsruhe.de">jurasz@imb.uni-karlsruhe.de</A>) 
-needed to create several grayscale screen dumps.</P>
-<P>Possible future extenstions: other color resolutions, loading, comparison of bitmaps,
-getting from clipboard.</P>
-<P>Synopsis:</P>
-<PRE>
+   }</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_windowfrompoint">HWND WindowFromPoint(x, y)</a></strong><br />
+</dt>
+</dl>
+<p>
+</p>
+<h2><a name="dibsect">DibSect</a></h2>
+<p>A class to manage a Windows DIB section. Currently limited in functionality to 
+24-bit images. Pulled from old code into GuiTest when I (<a href="mailto:jurasz@imb.uni-karlsruhe.de">jurasz@imb.uni-karlsruhe.de</a>) 
+needed to create several grayscale screen dumps.</p>
+<p>Possible future extenstions: other color resolutions, loading, comparison of bitmaps,
+getting from clipboard.</p>
+<p>Synopsis:</p>
+<pre>
   $ds = new Win32::GuiTest::DibSect;
   $ds-&gt;CopyWindow($w);
   $ds-&gt;ToGrayScale();
   $ds-&gt;SaveAs(&quot;bla.bmp&quot;);
-  $ds-&gt;ToClipboard();</PRE>
-<DL>
-<DT><STRONG><A NAME="item_CopyClient">bool DibSect::CopyClient(hwnd,[rect])</A></STRONG><BR>
-<DD>
+  $ds-&gt;ToClipboard();</pre>
+<dl>
+<dt><strong><a name="item_copyclient">bool DibSect::CopyClient(hwnd,[rect])</a></strong><br />
+</dt>
+<dd>
 Copy a client area of given window (or possibly its subset) into a given DibSect.
 The rectangle may be optionally passed as a reference to 4-element array.
 To get the right result make sure the window you want to copy is not obscured by 
 others.
-<P></P>
-<DT><STRONG><A NAME="item_CopyWindow">bool DibSect::CopyWindow(hwnd)</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_copywindow">bool DibSect::CopyWindow(hwnd)</a></strong><br />
+</dt>
+<dd>
 Copy the window rectangle. Equivalent to
-<PRE>
-  $ds-&gt;CopyClient(GetDesktopWindow(), \@{[GetWindowRect($w)]});</PRE>
-<P></P>
-<DT><STRONG><A NAME="item_SaveAs">bool DibSect::SaveAs(szFile)</A></STRONG><BR>
-<DD>
+</dd>
+<dd>
+<pre>
+  $ds-&gt;CopyClient(GetDesktopWindow(), \@{[GetWindowRect($w)]});</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_saveas">bool DibSect::SaveAs(szFile)</a></strong><br />
+</dt>
+<dd>
 Save the current contents of the DIB section in a given file. With 24-bit 
 resolution it can grow quite big, so I immediately convert them to PNG (direct 
 writing of PNG seemed to complicated to implement).
-<P></P>
-<DT><STRONG><A NAME="item_Invert">bool DibSect::Invert()</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_invert">bool DibSect::Invert()</a></strong><br />
+</dt>
+<dd>
 Invert the colors in a current DIB section.
-<P></P>
-<DT><STRONG><A NAME="item_ToGrayScale">bool DibSect::ToGrayScale()</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_tograyscale">bool DibSect::ToGrayScale()</a></strong><br />
+</dt>
+<dd>
 Convert the DibSection to the gray scale. Note that it is still encoded as 24-bit
 BMP for simplicity.
-<P></P>
-<DT><STRONG><A NAME="item_ToClipboard">bool DibSect::ToClipboard()</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_toclipboard">bool DibSect::ToClipboard()</a></strong><br />
+</dt>
+<dd>
 Copies the DibSect to clipboard (as an old-fashioned metafile), so that it can 
 be further processed with your favourite image processing software, for example 
 automatically using SendKeys.
-<P></P>
-<DT><STRONG><A NAME="item_Destroy">bool DibSect::Destroy()</A></STRONG><BR>
-<DD>
+</dd>
+<p></p>
+<dt><strong><a name="item_destroy">bool DibSect::Destroy()</a></strong><br />
+</dt>
+<dd>
 Destroys the contents of the DIB section.
-<P></P></DL>
-<P>
-<HR>
-<H1><A NAME="version">VERSION</A></H1>
-<PRE>
-    1.50.1-ad</PRE>
-<P>
-<HR>
-<H1><A NAME="changes">CHANGES</A></H1>
-<P>Moved to the CHANGES file.</P>
-<P>
-<HR>
-<H1><A NAME="copyright">COPYRIGHT</A></H1>
-<P>The SendKeys function is based on the Delphi sourcecode
-published by Al Williams  &lt;<A HREF="http://www.al-williams.com/awc/">http://www.al-williams.com/awc/</A>&gt; 
-in Dr.Dobbs  &lt;<A HREF="http://www.ddj.com/ddj/1997/careers1/wil2.htm">http://www.ddj.com/ddj/1997/careers1/wil2.htm</A>&gt;.</P>
-<P>Copyright (c) 1998-2002 Ernesto Guisado, (c) 2004 Dennis K. Paulsen. All rights 
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="version">VERSION</a></h1>
+<pre>
+    1.50.1-ad</pre>
+<p>
+</p>
+<hr />
+<h1><a name="changes">CHANGES</a></h1>
+<p>Moved to the CHANGES file.</p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright">COPYRIGHT</a></h1>
+<p>The SendKeys function is based on the Delphi sourcecode
+published by Al Williams  &lt;<a href="http://www.al-williams.com/awc/">http://www.al-williams.com/awc/</a>&gt; 
+in Dr.Dobbs  &lt;<a href="http://www.ddj.com/ddj/1997/careers1/wil2.htm">http://www.ddj.com/ddj/1997/careers1/wil2.htm</a>&gt;.</p>
+<p>Copyright (c) 1998-2002 Ernesto Guisado, (c) 2004 Dennis K. Paulsen. All rights 
 reserved. This program is free software; You may distribute it and/or modify it
-under the same terms as Perl itself.</P>
-<P>
-<HR>
-<H1><A NAME="authors">AUTHORS</A></H1>
-<P>Ernesto Guisado (<A HREF="mailto:erngui@acm.org">erngui@acm.org</A>), <A HREF="http://triumvir.org">http://triumvir.org</A></P>
-<P>Jarek Jurasz (<A HREF="mailto:jurasz@imb.uni-karlsruhe.de">jurasz@imb.uni-karlsruhe.de</A>), <A HREF="http://www.uni-karlsruhe.de/~gm07">http://www.uni-karlsruhe.de/~gm07</A> wrote 
-DibSect and some other pieces (see <CODE>Changes</CODE> for details).</P>
-<P>Dennis K. Paulsen (<A HREF="mailto:ctrondlpaulsden@yahoo.com">ctrondlpaulsden@yahoo.com</A>) wrote various pieces (See <CODE>Changes</CODE> for
-details).</P>
-<P>
-<HR>
-<H1><A NAME="credits">CREDITS</A></H1>
-<P>Thanks very much to:</P>
-<DL>
-<DT><STRONG><A NAME="item_Johannes_Maehner">Johannes Maehner</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Ben_Shern">Ben Shern</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Phill_Wolf">Phill Wolf</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Mauro">Mauro</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Sohrab_Niramwalla">Sohrab Niramwalla</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Frank_van_Dijk">Frank van Dijk</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Jarek_Jurasz">Jarek Jurasz</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Wilson_P%2E_Snyder_II">Wilson P. Snyder II</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Rudi_Farkas">Rudi Farkas</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Paul_Covington">Paul Covington</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_%2E%2E%2Eand_more%2E%2E%2E">...and more...</A></STRONG><BR>
-<DD>
+under the same terms as Perl itself.</p>
+<p>
+</p>
+<hr />
+<h1><a name="authors">AUTHORS</a></h1>
+<p>Ernesto Guisado (<a href="mailto:erngui@acm.org">erngui@acm.org</a>), <a href="http://triumvir.org">http://triumvir.org</a></p>
+<p>Jarek Jurasz (<a href="mailto:jurasz@imb.uni-karlsruhe.de">jurasz@imb.uni-karlsruhe.de</a>), <a href="http://www.uni-karlsruhe.de/~gm07">http://www.uni-karlsruhe.de/~gm07</a> wrote 
+DibSect and some other pieces (see <code>Changes</code> for details).</p>
+<p>Dennis K. Paulsen (<a href="mailto:ctrondlpaulsden@yahoo.com">ctrondlpaulsden@yahoo.com</a>) wrote various pieces (See <code>Changes</code> for
+details).</p>
+<p>
+</p>
+<hr />
+<h1><a name="credits">CREDITS</a></h1>
+<p>Thanks very much to:</p>
+<dl>
+<dt><strong><a name="item_johannes_maehner">Johannes Maehner</a></strong><br />
+</dt>
+<dt><strong><a name="item_ben_shern">Ben Shern</a></strong><br />
+</dt>
+<dt><strong><a name="item_phill_wolf">Phill Wolf</a></strong><br />
+</dt>
+<dt><strong><a name="item_mauro">Mauro</a></strong><br />
+</dt>
+<dt><strong><a name="item_sohrab_niramwalla">Sohrab Niramwalla</a></strong><br />
+</dt>
+<dt><strong><a name="item_frank_van_dijk">Frank van Dijk</a></strong><br />
+</dt>
+<dt><strong><a name="item_jarek_jurasz">Jarek Jurasz</a></strong><br />
+</dt>
+<dt><strong><a name="item_wilson_p_2e_snyder_ii">Wilson P. Snyder II</a></strong><br />
+</dt>
+<dt><strong><a name="item_rudi_farkas">Rudi Farkas</a></strong><br />
+</dt>
+<dt><strong><a name="item_paul_covington">Paul Covington</a></strong><br />
+</dt>
+<dt><strong><a name="item__2e_2e_2eand_more_2e_2e_2e">...and more...</a></strong><br />
+</dt>
+<dd>
 for code, suggestions and bug fixes.
-<P></P></DL>
+</dd>
+<p></p></dl>
 
-</BODY>
+</body>
 
-</HTML>
+</html>

@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.10 2004/05/19 21:30:09 ctrondlp Exp $
+# $Id: guitest.pm,v 1.11 2004/05/29 12:29:33 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -69,6 +69,9 @@ include more GUI testing functions).
 
 I've created a Yahoo Group for the module that you can join at
    http://groups.yahoo.com/group/perlguitest/join
+
+Also, a script recording application has been written to use with this 
+module.  A copy of it can be found at http://dkp.itgo.com
 
 =cut
 
