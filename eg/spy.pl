@@ -2,15 +2,52 @@
 use strict;
 
 # Based on the spy--.pl within the distribution
+# Parse a subtree of the whole windoing systme and print as much information as possible
+# about each window and each object.
+# This software is in a very early stage. Its options and output format will change a lot.
+# Your input is welcome !
+
 # Written by Gabor Szabo <gabor@pti.co.il>
 
-# $Id: spy.pl,v 1.2 2004/07/15 19:38:02 szabgab Exp $
+# $Id: spy.pl,v 1.3 2004/07/21 21:38:22 szabgab Exp $
+my $VERSION = "0.02";
 
-
+use Getopt::Long;
 use Win32::GuiTest qw(:ALL);
+my %opts;
+GetOptions(\%opts, "help", "title=s", "all", "id=i", "class=s"); 
+usage() if $opts{help} or not %opts;
+
+
 my %seen;
 my $desktop = GetDesktopWindow();
-my $root = 0;
+my $root    = 0;
+my $start;
+
+$start = 0 if $opts{all};
+$start = $opts{id} if $opts{id};
+if ($opts{title} or $opts{class}) {
+	my @windows = FindWindowLike(0, $opts{title}, $opts{class});
+	#my @windows = FindWindowLike(0, $opts{title}) if $opts{title};
+	#@windows = FindWindowLike(0, '', $opts{class}) if $opts{class};
+	if (@windows > 1) {
+		print "There are more than one window that fit:\n";
+		foreach my $w (@windows) {
+			printf "%s | %s | %s\n", $w,  GetClassName($w), GetWindowText($w);
+		}
+		exit;
+	}
+	die "Did not find such a window." if not @windows;
+	$start = $windows[0];
+}
+
+
+
+
+
+
+usage() if not defined $start;
+
 
 my $format = "%-10s %-10s, '%-25s', %-10s, Rect:%-3s,%-3s,%-3s,%-3s   '%s'\n";
 printf $format,
@@ -22,7 +59,7 @@ printf $format,
 		"WindowText";
 
 
-parse_tree(0);
+parse_tree($start);
 
 
 
@@ -79,3 +116,17 @@ sub prt {
 		($w ? GetWindowText($w) : ""); 
 }
 
+
+
+sub usage {
+	print "Version: v$VERSION\n";
+	print "Usage:\n";
+	print "        $0 --help\n";
+	print "        $0 --all\n";
+	print "        $0 --title TITLE\n";
+	print "\n";
+	print "As the output is quite verbose, probably you'll want to redirect \n";
+	print "the output to a file:   $0 options > out.txt\n";
+	print "\n";
+	exit;
+}
