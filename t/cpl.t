@@ -1,7 +1,7 @@
 #!perl -w
 BEGIN { $| = 1; }
 
-# $Id: cpl.t,v 1.3 2004/07/19 20:17:58 szabgab Exp $
+# $Id: cpl.t,v 1.4 2004/07/21 21:36:02 szabgab Exp $
 
 use strict;
 
@@ -45,6 +45,9 @@ sub closewnd {
     waitcome($me);
 }
 
+SKIP: {
+
+skip "Set CPLTEST=1 in order to run these tests", 1 if not $ENV{CPLTEST};
 
 my $me = GetForegroundWindow();
 
@@ -140,3 +143,4 @@ ok(1);
 #closewnd($me, "%{F4}");
 #ok(1);
 
+}
