@@ -473,11 +473,21 @@ DESCRIPTION
     GetListViewContents($window)
             Returns a list of the contents of the specified list view.
 
-    SelListViewItem($window, $idx)
+    SelListViewItem($window, $idx, [$multi_select])
             Selects an item in the list view based off an index.
 
-    SelListViewItemText($window, $txt)
-            Selects an item in the list view based off text.
+                # Select first item, clears out any previous selections.
+                SelListViewItem($win, 0);
+                # Select an *additional* item.
+                SelListViewItem($win, 1, 1);
+
+    SelListViewItemText($window, $txt, [$multi_select])
+            Selects an item in the list view based off text (case insensitive).
+
+                # Select first item, clears out any previous selections.
+                SelListViewItemText($win, 'Temp');
+                # Select an *additional* item.
+                SelListViewItemText($win, 'cabs', 1);
 
     IsListViewItemSel($window, $txt)
            Determines if the specified list view item is selected.
@@ -489,15 +499,17 @@ DESCRIPTION
             Selects a tab based off an index.
 
     SelTabItemText($window, $txt)
-            Selects a tab based off text label.
+            Selects a tab based off text label (case insensitive).
 
     IsTabItemSel($window, $txt)
            Determines if the specified tab item is selected.
 
     SelTreeViewItemPath($window, $path)
-            Selects a tree view item based off a "path".
+            Selects a tree view item based off a "path" (case insensitive).
 
+            # Select Machine item and Processors sub-item.
             SelTreeViewItemPath($window, "Machine|Processors");
+
             SelTreeViewItemPath($window, "Item");
 
   DibSect

@@ -724,17 +724,31 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 <pre>
     Returns a list of the contents of the specified list view.</pre>
 </dd>
-<dt><strong><a name="item_sellistviewitem">SelListViewItem($window, $idx)</a></strong><br />
+<dt><strong><a name="item_sellistviewitem">SelListViewItem($window, $idx, [$multi_select])</a></strong><br />
 </dt>
 <dd>
 <pre>
     Selects an item in the list view based off an index.</pre>
 </dd>
-<dt><strong><a name="item_sellistviewitemtext">SelListViewItemText($window, $txt)</a></strong><br />
+<dd>
+<pre>
+        # Select first item, clears out any previous selections.
+        SelListViewItem($win, 0);
+        # Select an *additional* item.
+        SelListViewItem($win, 1, 1);</pre>
+</dd>
+<dt><strong><a name="item_sellistviewitemtext">SelListViewItemText($window, $txt, [$multi_select])</a></strong><br />
 </dt>
 <dd>
 <pre>
-    Selects an item in the list view based off text.</pre>
+    Selects an item in the list view based off text (case insensitive).</pre>
+</dd>
+<dd>
+<pre>
+        # Select first item, clears out any previous selections.
+        SelListViewItemText($win, 'Temp');
+        # Select an *additional* item.
+        SelListViewItemText($win, 'cabs', 1);</pre>
 </dd>
 <dt><strong><a name="item_islistviewitemsel">IsListViewItemSel($window, $txt)</a></strong><br />
 </dt>
@@ -758,7 +772,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 </dt>
 <dd>
 <pre>
-    Selects a tab based off text label.</pre>
+    Selects a tab based off text label (case insensitive).</pre>
 </dd>
 <dt><strong><a name="item_istabitemsel">IsTabItemSel($window, $txt)</a></strong><br />
 </dt>
@@ -770,11 +784,15 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 </dt>
 <dd>
 <pre>
-    Selects a tree view item based off a &quot;path&quot;.</pre>
+    Selects a tree view item based off a &quot;path&quot; (case insensitive).</pre>
 </dd>
 <dd>
 <pre>
-    SelTreeViewItemPath($window, &quot;Machine|Processors&quot;);
+    # Select Machine item and Processors sub-item.
+    SelTreeViewItemPath($window, &quot;Machine|Processors&quot;);</pre>
+</dd>
+<dd>
+<pre>
     SelTreeViewItemPath($window, &quot;Item&quot;);</pre>
 </dd>
 </dl>

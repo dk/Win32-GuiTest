@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.22 2004/11/17 00:21:52 ctrondlp Exp $
+# $Id: guitest.pm,v 1.23 2004/11/17 17:57:31 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -959,15 +959,25 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 
 =cut
 
-=item SelListViewItem($window, $idx)
+=item SelListViewItem($window, $idx, [$multi_select])
 
     Selects an item in the list view based off an index.
 
+	# Select first item, clears out any previous selections.
+	SelListViewItem($win, 0);
+	# Select an *additional* item.
+	SelListViewItem($win, 1, 1);
+
 =cut
 
-=item SelListViewItemText($window, $txt)
+=item SelListViewItemText($window, $txt, [$multi_select])
 
-    Selects an item in the list view based off text.
+    Selects an item in the list view based off text (case insensitive).
+
+	# Select first item, clears out any previous selections.
+	SelListViewItemText($win, 'Temp');
+	# Select an *additional* item.
+	SelListViewItemText($win, 'cabs', 1);
 
 =cut
 
@@ -991,7 +1001,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 
 =item SelTabItemText($window, $txt)
 
-    Selects a tab based off text label.
+    Selects a tab based off text label (case insensitive).
 
 =cut
 
@@ -1003,9 +1013,11 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 
 =item SelTreeViewItemPath($window, $path)
 
-    Selects a tree view item based off a "path".
+    Selects a tree view item based off a "path" (case insensitive).
 
+    # Select Machine item and Processors sub-item.
     SelTreeViewItemPath($window, "Machine|Processors");
+
     SelTreeViewItemPath($window, "Item");
 
 =cut

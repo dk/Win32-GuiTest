@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.13 2004/11/17 00:21:52 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.14 2004/11/17 17:57:31 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -149,8 +149,9 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 	} else if (pCW->message == WM_LV_SELBYINDEX) {
 		int iCount = ListView_GetItemCount(g_hWnd);
 		int iSel = pCW->wParam;
-		// Clear out any previous selections
-		if (ListView_GetSelectedCount(g_hWnd) > 0) {
+		BOOL bMulti = pCW->lParam;
+		// Clear out any previous selections if needed
+		if (!bMulti && ListView_GetSelectedCount(g_hWnd) > 0) {
 			for (int i = 0; i < iCount; i++) {
 				ListView_SetItemState(g_hWnd, i, 0, LVIS_SELECTED);
 			}
@@ -162,8 +163,9 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 	} else if (pCW->message == WM_LV_SELBYTEXT) {
 		char szItem[MAX_DATA_BUF+1] = "";
 		int iCount = ListView_GetItemCount(g_hWnd);
-		// Clear out any previous selections
-		if (ListView_GetSelectedCount(g_hWnd) > 0) {
+		BOOL bMulti = pCW->lParam;
+		// Clear out any previous selections if needed
+		if (!bMulti && ListView_GetSelectedCount(g_hWnd) > 0) {
 			for (int i = 0; i < iCount; i++) {
 				ListView_SetItemState(g_hWnd, i, 0, LVIS_SELECTED);
 			}
@@ -296,7 +298,7 @@ int GetLVItemText(HWND hWnd, int iItem, char *lpString)
 	return (int)strlen(lpString);
 }
 
-BOOL SelLVItem(HWND hWnd, int iItem)
+BOOL SelLVItem(HWND hWnd, int iItem, BOOL bMulti)
 {
 	g_hWnd = hWnd;
 
@@ -308,12 +310,12 @@ BOOL SelLVItem(HWND hWnd, int iItem)
 	if (WM_LV_SELBYINDEX == NULL)
 		WM_LV_SELBYINDEX = RegisterWindowMessage("WM_LV_SELBYINDEX_RM");
 
-	SendMessage(hWnd, WM_LV_SELBYINDEX, iItem, 0);
+	SendMessage(hWnd, WM_LV_SELBYINDEX, iItem, bMulti);
 
 	return g_bRetVal;
 }
 
-BOOL SelLVItemText(HWND hWnd, char *lpItem)
+BOOL SelLVItemText(HWND hWnd, char *lpItem, BOOL bMulti)
 {
 	g_hWnd = hWnd;
 
@@ -326,7 +328,7 @@ BOOL SelLVItemText(HWND hWnd, char *lpItem)
 		WM_LV_SELBYTEXT = RegisterWindowMessage("WM_LV_SELBYTEXT_RM");
 
 	lstrcpy(g_szBuffer, lpItem);
-	SendMessage(hWnd, WM_LV_SELBYTEXT, 0, 0);
+	SendMessage(hWnd, WM_LV_SELBYTEXT, 0, bMulti);
 
 	return g_bRetVal;
 }
@@ -827,24 +829,26 @@ PPCODE:
 	int iCount = GetLVItemCount(hWnd);
 	for (int i = 0; i < iCount; i++) {
 		GetLVItemText(hWnd, i, szItem);
-	        XPUSHs(sv_2mortal(newSVpv(szItem, 0)));
+        XPUSHs(sv_2mortal(newSVpv(szItem, 0)));
 	}
 
 BOOL
-SelListViewItem(hWnd, iItem)
+SelListViewItem(hWnd, iItem, bMulti=FALSE)
 	HWND hWnd
 	int iItem
+	BOOL bMulti
 CODE:
-	RETVAL = SelLVItem(hWnd, iItem);
+	RETVAL = SelLVItem(hWnd, iItem, bMulti);
 OUTPUT:
 	RETVAL
 
 BOOL
-SelListViewItemText(hWnd, lpItem)
+SelListViewItemText(hWnd, lpItem, bMulti=FALSE)
 	HWND hWnd
 	char *lpItem
+	BOOL bMulti
 CODE:
-	RETVAL = SelLVItemText(hWnd, lpItem);
+	RETVAL = SelLVItemText(hWnd, lpItem, bMulti);
 OUTPUT:
 	RETVAL
 
