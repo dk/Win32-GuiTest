@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.3 2004/03/17 23:22:07 ctrondlp Exp $
+# $Id: guitest.pm,v 1.4 2004/03/17 23:33:45 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -95,7 +95,7 @@ require AutoLoader;
         IsWindowVisible MenuSelect MouseMoveAbsPix NormToScreen PostMessage
         PushButton PushChildButton ScreenToClient ScreenToNorm SelectTabItem
         SendKeys SendLButtonDown SendLButtonUp SendMButtonDown SendMButtonUp
-        SendMessage SendMessage SendMouse SendMouseMoveAbs SendMouseMoveRel
+        SendMessage SendMouse SendMouseMoveAbs SendMouseMoveRel
         SendRButtonDown SendRButtonUp SetActiveWindow SetForegroundWindow
         SetWindowPos ShowWindow TabCtrl_SetCurFocus TabCtrl_GetCurFocus
         TabCtrl_SetCurSel TabCtrl_GetItemCount WMGetText WMSetText WaitWindow
