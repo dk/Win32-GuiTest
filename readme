@@ -408,7 +408,8 @@ DESCRIPTION
     GrayOutButton(hwnd)
     BOOL IsCheckedButton(hwnd)
     BOOL IsGrayedButton(hwnd)
-        The names say it.
+        The names say it. Works on radio buttons and checkboxes. For regular
+        buttons, use IsWindowEnabled.
 
     BOOL IsWindow(hwnd) *
     ($x,$y) = ScreenToClient(hwnd,x,y) *

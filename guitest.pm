@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.23 2004/11/17 17:57:31 ctrondlp Exp $
+# $Id: guitest.pm,v 1.24 2004/11/17 20:59:09 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -868,7 +868,8 @@ See corresponding Windows library function in MSDN.
 
 =item BOOL IsGrayedButton(hwnd)
 
-The names say it.
+The names say it.  Works on radio buttons and
+checkboxes.  For regular buttons, use IsWindowEnabled.
 
 =item BOOL IsWindow(hwnd) *
 
