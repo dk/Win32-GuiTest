@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.1 2004/03/16 01:37:20 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.2 2004/03/17 02:19:21 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -1008,6 +1008,7 @@ CODE:
 	    minfo.dwTypeData = buff;
 	    minfo.cch = sizeof(buff);
 	    if (GetMenuItemInfo(hm, mi, TRUE, &minfo) &&
+				minfo.fType == MFT_STRING &&
                 minfo.dwTypeData != NULL &&
                 strnicmp(minfo.dwTypeData, sitem, strlen(sitem)) == 0) {
                 /* Got what we came for, so return index. */
