@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.9 2004/07/22 20:01:23 szabgab Exp $
+ *  $Id: guitest.xs,v 1.10 2004/07/22 20:04:05 szabgab Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -553,7 +553,7 @@ SV*
 GetWindowText(hwnd)
     HWND hwnd
     CODE:
-        SV* sv;
+//        SV* sv;
         char text[255];
         int r;
         r = GetWindowText(hwnd, text, 255);
@@ -565,7 +565,7 @@ SV*
 GetClassName(hwnd)
     HWND hwnd
     CODE:
-        SV* sv;
+//        SV* sv;
         char text[255];
         int r;
         r = GetClassName(hwnd, text, 255);
@@ -627,7 +627,7 @@ SV*
 WMGetText(hwnd)
     HWND hwnd
     CODE:
-        SV* sv;
+//        SV* sv;
         char* text;
         int len = SendMessage(hwnd, WM_GETTEXTLENGTH, 0, 0L); 
         text = (char*)safemalloc(len+1);
