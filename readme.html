@@ -101,10 +101,8 @@ optional delay between keystrokes (default is 50 ms and should be OK for
 most uses).
 <P>The keystrokes to send are specified in KEYS. There are several
 characters that have special meaning. This allows sending control codes 
-and modifiers:
-</P>
+and modifiers:</P>
 <PRE>
-
         ~ means ENTER
         + means SHIFT 
         ^ means CTRL 
@@ -385,10 +383,8 @@ specified key.
 Wrapper around keybd_event. Allows sending low-level keys. The first argument is any of the VK_* constants. The second argument can be 0, KEYEVENTF_EXTENDEDKEY, KEYEVENTF_KEYUP or a combination of them.
 <PRE>
     KEYEVENTF_EXTENDEDKEY - Means it is an extended key (i.e. to distinguish between arrow keys on the numeric keypad and elsewhere). 
-    KEYEVENTF_KEYUP       - Means keyup. Unspecified means keydown.
-</PRE>
+    KEYEVENTF_KEYUP       - Means keyup. Unspecified means keydown.</PRE>
 <PRE>
-
    #Example
    use Win32::GuiTest qw/:FUNC :VK/;</PRE>
 <PRE>
@@ -396,7 +392,10 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
        SendRawKey(VK_DOWN, KEYEVENTF_EXTENDEDKEY); 
        SendKeys &quot;{PAUSE 200}&quot;;
    }</PRE>
-<P></P></DL>
+<P></P>
+<DT><STRONG><A NAME="item_WindowFromPoint">HWND WindowFromPoint(x, y)</A></STRONG><BR>
+<DD>
+</DL>
 <P>
 <H2><A NAME="dibsect">DibSect</A></H2>
 <P>A class to manage a Windows DIB section. Currently limited in functionality to 

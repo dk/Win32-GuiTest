@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.2 2004/03/17 23:15:17 ctrondlp Exp $
+# $Id: guitest.pm,v 1.3 2004/03/17 23:22:07 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -164,7 +164,7 @@ most uses).
 The keystrokes to send are specified in KEYS. There are several
 characters that have special meaning. This allows sending control codes 
 and modifiers:
- 
+
 	~ means ENTER
 	+ means SHIFT 
 	^ means CTRL 
@@ -755,7 +755,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 
     KEYEVENTF_EXTENDEDKEY - Means it is an extended key (i.e. to distinguish between arrow keys on the numeric keypad and elsewhere). 
     KEYEVENTF_KEYUP       - Means keyup. Unspecified means keydown.
- 
+
    #Example
    use Win32::GuiTest qw/:FUNC :VK/;
 
@@ -764,6 +764,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
        SendKeys "{PAUSE 200}";
    }
 
+=item HWND WindowFromPoint(x, y)
 
 =back
 
