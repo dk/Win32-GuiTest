@@ -1,7 +1,6 @@
 changes
 dibsect.cpp
 dibsect.h
-dibsect.obj
 eg/ask.pl
 eg/excel.pl
 eg/excel2.pl
@@ -25,17 +24,10 @@ eg/waitwindow.pl
 eg/which.pl
 eg/winbmp.pl
 eg/wptr.pl
-GuiTest.bs
-guitest.cpp
-GuiTest.def
-GuiTest.html
-guitest.obj
 guitest.pm
-GuiTest.txt
 guitest.xs
 lib/win32/guitest/cmd.pm
 lib/win32/guitest/guitest.pc
-makedist.log
 makedist.pl
 makefile.pl
 makepod.bat
@@ -43,7 +35,6 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
 perlobject.map
-pm_to_blib
 readme
 readme.html
 Recorder/Copying.txt
@@ -51,7 +42,5 @@ Recorder/README.txt
 Recorder/Win32GuiTest.exe
 t/std.t
 typemap
-vc60.pdb
-Win32-GuiTest-1.50.2-ad/makedist.log
 Win32-GuiTest.ppd
 Win32-GuiTest.tar.gz
