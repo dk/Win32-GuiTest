@@ -1,3 +1,8 @@
+#!/usr/bin/perl
+#
+# $Id: makefile.pl,v 1.2 2004/03/21 07:59:44 ctrondlp Exp $
+#
+
 use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.

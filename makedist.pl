@@ -1,7 +1,10 @@
-# $Id: makedist.pl,v 1.1 2004/03/16 01:37:20 ctrondlp Exp $
+#!/usr/bin/perl
+# $Id: makedist.pl,v 1.2 2004/03/21 07:59:44 ctrondlp Exp $
+
 # Compile everything (including things in the eg directory) and
 # generate the Win32::GuiTest distribution.
 #
+
 sub sys {
   my $s = shift;
   `echo --- $s --- >>makedist.log`;
