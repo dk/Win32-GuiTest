@@ -1,5 +1,5 @@
 NAME
-    Win32::GuiTest - Perl GUI Test Utilities
+    Win32::GuiTest (alternate distribution) - Perl GUI Test Utilities
 
 SYNOPSIS
       use Win32::GuiTest qw(FindWindowLike GetWindowText 
@@ -15,6 +15,10 @@ SYNOPSIS
       }
 
 INSTALLATION
+        // This batch file comes with MS Visual Studio.  Running
+        // it first might help with various compilation problems.
+        vcvars32.bat 
+
         perl makefile.pl
         nmake
         nmake test
@@ -429,16 +433,19 @@ COPYRIGHT
     Williams <http://www.al-williams.com/awc/> in Dr.Dobbs
     <http://www.ddj.com/ddj/1997/careers1/wil2.htm>.
 
-    Copyright (c) 1998-2002 Ernesto Guisado. All rights reserved. This
-    program is free software; You may distribute it and/or modify it under
-    the same terms as Perl itself.
+    Copyright (c) 1998-2002 Ernesto Guisado, (c) 2004 Dennis K. Paulsen. All
+    rights reserved. This program is free software; You may distribute it
+    and/or modify it under the same terms as Perl itself.
 
-AUTHOR
+AUTHORS
     Ernesto Guisado (erngui@acm.org), http://triumvir.org
 
     Jarek Jurasz (jurasz@imb.uni-karlsruhe.de),
     http://www.uni-karlsruhe.de/~gm07 wrote DibSect and some other pieces
     (see "Changes" for details).
+
+    Dennis K. Paulsen (ctrondlpaulsden@yahoo.com) wrote various pieces (See
+    "Changes" for details).
 
 CREDITS
     Thanks very much to:
@@ -452,7 +459,6 @@ CREDITS
     Jarek Jurasz
     Wilson P. Snyder II
     Rudi Farkas
-    Anonymous
     Paul Covington
     ...and more...
         for code, suggestions and bug fixes.

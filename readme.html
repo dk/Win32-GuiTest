@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>Win32::GuiTest - Perl GUI Test Utilities</TITLE>
+<TITLE>distribution) - Perl GUI Test Utilities</TITLE>
 <LINK REV="made" HREF="mailto:">
 </HEAD>
 
@@ -23,7 +23,7 @@
 
 	<LI><A HREF="#changes">CHANGES</A></LI>
 	<LI><A HREF="#copyright">COPYRIGHT</A></LI>
-	<LI><A HREF="#author">AUTHOR</A></LI>
+	<LI><A HREF="#authors">AUTHORS</A></LI>
 	<LI><A HREF="#credits">CREDITS</A></LI>
 </UL>
 <!-- INDEX END -->
@@ -31,7 +31,7 @@
 <HR>
 <P>
 <H1><A NAME="name">NAME</A></H1>
-<P>Win32::GuiTest - Perl GUI Test Utilities</P>
+<P>Win32::GuiTest (alternate distribution) - Perl GUI Test Utilities</P>
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
@@ -50,6 +50,10 @@
 <P>
 <HR>
 <H1><A NAME="installation">INSTALLATION</A></H1>
+<PRE>
+    // This batch file comes with MS Visual Studio.  Running
+    // it first might help with various compilation problems.
+    vcvars32.bat</PRE>
 <PRE>
     perl makefile.pl
     nmake
@@ -486,15 +490,17 @@ Destroys the contents of the DIB section.
 <P>The SendKeys function is based on the Delphi sourcecode
 published by Al Williams  &lt;<A HREF="http://www.al-williams.com/awc/">http://www.al-williams.com/awc/</A>&gt; 
 in Dr.Dobbs  &lt;<A HREF="http://www.ddj.com/ddj/1997/careers1/wil2.htm">http://www.ddj.com/ddj/1997/careers1/wil2.htm</A>&gt;.</P>
-<P>Copyright (c) 1998-2002 Ernesto Guisado. All rights reserved. This program 
-is free software; You may distribute it and/or modify it under the 
-same terms as Perl itself.</P>
+<P>Copyright (c) 1998-2002 Ernesto Guisado, (c) 2004 Dennis K. Paulsen. All rights 
+reserved. This program is free software; You may distribute it and/or modify it
+under the same terms as Perl itself.</P>
 <P>
 <HR>
-<H1><A NAME="author">AUTHOR</A></H1>
+<H1><A NAME="authors">AUTHORS</A></H1>
 <P>Ernesto Guisado (<A HREF="mailto:erngui@acm.org">erngui@acm.org</A>), <A HREF="http://triumvir.org">http://triumvir.org</A></P>
 <P>Jarek Jurasz (<A HREF="mailto:jurasz@imb.uni-karlsruhe.de">jurasz@imb.uni-karlsruhe.de</A>), <A HREF="http://www.uni-karlsruhe.de/~gm07">http://www.uni-karlsruhe.de/~gm07</A> wrote 
 DibSect and some other pieces (see <CODE>Changes</CODE> for details).</P>
+<P>Dennis K. Paulsen (<A HREF="mailto:ctrondlpaulsden@yahoo.com">ctrondlpaulsden@yahoo.com</A>) wrote various pieces (See <CODE>Changes</CODE> for
+details).</P>
 <P>
 <HR>
 <H1><A NAME="credits">CREDITS</A></H1>
@@ -517,8 +523,6 @@ DibSect and some other pieces (see <CODE>Changes</CODE> for details).</P>
 <DT><STRONG><A NAME="item_Wilson_P%2E_Snyder_II">Wilson P. Snyder II</A></STRONG><BR>
 <DD>
 <DT><STRONG><A NAME="item_Rudi_Farkas">Rudi Farkas</A></STRONG><BR>
-<DD>
-<DT><STRONG><A NAME="item_Anonymous">Anonymous</A></STRONG><BR>
 <DD>
 <DT><STRONG><A NAME="item_Paul_Covington">Paul Covington</A></STRONG><BR>
 <DD>

@@ -1,10 +1,10 @@
 #
-# $Id: guitest.pm,v 1.6 2004/03/21 08:22:11 ctrondlp Exp $
+# $Id: guitest.pm,v 1.7 2004/04/02 02:27:18 ctrondlp Exp $
 #
 
 =head1 NAME
 
-Win32::GuiTest - Perl GUI Test Utilities
+Win32::GuiTest (alternate distribution) - Perl GUI Test Utilities
 
 =head1 SYNOPSIS
 
@@ -21,6 +21,10 @@ Win32::GuiTest - Perl GUI Test Utilities
   }
 
 =head1 INSTALLATION
+
+    // This batch file comes with MS Visual Studio.  Running
+    // it first might help with various compilation problems.
+    vcvars32.bat 
 
     perl makefile.pl
     nmake
@@ -921,16 +925,19 @@ The SendKeys function is based on the Delphi sourcecode
 published by Al Williams  E<lt>http://www.al-williams.com/awc/E<gt> 
 in Dr.Dobbs  E<lt>http://www.ddj.com/ddj/1997/careers1/wil2.htmE<gt>.
 
-Copyright (c) 1998-2002 Ernesto Guisado. All rights reserved. This program 
-is free software; You may distribute it and/or modify it under the 
-same terms as Perl itself.
+Copyright (c) 1998-2002 Ernesto Guisado, (c) 2004 Dennis K. Paulsen. All rights 
+reserved. This program is free software; You may distribute it and/or modify it
+under the same terms as Perl itself.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Ernesto Guisado (erngui@acm.org), http://triumvir.org
 
 Jarek Jurasz (jurasz@imb.uni-karlsruhe.de), http://www.uni-karlsruhe.de/~gm07 wrote 
 DibSect and some other pieces (see C<Changes> for details).
+
+Dennis K. Paulsen (ctrondlpaulsden@yahoo.com) wrote various pieces (See C<Changes> for
+details).
 
 =head1 CREDITS
 
@@ -956,8 +963,6 @@ Thanks very much to:
 
 =item Rudi Farkas
 
-=item Anonymous
-
 =item Paul Covington
 
 =item ...and more...
@@ -967,6 +972,3 @@ for code, suggestions and bug fixes.
 =back
 
 =cut
-
-
-
