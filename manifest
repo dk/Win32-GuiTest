@@ -29,6 +29,7 @@ eg/winbmp.pl
 eg/wptr.pl
 guitest.pm
 guitest.xs
+Examples.pm
 lib/win32/guitest/cmd.pm
 lib/win32/guitest/guitest.pc
 makedist.pl
