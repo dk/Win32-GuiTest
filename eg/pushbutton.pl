@@ -1,10 +1,10 @@
 #!/usr/bin/perl
-# $Id: pushbutton.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+# $Id: pushbutton.pl,v 1.4 2004/04/09 01:19:43 ctrondlp Exp $
 #
 
 use strict;
 use Win32::GuiTest qw(PushButton FindWindowLike SetForegroundWindow
-    SendKeys WaitWindowIsWindow);
+    SendKeys WaitWindow IsWindow);
 
 				  
 # Test PushButton()
