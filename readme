@@ -229,6 +229,42 @@ DESCRIPTION
             # Exit foreground application through system menu
             MenuSelect("&Close", 0, GetSystemMenu(GetForegroundWindow(), FALSE));
 
+    MouseClick($window [,$parent] [,$x_offset] [,$y_offset] [,$button]
+    [,$delay])
+        Allows one to easily interact with an application through mouse
+        emulation.
+
+        window = Regexp for a Window caption / Child caption, or just a
+        Child ID.
+
+        parent = Handle to parent window. Default is foreground window. Use
+        GetDesktopWindow() return value for this if clicking on an
+        application title bar.
+
+        x_offset = Offset for X axis. Default is 0.
+
+        y_offset = Offset for Y axis. Default is 0.
+
+        button = {LEFT}, {MIDDLE}, {RIGHT}. Default is {LEFT}
+
+        delay = Default is 0. 0.50 = 500 ms. Delay between button down and
+        button up.
+
+        Simple Examples:
+
+            # Click on CE button if its parent window is in foreground.
+            MouseClick('^CE$');
+
+            # Right click on CE button if its parent window is in foreground
+            MouseClick('^CE$', undef, undef, undef, '{RIGHT}');
+
+            # Click on 8 button window under the specified parent window; where
+            # [PARENTHWND] will be replaced by a parent handle variable.
+            MouseClick('8', [PARENTHWND]);
+
+            # Click on Calculator parent window itself
+            MouseClick('Calculator', GetDesktopWindow());
+
     $text = WMGetText($hwnd) *
         Sends a WM_GETTEXT to a window and returns its contents
 

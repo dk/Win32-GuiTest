@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.4 2004/03/17 23:33:45 ctrondlp Exp $
+# $Id: guitest.pm,v 1.5 2004/03/18 23:44:20 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -92,7 +92,7 @@ require AutoLoader;
         GetScreenRes GetSystemMenu GetWindow GetWindowID GetWindowLong
         GetWindowRect GetWindowText IsCheckedButton IsChild IsGrayedButton
         IsKeyPressed IsWindow IsWindowEnabled IsWindowStyle IsWindowStyleEx
-        IsWindowVisible MenuSelect MouseMoveAbsPix NormToScreen PostMessage
+        IsWindowVisible MenuSelect MouseClick MouseMoveAbsPix NormToScreen PostMessage
         PushButton PushChildButton ScreenToClient ScreenToNorm SelectTabItem
         SendKeys SendLButtonDown SendLButtonUp SendMButtonDown SendMButtonUp
         SendMessage SendMouse SendMouseMoveAbs SendMouseMoveRel
@@ -615,6 +615,75 @@ sub MenuSelectItem {
     }
 	
     return 1;
+}
+
+=item MouseClick($window [,$parent] [,$x_offset] [,$y_offset] [,$button] [,$delay])
+
+Allows one to easily interact with an application through mouse emulation.
+
+window = Regexp for a Window caption / Child caption, or just a Child ID.
+
+parent = Handle to parent window.  Default is foreground window.  Use
+GetDesktopWindow() return value for this if clicking on an application
+title bar.
+
+x_offset = Offset for X axis.  Default is 0.
+
+y_offset = Offset for Y axis.  Default is 0.
+
+button = {LEFT}, {MIDDLE}, {RIGHT}.  Default is {LEFT}
+
+delay = Default is 0.  0.50 = 500 ms.  Delay between button down and
+button up.
+
+Simple Examples:
+
+    # Click on CE button if its parent window is in foreground.
+    MouseClick('^CE$');
+
+    # Right click on CE button if its parent window is in foreground
+    MouseClick('^CE$', undef, undef, undef, '{RIGHT}');
+
+    # Click on 8 button window under the specified parent window; where
+    # [PARENTHWND] will be replaced by a parent handle variable.
+    MouseClick('8', [PARENTHWND]);
+
+    # Click on Calculator parent window itself
+    MouseClick('Calculator', GetDesktopWindow());
+
+=cut
+
+sub MouseClick {
+    my $window = shift or return(0);
+    my $parent = shift || GetForegroundWindow();
+    my $x_off = shift || 0;
+    my $y_off = shift || 0;
+    my $button = shift || '{LEFT}';
+    my $delay = shift || 0;
+
+    # Ensure button variable looks ok
+    ($button =~ /^\{\D+\}$/) or return(0);
+    # Strike } from $button for purposes below
+    $button =~ s/\}$//;
+
+    foreach my $child (GetChildWindows($parent)) {
+        # Is correct text or window ID?
+        if (MatchTitleOrId($child, $window)) {
+            my ($x, $y) = GetWindowRect($child);
+            # Move mouse to window, +1 for curved windows
+            MouseMoveAbsPix(($x + 1) + $x_off, ($y + 1) + $y_off);
+            # Press button
+            SendMouse($button.'DOWN}');
+            select(undef, undef, undef, $delay) if $delay;
+            # Release button
+            SendMouse($button.'UP}');
+            # Success
+            return(1);
+        }
+    }
+
+    # Failure
+    return(0);
 }
 
 =item $text = WMGetText($hwnd) *

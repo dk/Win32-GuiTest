@@ -220,4 +220,7 @@
 
     - Added WindowFromPoint function and wptr.pl example script. (DKP)
 
+    - Added the MouseClick function and documentation. (DKP)
+
+
 

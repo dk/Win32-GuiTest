@@ -246,6 +246,33 @@ Allows selecting a menu programmatically.
     # Exit foreground application through system menu
     MenuSelect(&quot;&amp;Close&quot;, 0, GetSystemMenu(GetForegroundWindow(), FALSE));</PRE>
 <P></P>
+<DT><STRONG><A NAME="item_MouseClick">MouseClick($window [,$parent] [,$x_offset] [,$y_offset] [,$button] [,$delay])</A></STRONG><BR>
+<DD>
+Allows one to easily interact with an application through mouse emulation.
+<P>window = Regexp for a Window caption / Child caption, or just a Child ID.</P>
+<P>parent = Handle to parent window.  Default is foreground window.  Use
+<A HREF="#item_GetDesktopWindow"><CODE>GetDesktopWindow()</CODE></A> return value for this if clicking on an application
+title bar.</P>
+<P>x_offset = Offset for X axis.  Default is 0.</P>
+<P>y_offset = Offset for Y axis.  Default is 0.</P>
+<P>button = {LEFT}, {MIDDLE}, {RIGHT}.  Default is {LEFT}</P>
+<P>delay = Default is 0.  0.50 = 500 ms.  Delay between button down and
+button up.</P>
+<P>Simple Examples:</P>
+<PRE>
+    # Click on CE button if its parent window is in foreground.
+    MouseClick('^CE$');</PRE>
+<PRE>
+    # Right click on CE button if its parent window is in foreground
+    MouseClick('^CE$', undef, undef, undef, '{RIGHT}');</PRE>
+<PRE>
+    # Click on 8 button window under the specified parent window; where
+    # [PARENTHWND] will be replaced by a parent handle variable.
+    MouseClick('8', [PARENTHWND]);</PRE>
+<PRE>
+    # Click on Calculator parent window itself
+    MouseClick('Calculator', GetDesktopWindow());</PRE>
+<P></P>
 <DT><STRONG><A NAME="item_WMGetText">$text = <CODE>WMGetText($hwnd)</CODE> *</A></STRONG><BR>
 <DD>
 Sends a WM_GETTEXT to a window and returns its contents
