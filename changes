@@ -215,3 +215,6 @@
 
     - Fixed crash with MenuSelect when used on MDI applications with documents
       maximized. (DKP)
+
+    - Implemented pertinent parts of Jonathan A's patch for CygWin Perl. (DKP)
+

@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.3 2004/03/17 02:20:55 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.4 2004/03/17 02:41:20 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -149,7 +149,7 @@ int GetNum(
     }
     tmp[pos] = '\0';
     res = atoi(tmp);
-    free(tmp);
+    safefree(tmp);
     return res;
 }
 
@@ -226,7 +226,7 @@ OutputDebugString(tmp);
 OutputDebugString("\n");
 			Sleep(*count);
 			*key=0;
-			free(tmp);
+			safefree(tmp);
 			return;
 		}
 		
@@ -236,7 +236,7 @@ OutputDebugString("\n");
 		/* if key=0 here then something is bad */
 	} /* end of token processing */
 
-	free(tmp);
+	safefree(tmp);
 }
 
 /* Wrapper around kebyd_event */
