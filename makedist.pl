@@ -1,10 +1,12 @@
-#!/usr/bin/perl
-# $Id: makedist.pl,v 1.2 2004/03/21 07:59:44 ctrondlp Exp $
+#!perl -w
+# $Id: makedist.pl,v 1.3 2004/07/21 21:35:30 szabgab Exp $
 
 # Compile everything (including things in the eg directory) and
 # generate the Win32::GuiTest distribution.
-#
 
+use strict;
+
+use FindBin qw($Bin);
 sub sys {
   my $s = shift;
   `echo --- $s --- >>makedist.log`;
@@ -13,12 +15,18 @@ sub sys {
 
 unlink("makedist.log");
 sys("perl makefile.pl");
+sys("perl make_eg.pl");
 sys("nmake");
+
 open(MAN, "<manifest");
-while (<MAN>) {
+my @manifest = <MAN>;
+close(MAN);
+
+$ENV{PERL5LIB}="$Bin/blib/lib;$Bin/blib/arch";
+while (@manifest) {
   sys("perl -wc $_") if /\.(p[l|m]|t)$/i;
 }
-close(MAN);
+sys("nmake test");
 sys("makepod GuiTest");
 sys("copy guitest.txt README");
 sys("copy guitest.html README.html");
