@@ -2,6 +2,7 @@ changes
 dibsect.cpp
 dibsect.h
 eg/ask.pl
+eg/calc.pl
 eg/excel.pl
 eg/excel2.pl
 eg/fonts.pl
@@ -42,7 +43,11 @@ readme.html
 Recorder/Copying.txt
 Recorder/README.txt
 Recorder/Win32GuiTest.exe
+t/02calc.t
+t/basic.t
+t/cpl.t
 t/std.t
+t/which.t
 typemap
 Win32-GuiTest.ppd
 Win32-GuiTest.tar.gz
