@@ -205,3 +205,12 @@
     - Added VK_* constants and KEYEVENTF_* flags.
 
     - Added SendRawKey function.
+
+1.50 (Test Version) Sun Jun 22 ??:??:?? 2003
+
+    - Added use of AttachWin() for those functions that require the
+      window to be attached to the calling thread's message queue.
+
+1.50.1-ad ??? ??? ?? ??:??:?? ????
+
+    - 
