@@ -2,34 +2,10 @@
 BEGIN { $| = 1; }
 
 use strict;
+use Test::More qw(no_plan);
 
 use Win32::GuiTest qw(:ALL);
 
-=pod
-qw/
-    FindWindowLike
-    GetChildDepth
-    GetChildWindows
-    GetClassName
-    GetDesktopWindow
-    GetScreenRes
-    GetWindowRect
-    GetWindowText
-    IsCheckedButton
-    IsWindow
-    SendKeys
-    SetForegroundWindow
-    WMGetText
-    MouseMoveAbsPix
-    SendLButtonDown
-    SendLButtonUp
-    GetCursorPos
-    PushButton
-    WaitWindowLike
-    /;
-=cut
-
-use Test::More qw(no_plan);
 
 # Check that there are no duplicate windows in the list
 my @wins = FindWindowLike();
@@ -145,72 +121,4 @@ my ($left, $top, $right, $bottom) = GetWindowRect($desk);
 cmp_ok(($right-$left), ">=", $x);
 cmp_ok(($bottom-$top), ">=", $y);
 
-# Do some tricks with the calculator
-system("start calc");
-my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$"); 
-# hmm, strange that this was working with a Standard calculator
-
-ok(IsWindow($calc));
-SetForegroundWindow($calc);
-
-MenuSelect("&View|&Scientific");
-# SZABGAB sais from here on the tests are failing on my computer 
-# partially probably because my calcualtor does not default to be a
-# scientific alculater so it does not have Hex and similar windows.
-
-SendKeys("1969");
-SKIP: {
-	my ($result) = FindWindowLike($calc, "1969");
-	ok(defined $result, "found 1969") or skip "could not find window", 1;
-	ok(IsWindow($result));
-}
-
-#Find the Hex radio button
-SKIP: {
-	my ($hex) = FindWindowLike($calc, "Hex");
-	ok(defined $hex, "hex found") or skip "could not find window", 1;
-	ok(IsWindow($hex), "Hex is a window");
-}
-
-__END__
-#Find the Bin, Oct and Dec radio buttons
-my ($bin) = FindWindowLike($calc, "Bin");
-my ($oct) = FindWindowLike($calc, "Oct");
-my ($dec) = FindWindowLike($calc, "Dec");
-
-ok(IsWindow($bin));
-ok(IsWindow($oct));
-ok(IsWindow($dec));
-ok(!IsCheckedButton($bin));
-ok(!IsCheckedButton($oct));
-ok(!IsCheckedButton($hex));
-ok(IsCheckedButton($dec));
-
-# Click on the Hex radio button
-my ($wx, $wy) = GetWindowRect($hex);
-my ($cx, $cy) = GetCursorPos();
-MouseMoveAbsPix($wx+1,$wy+1);
-sleep 1;
-SendLButtonDown();
-SendLButtonUp();
-sleep 1;
-MouseMoveAbsPix($cx,$cy);
-
-# try out pushing on window by caption
-PushButton("Bin"); sleep 1;
-PushButton("Oct"); sleep 1;
-PushButton("Dec"); sleep 1;
-PushButton("Hex"); sleep 1;
-
-ok(!IsCheckedButton($dec));
-ok(IsCheckedButton($hex));
-
-# The result window contain "1969" in hex
-my $result = WaitWindowLike($calc, "7B1");
-ok(IsWindow($result));
-
-# Close calc
-SendKeys("%{F4}");
-
-ok(1); 
 
