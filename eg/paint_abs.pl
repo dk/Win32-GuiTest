@@ -1,39 +1,41 @@
-#!/usr/bin/perl
-# $Id: paint_abs.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+#!perl -w
+# $Id: paint_abs.pl,v 1.3 2004/07/21 17:47:38 szabgab Exp $
 #
-
+# Draw an X and a box around it
+#
+use strict;
 use Win32::GuiTest qw(FindWindowLike SetForegroundWindow 
-    SendMouse);
+    SendMouse MouseMoveAbsPix SendLButtonDown SendLButtonUp);
 
 system("start /max mspaint");
 sleep 2;
-@windows = FindWindowLike(0, "Paint", "");
-if ( $windows[0] != 0 ) {
-    SetForegroundWindow($windows[0]);
-    sleep 2;
+my @windows = FindWindowLike(0, "Paint", "");
+die "Could not find Paint\n" if not @windows;
 
-    #Using low level functions
-    Win32::GuiTest::MouseMoveAbsPix(100,100);
-    Win32::GuiTest::SendLButtonDown();
-    Win32::GuiTest::MouseMoveAbsPix(500,500);
-    Win32::GuiTest::SendLButtonUp();
+SetForegroundWindow($windows[0]);
+sleep 1;
 
-    sleep 1;
+#Using low level functions
+MouseMoveAbsPix(100,100);
+SendLButtonDown();
+MouseMoveAbsPix(300,300);
+SendLButtonUp();
 
-    Win32::GuiTest::MouseMoveAbsPix(100,500);
-    Win32::GuiTest::SendLButtonDown();
-    Win32::GuiTest::MouseMoveAbsPix(500,100);
-    Win32::GuiTest::SendLButtonUp();
+
+sleep 1;
+
+MouseMoveAbsPix(100,300);
+SendLButtonDown();
+MouseMoveAbsPix(300,100);
+SendLButtonUp();
+
+sleep 1;
     
-    sleep 1;
-    
-    Win32::GuiTest::MouseMoveAbsPix(100,100);
-    Win32::GuiTest::SendLButtonDown();
-    Win32::GuiTest::MouseMoveAbsPix(500,100);
-    Win32::GuiTest::MouseMoveAbsPix(500,500);
-    Win32::GuiTest::MouseMoveAbsPix(100,500);
-    Win32::GuiTest::MouseMoveAbsPix(100,100);
-    Win32::GuiTest::SendLButtonUp();
+MouseMoveAbsPix(100,100);
+SendLButtonDown();
+MouseMoveAbsPix(300,100);
+MouseMoveAbsPix(300,300);
+MouseMoveAbsPix(100,300);
+MouseMoveAbsPix(100,100);
+SendLButtonUp();
 
-
- }

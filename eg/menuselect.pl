@@ -1,5 +1,8 @@
 #!perl -w
-# $Id: menuselect.pl,v 1.4 2004/07/19 20:20:58 szabgab Exp $
+# $Id: menuselect.pl,v 1.5 2004/07/21 17:47:31 szabgab Exp $
+
+# Example how to get the names of the menues
+# Dows not work yet as the backend is not there yet !
 
 use strict;
 

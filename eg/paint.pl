@@ -1,38 +1,41 @@
-#!/usr/bin/perl
-# $Id: paint.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
-#
+#!perl -w
+# $Id: paint.pl,v 1.3 2004/07/21 17:47:38 szabgab Exp $
+# Draw triangles in MS Paint.
 
-use Win32::GuiTest qw(FindWindowLike SetForegroundWindow 
-    SendMouse);
 
-# Draw a triangle in MS Paint.
+use strict;
+
+use Win32::GuiTest qw(:ALL); 
+
 system("start /max mspaint");
 sleep 2;
-@windows = FindWindowLike(0, "Paint", "");
-if ( $windows[0] != 0 ) {
-    SetForegroundWindow($windows[0]);
-    sleep 2;
+my @windows = FindWindowLike(0, "Paint", "");
+die "Could not find Paint\n" if not @windows;
 
-    #Using high-level functions
-    Win32::GuiTest::SendMouse ( "{LEFTDOWN}" );
-    for ( $i = 0; $i < 100; $i++ )
-    { SendMouse ( "{REL1,1}" );  }
-    for ( $i = 0; $i < 100; $i++ )
-	{ SendMouse ( "{REL1,-1}" ); }
-    for ( $i = 0; $i < 200; $i++ )
-	{ SendMouse ( "{REL-1,0}" ); }
-    SendMouse ( "{LEFTUP}" );
-    
-    #Using low level functions
-    Win32::GuiTest::SendMouseMoveRel(5,20);
 
-    Win32::GuiTest::SendLButtonDown();
-    for ( $i = 0; $i < 100; $i++ )
-    { Win32::GuiTest::SendMouseMoveRel(1,1);  }
-    for ( $i = 0; $i < 100; $i++ )
-	{ Win32::GuiTest::SendMouseMoveRel(1,-1); }
-    for ( $i = 0; $i < 200; $i++ )
-	{ Win32::GuiTest::SendMouseMoveRel(-1,0); }
-    Win32::GuiTest::SendLButtonUp();
+SetForegroundWindow($windows[0]);
+sleep 1;
 
- }
+# totaly guess work about the location of the area where one can draw.
+# A better guess would be welcome
+MouseMoveAbsPix((GetWindowRect($windows[0]))[0,1]);
+SendMouse ( "{REL50,50}" );  
+
+# Using high-level functions
+SendMouse ( "{LEFTDOWN}" );
+for (1..100) { SendMouse ( "{REL1,1}"  ); }
+for (1..100) { SendMouse ( "{REL1,-1}" ); }
+for (1..200) { SendMouse ( "{REL-1,0}" ); }
+SendMouse ( "{LEFTUP}" );
+
+
+
+# Using low level functions
+SendMouseMoveRel(5,20);
+SendLButtonDown();
+for (1..100) { SendMouseMoveRel(1,1);  }
+for (1..100) { SendMouseMoveRel(1,-1); }
+for (1..200) { SendMouseMoveRel(-1,0); }
+SendLButtonUp();
+
+
