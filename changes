@@ -222,7 +222,14 @@
 
     - Added the MouseClick function and documentation. (DKP)
 
-?.??.?-ad ??? ??? ?? ??:??:?? ????
+1.50.2-ad Sun May 30 12:40:00 2004
 
     - Push*Button() functions will now correctly not manipulate disabled
       buttons. (DKP)
+
+    - Fixed various compiler warnings. (DKP)
+
+    - Minor updates to the documentation. (DKP)
+
+    - Included initial script recording application; which is still a
+      work-in-progress. (DKP)
