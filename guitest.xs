@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.6 2004/04/02 02:27:18 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.7 2004/05/29 12:28:28 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -611,10 +611,8 @@ void
 GetChildWindows(hWnd)
     HWND hWnd;
     PREINIT:
-        BOOL enum_ok;          
         windowtable children;
         int i;
-        char buf[512];
     PPCODE:
         children.size    = 0;
         children.windows = 0;

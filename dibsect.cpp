@@ -1,5 +1,5 @@
 /* 
- *  $Id: dibsect.cpp,v 1.1 2004/03/16 01:37:20 ctrondlp Exp $
+ *  $Id: dibsect.cpp,v 1.2 2004/05/29 12:28:28 ctrondlp Exp $
  *
  *  Adapted from code submitted by Jarek Jurasz
  * <jurasz@imb.uni-karlsruhe.de>. Thanks!
@@ -297,7 +297,7 @@ bool DibSect::ToClipboard()
 
   GlobalUnlock(h);
 
-  BOOL fSuccess = 
+  bool fSuccess = 
        OpenClipboard(NULL)
     && EmptyClipboard()
     && SetClipboardData(CF_METAFILEPICT, h);

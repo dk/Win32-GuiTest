@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Id: makefile.pl,v 1.3 2004/04/09 02:09:10 ctrondlp Exp $
+# $Id: makefile.pl,v 1.4 2004/05/29 12:28:28 ctrondlp Exp $
 #
 
 use ExtUtils::MakeMaker;
@@ -9,12 +9,12 @@ use ExtUtils::MakeMaker;
 
 my @make = (
     'NAME'	=> 'Win32::GuiTest',
-    'VERSION_FROM' => 'GuiTest.pm', # finds $VERSION
+    'VERSION_FROM' => 'guitest.pm', # finds $VERSION
     'LIBS'	=> [''],   # e.g., '-lm' 
     'DEFINE'	=> '',     # e.g., '-DHAVE_SOMETHING' 
     'INC'	=> '',     # e.g., '-I/usr/include/other' 
     'OBJECT'    => 'GuiTest$(OBJ_EXT) DibSect$(OBJ_EXT)'  ,
-    'XS'	=> { 'GuiTest.xs' => 'GuiTest.cpp' },
+    'XS'	=> { 'guitest.xs' => 'guitest.cpp' },
     'TYPEMAPS'  => ['perlobject.map' ],
 #    'XSOPT' => '-c++'
 #    'CCFLAGS' => '-MD -DWIN32 -Z7 -DDEBUG -D_DEBUG',
@@ -24,7 +24,7 @@ my @make = (
 
 # Add additional settings for the creation of PPD files
 if ($ExtUtils::MakeMaker::VERSION >= 5.43) {
-    push @make, 'ABSTRACT_FROM' => 'GuiTest.pm';
+    push @make, 'ABSTRACT_FROM' => 'guitest.pm';
     push @make, 'AUTHOR' => 'Dennis K. Paulsen (ctrondlpaulsden@yahoo.com)'; # Alternate distribution
 #    push @make, 'AUTHOR' => 'Ernesto Guisado (erngui@acm.org)';
 }
