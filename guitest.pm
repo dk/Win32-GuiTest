@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.15 2004/07/19 20:20:03 szabgab Exp $
+# $Id: guitest.pm,v 1.16 2004/07/21 21:33:55 szabgab Exp $
 #
 
 =head1 NAME
@@ -30,6 +30,8 @@ Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.
     nmake
     nmake test
     nmake install
+
+    See more details in the DEVELOPMENT section elswhere in this document.
 
 If you are using ActivePerl 5.6 
 (http://www.activestate.com/Products/ActivePerl/index.html) 
@@ -119,6 +121,7 @@ require AutoLoader;
         GetSubMenu
         GetMenuItemIndex
         GetMenuItemId
+	GetMenuItemCount
 
     )],
     VARS => [ qw(
@@ -584,13 +587,15 @@ sub FindAndCheck {
 
 Using the corresponding library function (see MSDN) it returns a MenuID number
 
-= item GetMenuItemIndex($curr, $menu);
+=item GetMenuItemIndex($curr, $menu);
 
 $curr is a MenuId and $menu is the (localized !) name of the menu including the hot
 key:  "Rep&eate"  
 Returns the index of the menu item (-1 if not found) 
 
-GetMenuItemCount
+=item GetMenuItemCount($menu)
+
+Returns the number of elements in the given menu.
 
 =item MenuSelect($menupath,$window,$menu)
 
@@ -990,8 +995,8 @@ have a C++ compiler.
 
 To get the lates source code you need a CVS client and then do the following:
 
-cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest login
-cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest co Win32-GuiTest
+ cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest login
+ cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest co Win32-GuiTest
 
 See more detailed explanations here http://sourceforge.net/projects/winguitest/
 
@@ -1027,11 +1032,21 @@ variables. In addition you'll have to run the C<setenv.bat> you got with the
 Core SDK (and located in C:\Program Files\Microsoft SDK) with the appropriate
 parameters. For me this was /XP32 /RETAIL
 
-After this you will probably be able to do the normal cycle:
-perl makefile.pl
-nmake
-nmake test
 
+In order to finish the packaging you'll also need the tar, gzip and zip utilities from 
+
+ http://gnuwin32.sourceforge.net/packages.html
+
+I have not tried it yet.
+
+After this you will probably be able to do the normal cycle:
+
+ perl makefile.pl
+ nmake
+ nmake test
+ 
+ or run
+ perl makedist.pl
 
 =head1 TODO
 
@@ -1048,11 +1063,11 @@ Here are a few items where help would be welcome.
  Add more calls to the C++ backend
  Fix current calls
 
-
- 
-
-=back
-
+ 32bit custom controls
+ Possibly Java interfaces
+ Mouse wheel support
+ Read ListView controls
+ Retreive the list of the menu of a given window.
 
 =head1 VERSION
 

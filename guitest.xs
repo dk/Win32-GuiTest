@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.7 2004/05/29 12:28:28 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.8 2004/07/21 21:33:55 szabgab Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -979,6 +979,14 @@ GetSubMenu(hMenu, nPos)
     int nPos;
 CODE:
     RETVAL = GetSubMenu(hMenu, nPos);
+OUTPUT:
+    RETVAL
+
+int 
+GetMenuItemCount(hMenu)
+    HMENU hMenu;
+CODE:
+    RETVAL = GetMenuItemCount(hMenu);
 OUTPUT:
     RETVAL
 
