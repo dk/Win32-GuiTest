@@ -1,6 +1,8 @@
 #!perl -w
 BEGIN { $| = 1; }
 
+# $Id: cpl.t,v 1.3 2004/07/19 20:17:58 szabgab Exp $
+
 use strict;
 
 # SZABGAB: some of the windows stay open, the script does not close them
