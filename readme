@@ -24,6 +24,8 @@ INSTALLATION
         nmake test
         nmake install
 
+        See more details in the DEVELOPMENT section elswhere in this document.
+
     If you are using ActivePerl 5.6
     (http://www.activestate.com/Products/ActivePerl/index.html) you can
     install the binary package I am including instead. You will need to
@@ -65,6 +67,15 @@ DESCRIPTION
     written to use with this module. A copy of it may be found with this
     distribution (Recorder\Win32GuiTest.exe) or can be obtained at
     http://dkp.itgo.com
+
+    If the documentation of the functions is not satisfactory, you can try
+    running a search on http://msdn.microsoft.com/ using the name of the
+    function. Some of these functions are described there.
+
+    The alternate distribution of this module - the one you are looking at
+    now - has its own CVS repository at
+    http://sourceforge.net/projects/winguitest Patches to both the code and
+    the documentation are welcome.
 
   Functions
     $debug
@@ -173,7 +184,10 @@ DESCRIPTION
         Move the mouse cursor to the screen pixel indicated as parameter.
 
           # Moves to x=200, y=100 in pixel coordinates.
-          MouseMoveAbsPix(200, 100); 
+          MouseMoveAbsPix(200, 100);
+
+    MouseMoveWheel($change)
+          Positive or negative value to direct mouse wheel movement.
 
     FindWindowLike($window,$titleregex,$classregex,$childid,$maxlevel)
         Finds the window handles of the windows matching the specified
@@ -187,6 +201,9 @@ DESCRIPTION
         text in the window class. If you pass a child ID number, the
         functions will only match windows with this id. In each case undef
         matches everything.
+
+    GetWindowID($window)
+            Returns the Id of the specified window.
 
     PushButton($button[,$delay])
         Equivalent to
@@ -228,6 +245,26 @@ DESCRIPTION
 
         wait - How many seconds should we wait before giving up
 
+    IsWindowStyle($window, $style)
+            Determines if a window has the specified style.  See sample
+            script for more details.
+
+    IsWindowStyleEx($window, $exstyle)
+            Determines if a window has the specified extended
+            style.  See sample script for more details.
+
+    GetMenu
+        Using the corresponding library function (see MSDN) it returns a
+        MenuID number
+
+    GetMenuItemIndex($curr, $menu);
+        $curr is a MenuId and $menu is the (localized !) name of the menu
+        including the hot key: "Rep&eate" Returns the index of the menu item
+        (-1 if not found)
+
+    GetMenuItemCount($menu)
+        Returns the number of elements in the given menu.
+
     MenuSelect($menupath,$window,$menu)
         Allows selecting a menu programmatically.
 
@@ -236,6 +273,18 @@ DESCRIPTION
 
             # Exit foreground application through system menu
             MenuSelect("&Close", 0, GetSystemMenu(GetForegroundWindow(), FALSE));
+
+    GetMenuItemInfo($menuHndl, $cnt)
+        Receives a menu handler (one we got from GetMenu or GetSubMenu) and
+        a number (which is the location of the item within the given menu).
+
+        Returns a hash of which there are currently 2 keys: type can be
+        either "string" or "separator" - this is the type of the menu item
+        text is the visible text of the menu item (provided only for
+        "string" type)
+
+        WARNING: This is an experimental function. Its behavior might
+        change.
 
     MouseClick($window [,$parent] [,$x_offset] [,$y_offset] [,$button]
     [,$delay])
@@ -295,22 +344,64 @@ DESCRIPTION
 
     HWND GetWindow(hwnd,uCmd) *
     SV * GetWindowText(hwnd) *
+        Get the text name of the window as shown on the top of it. Beware,
+        this is text depends on localization.
+
     $class = GetClassName(hwnd) *
+        Using the same Windows library function returns the name of the
+        class wo which the specified window belongs.
+
+        See MSDN for more details.
+
+        You can also check out MSDN to see an overview of the Window
+        Classes.
+
     HWND GetParent(hwnd) *
+        A library function (see MSDN) to return the WindowID of the parent
+        window. See MSDN for the special cases.
+
     long GetWindowLong(hwnd,index) *
     BOOL SetForegroundWindow(hWnd) *
         See corresponding Windows functions.
 
     @wnds = GetChildWindows(hWnd)
-        Like EnumChildWindows
+        Using EnumChildWindows library function (see MSDN) it returns the
+        WindowID of each child window. If the children have their own
+        children the function returns them too until the tree ends.
 
     BOOL IsChild(hWndParent,hWnd) *
-        See corresponding Windows function.
+        Using the corresponding library function (see MSDN) it returns true
+        if the second window is an immediate child or a descendant window of
+        the first window.
 
     $depth = GetChildDepth(hAncestor,hChild)
-    $res = SendMessage(hwnd,msg,wParam,lParam) *
+        Using the GetParent library function in a loop, returns the distance
+        between an ancestor window and a child (descendant) window.
+
+        Features/bugs: If the given "ancsetor" is not really an ancestor,
+        the return value is the distance of child from the root window (0)
+        If you supply the same id for both the ancestor and the child you
+        get 1. If the ancestor you are checking is not 0 then the distance
+        given is 1 larger than it should be.
+
+        see eg\get_child_depth.pl
+
+    $res = SendMessage(hWnd,Msg,wParam,lParam) *
+        This is a library function (see MSDN) used by a number of the
+        functions provided by Win32::GuiTest. It sends the specified message
+        to a window or windows. HWnd is the WindowID or HWND_BROADCAST to
+        send message to all top level windows. Message is not sent to child
+        windows. (If I understand this correctly this means it is sent to
+        all the immediate children of the root window (0). Msg the message
+        wParam additional parameter lParam additioanl parameter
+
+        It is most likely you won't use this directly but through one of the
+        functions implemented already in Win32::GuiTest.
+
+        See the guitest.xs for some examples.
+
     $res = PostMessage(hwnd,msg,wParam,lParam) *
-        See corresponding Windows functions.
+        See corresponding Windows library function in MSDN.
 
     CheckButton(hwnd)
     UnCheckButton(hwnd)
@@ -344,6 +435,7 @@ DESCRIPTION
     ($x,$y) = GetScreenRes()
         Returns screen resolution
 
+    HWND WindowFromPoint(x, y)
     ($l,$t,$r,$b) = GetWindowRect(hWnd) *
     ($l,$t,$r,$b) = GetClientRect(hWnd) *
         See corresponding Windows functions.
@@ -378,7 +470,28 @@ DESCRIPTION
                SendKeys "{PAUSE 200}";
            }
 
-    HWND WindowFromPoint(x, y)
+    GetListViewContents($window)
+            Returns a list of the contents of the specified list view.
+
+    SelListViewItem($window, $idx)
+            Selects an item in the list view based off an index.
+
+    SelListViewItemText($window, $txt)
+            Selects an item in the list view based off text.
+
+    GetTabItems($window)
+            Returns a list of a tab control's labels.
+
+    SelTabItem($window, $idx)
+            Selects a tab based off an index.
+
+    SelTabItemText($window, $txt)
+            Selects a tab based off text label.
+
+    SelTreeViewItemPath($window, $path)
+            Selects a tree view item based off a "path".
+
+            SelTreeViewItemPath($window, "Machine|Processors");
 
   DibSect
     A class to manage a Windows DIB section. Currently limited in
@@ -428,6 +541,86 @@ DESCRIPTION
 
     bool DibSect::Destroy()
             Destroys the contents of the DIB section.
+
+DEVELOPMENT
+    If you would like to participate in the development of this module there
+    are several thing that need to be done. For some of them you only need
+    Perl and the latest source of the module from CVS for others you'll also
+    need to have a C++ compiler.
+
+    To get the lates source code you need a CVS client and then do the
+    following:
+
+     cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest login
+     cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest co Win32-GuiTest
+
+    See more detailed explanations here
+    http://sourceforge.net/projects/winguitest/
+
+    To setup a development environment for compiling the C++ code you can
+    either buy Visual Studio with Visual C++ or you can download a few
+    things free of charge from Microsoft. There might be other ways too we
+    have not explored.
+
+    The instructions to get the free environment are here:
+
+    From http://www.microsoft.com/ download and install:
+
+     1) Microsoft .NET Framework Version 1.1 Redistributable Package
+     2) .NET Framework SDK Version 1.1
+
+    This is not enough as there are a number of header files and libraries
+    that are not included in these distributions. You can get them from
+    Microsoft in two additional downloads. For these you will have to be
+    using Internet Explorer. Visit
+
+      http://www.microsoft.com/msdownload/platformsdk/sdkupdate/
+
+    and install
+
+     1) Core SDK
+     2) Microsoft Data Access Components 2.7
+
+    Before you can compile you'll have to open a command prompt and execute
+    the "sdkvars.bat" script from the.NET SDK that will set a number of
+    environment variables. In addition you'll have to run the "setenv.bat"
+    you got with the Core SDK (and located in C:\Program Files\Microsoft
+    SDK) with the appropriate parameters. For me this was /XP32 /RETAIL
+
+    In order to finish the packaging you'll also need the tar, gzip and zip
+    utilities from
+
+     http://gnuwin32.sourceforge.net/packages.html
+
+    I have not tried it yet.
+
+    After this you will probably be able to do the normal cycle:
+
+     perl makefile.pl
+     nmake
+     nmake test
+
+     or run
+
+     perl makedist.pl
+
+TODO
+    Here are a few items where help would be welcome.
+
+  Perl only
+     Improve Tests
+     Improve documentation
+     Add more examples and explain them
+
+  C++ compiler needed
+     Add more calls to the C++ backend
+     Fix current calls
+
+     32bit custom controls
+     Possibly Java interfaces
+     Mouse wheel support
+     Read ListView controls
+     Retreive the list of the menu of a given window.
 
 VERSION
         1.50.2-ad

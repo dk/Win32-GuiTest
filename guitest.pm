@@ -1,5 +1,5 @@
-#
-# $Id: guitest.pm,v 1.18 2004/07/28 11:45:12 szabgab Exp $
+3#
+# $Id: guitest.pm,v 1.19 2004/11/14 02:31:34 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -118,11 +118,9 @@ require AutoLoader;
         SetWindowPos ShowWindow TabCtrl_SetCurFocus TabCtrl_GetCurFocus
         TabCtrl_SetCurSel TabCtrl_GetItemCount WMGetText WMSetText WaitWindow
         WaitWindowLike SendRawKey WindowFromPoint
-        GetSubMenu
-        GetMenuItemIndex
-        GetMenuItemId
-	GetMenuItemCount
-	GetMenuItemInfo
+        GetSubMenu GetMenuItemIndex GetMenuItemId GetMenuItemCount GetMenuItemInfo 
+        GetListViewContents SelListViewItem SelListViewItemText GetTabItems
+	SelTabItem SelTabItemText SelTreeViewItemPath MouseMoveWheel
 
     )],
     VARS => [ qw(
@@ -328,7 +326,15 @@ sub SendMouse {
 Move the mouse cursor to the screen pixel indicated as parameter.
 
   # Moves to x=200, y=100 in pixel coordinates.
-  MouseMoveAbsPix(200, 100); 
+  MouseMoveAbsPix(200, 100);
+
+=cut
+
+=item MouseMoveWheel($change)
+
+  Positive or negative value to direct mouse wheel movement.
+
+=cut
 
 =item FindWindowLike($window,$titleregex,$classregex,$childid,$maxlevel) 
 
@@ -402,6 +408,12 @@ sub DbgShow {
     my $string = shift;
     print $string if $debug;
 }
+
+=item GetWindowID($window)
+
+    Returns the Id of the specified window.
+
+=cut
 
 sub GetWindowID {
     return GetWindowLong(shift, GWL_ID());
@@ -528,7 +540,13 @@ sub WaitWindow {
     return WaitWindowLike(0, $wndtitle, "", undef, undef, $wait);
 }
 
-    
+=item IsWindowStyle($window, $style)
+
+    Determines if a window has the specified style.  See sample
+    script for more details.
+
+=cut    
+
 # Checks for a specified window style
 sub IsWindowStyle {
     my $hwnd = shift;
@@ -538,6 +556,13 @@ sub IsWindowStyle {
     # Check bitmasked return value for the style.
     return ($rs & $style);
 }
+
+=item IsWindowStyleEx($window, $exstyle)
+
+    Determines if a window has the specified extended
+    style.  See sample script for more details.
+
+=cut    
 
 # Checks for a specified extended window style
 sub IsWindowStyleEx {
@@ -620,7 +645,6 @@ type can be either "string" or "separator"  - this is the type of the menu item
 text is the visible text of the menu item (provided only for "string" type)
 
 WARNING: This is an experimental function. Its behavior might change.
- 
 
 =cut
 
@@ -886,6 +910,8 @@ The opposite transformation
 
 Returns screen resolution
 
+=item HWND WindowFromPoint(x, y)
+
 =item ($l,$t,$r,$b) = GetWindowRect(hWnd) *
 
 =item ($l,$t,$r,$b) = GetClientRect(hWnd) *
@@ -926,7 +952,49 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
        SendKeys "{PAUSE 200}";
    }
 
-=item HWND WindowFromPoint(x, y)
+=item GetListViewContents($window)
+
+    Returns a list of the contents of the specified list view.
+
+=cut
+
+=item SelListViewItem($window, $idx)
+
+    Selects an item in the list view based off an index.
+
+=cut
+
+=item SelListViewItemText($window, $txt)
+
+    Selects an item in the list view based off text.
+
+=cut
+
+=item GetTabItems($window)
+
+    Returns a list of a tab control's labels.
+
+=cut
+
+=item SelTabItem($window, $idx)
+
+    Selects a tab based off an index.
+
+=cut
+
+=item SelTabItemText($window, $txt)
+
+    Selects a tab based off text label.
+
+=cut
+
+=item SelTreeViewItemPath($window, $path)
+
+    Selects a tree view item based off a "path".
+
+    SelTreeViewItemPath($window, "Machine|Processors");
+
+=cut
 
 =back
 
@@ -1058,8 +1126,9 @@ After this you will probably be able to do the normal cycle:
  perl makefile.pl
  nmake
  nmake test
- 
+
  or run
+
  perl makedist.pl
 
 =head1 TODO

@@ -22,6 +22,14 @@
 		<li><a href="#dibsect">DibSect</a></li>
 	</ul>
 
+	<li><a href="#development">DEVELOPMENT</a></li>
+	<li><a href="#todo">TODO</a></li>
+	<ul>
+
+		<li><a href="#perl_only">Perl only</a></li>
+		<li><a href="#c___compiler_needed">C++ compiler needed</a></li>
+	</ul>
+
 	<li><a href="#version">VERSION</a></li>
 	<li><a href="#changes">CHANGES</a></li>
 	<li><a href="#copyright">COPYRIGHT</a></li>
@@ -64,6 +72,8 @@
     nmake
     nmake test
     nmake install</pre>
+<pre>
+    See more details in the DEVELOPMENT section elswhere in this document.</pre>
 <p>If you are using ActivePerl 5.6 
 (http://www.activestate.com/Products/ActivePerl/index.html) 
 you can install the binary package I am including instead. You will need 
@@ -100,6 +110,12 @@ include more GUI testing functions).</p>
 <p>Also, an initial version of a script recording application has been written to use with this 
 module.  A copy of it may be found with this distribution (Recorder\Win32GuiTest.exe)
 or can be obtained at <a href="http://dkp.itgo.com">http://dkp.itgo.com</a></p>
+<p>If the documentation of the functions is not satisfactory, you can 
+try running a search on <a href="http://msdn.microsoft.com/">http://msdn.microsoft.com/</a> using the name of the function. 
+Some of these functions are described there.</p>
+<p>The alternate distribution of this module - the one you are looking at now - has
+its own CVS repository at <a href="http://sourceforge.net/projects/winguitest">http://sourceforge.net/projects/winguitest</a>
+Patches to both the code and the documentation are welcome.</p>
 <p>
 </p>
 <h2><a name="functions">Functions</a></h2>
@@ -241,6 +257,12 @@ Move the mouse cursor to the screen pixel indicated as parameter.
   MouseMoveAbsPix(200, 100);</pre>
 </dd>
 <p></p>
+<dt><strong><a name="item_mousemovewheel"><code>MouseMoveWheel($change)</code></a></strong><br />
+</dt>
+<dd>
+<pre>
+  Positive or negative value to direct mouse wheel movement.</pre>
+</dd>
 <dt><strong><a name="item_findwindowlike"><code>FindWindowLike($window,$titleregex,$classregex,$childid,$maxlevel)</code></a></strong><br />
 </dt>
 <dd>
@@ -257,6 +279,12 @@ number, the functions will only match windows with this id. In each case
 undef matches everything.</p>
 </dd>
 <p></p>
+<dt><strong><a name="item_getwindowid"><code>GetWindowID($window)</code></a></strong><br />
+</dt>
+<dd>
+<pre>
+    Returns the Id of the specified window.</pre>
+</dd>
 <dt><strong><a name="item_pushbutton"><code>PushButton($button[,$delay])</code></a></strong><br />
 </dt>
 <dd>
@@ -322,6 +350,40 @@ regexp. You can also specify the wait timeout in seconds.
 <p>wait     - How many seconds should we wait before giving up</p>
 </dd>
 <p></p>
+<dt><strong><a name="item_iswindowstyle">IsWindowStyle($window, $style)</a></strong><br />
+</dt>
+<dd>
+<pre>
+    Determines if a window has the specified style.  See sample
+    script for more details.</pre>
+</dd>
+<dt><strong><a name="item_iswindowstyleex">IsWindowStyleEx($window, $exstyle)</a></strong><br />
+</dt>
+<dd>
+<pre>
+    Determines if a window has the specified extended
+    style.  See sample script for more details.</pre>
+</dd>
+<dt><strong><a name="item_getmenu">GetMenu</a></strong><br />
+</dt>
+<dd>
+Using the corresponding library function (see MSDN) it returns a MenuID number
+</dd>
+<p></p>
+<dt><strong><a name="item_getmenuitemindex">GetMenuItemIndex($curr, $menu);</a></strong><br />
+</dt>
+<dd>
+$curr is a MenuId and $menu is the (localized !) name of the menu including the hot
+key:  ``Rep&amp;eate''  
+Returns the index of the menu item (-1 if not found)
+</dd>
+<p></p>
+<dt><strong><a name="item_getmenuitemcount"><code>GetMenuItemCount($menu)</code></a></strong><br />
+</dt>
+<dd>
+Returns the number of elements in the given menu.
+</dd>
+<p></p>
 <dt><strong><a name="item_menuselect"><code>MenuSelect($menupath,$window,$menu)</code></a></strong><br />
 </dt>
 <dd>
@@ -336,6 +398,21 @@ Allows selecting a menu programmatically.
 <pre>
     # Exit foreground application through system menu
     MenuSelect(&quot;&amp;Close&quot;, 0, GetSystemMenu(GetForegroundWindow(), FALSE));</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_getmenuiteminfo">GetMenuItemInfo($menuHndl, $cnt)</a></strong><br />
+</dt>
+<dd>
+Receives a menu handler (one we got from GetMenu or GetSubMenu) and
+a number (which is the location of the item within the given menu).
+</dd>
+<dd>
+<p>Returns a hash of which there are currently 2 keys:
+type can be either ``string'' or ``separator''  - this is the type of the menu item
+text is the visible text of the menu item (provided only for ``string'' type)</p>
+</dd>
+<dd>
+<p>WARNING: This is an experimental function. Its behavior might change.</p>
 </dd>
 <p></p>
 <dt><strong><a name="item_mouseclick">MouseClick($window [,$parent] [,$x_offset] [,$y_offset] [,$button] [,$delay])</a></strong><br />
@@ -429,10 +506,31 @@ Returns a handle to the desktop window
 </dt>
 <dt><strong><a name="item_getwindowtext">SV * <code>GetWindowText(hwnd)</code> *</a></strong><br />
 </dt>
+<dd>
+Get the text name of the window as shown on the top of it.
+Beware, this is text depends on localization.
+</dd>
+<p></p>
 <dt><strong><a name="item_getclassname">$class = <code>GetClassName(hwnd)</code> *</a></strong><br />
 </dt>
+<dd>
+Using the same Windows library function returns the name
+of the class wo which the specified window belongs.
+</dd>
+<dd>
+<p>See MSDN for more details.</p>
+</dd>
+<dd>
+<p>You can also check out MSDN to see an overview of the Window Classes.</p>
+</dd>
+<p></p>
 <dt><strong><a name="item_getparent">HWND <code>GetParent(hwnd)</code> *</a></strong><br />
 </dt>
+<dd>
+A library function (see MSDN) to return the WindowID of the parent window.
+See MSDN for the special cases.
+</dd>
+<p></p>
 <dt><strong><a name="item_getwindowlong">long <code>GetWindowLong(hwnd,index)</code> *</a></strong><br />
 </dt>
 <dt><strong><a name="item_setforegroundwindow">BOOL <code>SetForegroundWindow(hWnd)</code> *</a></strong><br />
@@ -444,23 +542,59 @@ See corresponding Windows functions.
 <dt><strong><a name="item_getchildwindows">@wnds = <code>GetChildWindows(hWnd)</code></a></strong><br />
 </dt>
 <dd>
-Like EnumChildWindows
+Using EnumChildWindows library function (see MSDN) it returns the WindowID 
+of each child window. If the children have their own children the function
+returns them too until the tree ends.
 </dd>
 <p></p>
 <dt><strong><a name="item_ischild">BOOL <code>IsChild(hWndParent,hWnd)</code> *</a></strong><br />
 </dt>
 <dd>
-See corresponding Windows function.
+Using the corresponding library function (see MSDN) it returns true
+if the second window is an immediate child or a descendant window of
+the first window.
 </dd>
 <p></p>
 <dt><strong><a name="item_getchilddepth">$depth = <code>GetChildDepth(hAncestor,hChild)</code></a></strong><br />
 </dt>
-<dt><strong><a name="item_sendmessage">$res = <code>SendMessage(hwnd,msg,wParam,lParam)</code> *</a></strong><br />
+<dd>
+Using the GetParent library function in a loop, returns the distance
+between an ancestor window and a child (descendant) window.
+</dd>
+<dd>
+<p>Features/bugs:
+If the given ``ancsetor'' is not really an ancestor, the return value is the distance of child from the root window (0)
+If you supply the same id for both the ancestor and the child you get 1.
+If the ancestor you are checking is not 0 then the distance given is 1 larger than it should be.</p>
+</dd>
+<dd>
+<p>see eg\get_child_depth.pl</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_sendmessage">$res = <code>SendMessage(hWnd,Msg,wParam,lParam)</code> *</a></strong><br />
 </dt>
+<dd>
+This is a library function (see MSDN) used by a number of the functions provided by
+Win32::GuiTest. It sends the specified message to a window or windows.
+HWnd is the WindowID or HWND_BROADCAST to send message to all top level windows.
+     Message is not sent to child windows. (If I understand this correctly this means
+     it is sent to all the immediate children of the root window (0).
+Msg  the message
+wParam additional parameter
+lParam additioanl parameter
+</dd>
+<dd>
+<p>It is most likely you won't use this directly but through one of the functions
+implemented already in Win32::GuiTest.</p>
+</dd>
+<dd>
+<p>See the guitest.xs for some examples.</p>
+</dd>
+<p></p>
 <dt><strong><a name="item_postmessage">$res = <code>PostMessage(hwnd,msg,wParam,lParam)</code> *</a></strong><br />
 </dt>
 <dd>
-See corresponding Windows functions.
+See corresponding Windows library function in MSDN.
 </dd>
 <p></p>
 <dt><strong><a name="item_checkbutton"><code>CheckButton(hwnd)</code></a></strong><br />
@@ -526,6 +660,8 @@ The opposite transformation
 Returns screen resolution
 </dd>
 <p></p>
+<dt><strong><a name="item_windowfrompoint">HWND WindowFromPoint(x, y)</a></strong><br />
+</dt>
 <dt><strong><a name="item_getwindowrect">($l,$t,$r,$b) = <code>GetWindowRect(hWnd)</code> *</a></strong><br />
 </dt>
 <dt><strong><a name="item_getclientrect">($l,$t,$r,$b) = <code>GetClientRect(hWnd)</code> *</a></strong><br />
@@ -582,8 +718,52 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
    }</pre>
 </dd>
 <p></p>
-<dt><strong><a name="item_windowfrompoint">HWND WindowFromPoint(x, y)</a></strong><br />
+<dt><strong><a name="item_getlistviewcontents"><code>GetListViewContents($window)</code></a></strong><br />
 </dt>
+<dd>
+<pre>
+    Returns a list of the contents of the specified list view.</pre>
+</dd>
+<dt><strong><a name="item_sellistviewitem">SelListViewItem($window, $idx)</a></strong><br />
+</dt>
+<dd>
+<pre>
+    Selects an item in the list view based off an index.</pre>
+</dd>
+<dt><strong><a name="item_sellistviewitemtext">SelListViewItemText($window, $txt)</a></strong><br />
+</dt>
+<dd>
+<pre>
+    Selects an item in the list view based off text.</pre>
+</dd>
+<dt><strong><a name="item_gettabitems"><code>GetTabItems($window)</code></a></strong><br />
+</dt>
+<dd>
+<pre>
+    Returns a list of a tab control's labels.</pre>
+</dd>
+<dt><strong><a name="item_seltabitem">SelTabItem($window, $idx)</a></strong><br />
+</dt>
+<dd>
+<pre>
+    Selects a tab based off an index.</pre>
+</dd>
+<dt><strong><a name="item_seltabitemtext">SelTabItemText($window, $txt)</a></strong><br />
+</dt>
+<dd>
+<pre>
+    Selects a tab based off text label.</pre>
+</dd>
+<dt><strong><a name="item_seltreeviewitempath">SelTreeViewItemPath($window, $path)</a></strong><br />
+</dt>
+<dd>
+<pre>
+    Selects a tree view item based off a &quot;path&quot;.</pre>
+</dd>
+<dd>
+<pre>
+    SelTreeViewItemPath($window, &quot;Machine|Processors&quot;);</pre>
+</dd>
 </dl>
 <p>
 </p>
@@ -655,6 +835,79 @@ automatically using SendKeys.
 Destroys the contents of the DIB section.
 </dd>
 <p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="development">DEVELOPMENT</a></h1>
+<p>If you would like to participate in the development of this module there are 
+several thing that need to be done. For some of them you only need Perl
+and the latest source of the module from CVS for others you'll also need to 
+have a C++ compiler.</p>
+<p>To get the lates source code you need a CVS client and then do the following:</p>
+<pre>
+ cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest login
+ cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest co Win32-GuiTest</pre>
+<p>See more detailed explanations here <a href="http://sourceforge.net/projects/winguitest/">http://sourceforge.net/projects/winguitest/</a></p>
+<p>To setup a development environment for compiling the C++ code you can either buy
+Visual Studio with Visual C++ or you can download a few things free of charge from 
+Microsoft. There might be other ways too we have not explored.</p>
+<p>The instructions to get the free environment are here:</p>
+<p>From <a href="http://www.microsoft.com/">http://www.microsoft.com/</a> download and install:</p>
+<pre>
+ 1) Microsoft .NET Framework Version 1.1 Redistributable Package
+ 2) .NET Framework SDK Version 1.1</pre>
+<p>This is not enough as there are a number of header files and libraries that are 
+not included in these distributions. You can get them from Microsoft in two additional
+downloads. For these you will have to be using Internet Explorer.
+Visit</p>
+<pre>
+  <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/">http://www.microsoft.com/msdownload/platformsdk/sdkupdate/</a></pre>
+<p>and install</p>
+<pre>
+ 1) Core SDK
+ 2) Microsoft Data Access Components 2.7</pre>
+<p>Before you can compile you'll have to open a command prompt and execute the
+<code>sdkvars.bat</code> script from the.NET SDK that will set a number of environment
+variables. In addition you'll have to run the <code>setenv.bat</code> you got with the 
+Core SDK (and located in C:\Program Files\Microsoft SDK) with the appropriate
+parameters. For me this was /XP32 /RETAIL</p>
+<p>In order to finish the packaging you'll also need the tar, gzip and zip utilities from</p>
+<pre>
+ <a href="http://gnuwin32.sourceforge.net/packages.html">http://gnuwin32.sourceforge.net/packages.html</a></pre>
+<p>I have not tried it yet.</p>
+<p>After this you will probably be able to do the normal cycle:</p>
+<pre>
+ perl makefile.pl
+ nmake
+ nmake test</pre>
+<pre>
+ or run</pre>
+<pre>
+ perl makedist.pl</pre>
+<p>
+</p>
+<hr />
+<h1><a name="todo">TODO</a></h1>
+<p>Here are a few items where help would be welcome.</p>
+<p>
+</p>
+<h2><a name="perl_only">Perl only</a></h2>
+<pre>
+ Improve Tests
+ Improve documentation
+ Add more examples and explain them</pre>
+<p>
+</p>
+<h2><a name="c___compiler_needed">C++ compiler needed</a></h2>
+<pre>
+ Add more calls to the C++ backend
+ Fix current calls</pre>
+<pre>
+ 32bit custom controls
+ Possibly Java interfaces
+ Mouse wheel support
+ Read ListView controls
+ Retreive the list of the menu of a given window.</pre>
 <p>
 </p>
 <hr />

@@ -242,5 +242,8 @@ TBD.
      - Explanation how to setup development environment (SZABGAB)
      - A number of new exported methods regarding Menu items
        such as GetMenuItemInfo 
-
+     - Added support for some 32bit controls: GetListViewContents, 
+       SelListViewItem, SelListViewItemText, GetTabItems,
+       SelTabItem, SelTabItemText, SelTreeViewItemPath (DKP)
+     - Added basic mouse wheel support: MouseMoveWheel (DKP)
 

@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.11 2004/07/28 11:45:12 szabgab Exp $
+ *  $Id: guitest.xs,v 1.12 2004/11/14 02:31:34 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -30,7 +30,354 @@
 //}
 #endif
 
+#define MAX_DATA_BUF 1024
+#define NUL '\0'
 
+HINSTANCE g_hDLL = NULL;
+
+#pragma data_seg(".shared")
+// Used by hooking/injected routines
+HWND g_hWnd = 0;
+HHOOK g_hHook = NULL;
+BOOL g_bRetVal = 0;
+char g_szBuffer[MAX_DATA_BUF+1] = {NUL};
+UINT WM_LV_GETTEXT = 0;
+UINT WM_LV_SELBYINDEX = 0;
+UINT WM_LV_SELBYTEXT = 0;
+UINT WM_TC_GETTEXT = 0;
+UINT WM_TC_SELBYINDEX = 0;
+UINT WM_TC_SELBYTEXT = 0;
+UINT WM_TV_SELBYPATH = 0;
+#pragma data_seg()
+#pragma comment(linker, "/SECTION:.shared,RWS")
+
+BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call, 
+                      LPVOID lpReserved)
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+		// Value used by SetWindowsHookEx, etc.
+		g_hDLL = (HINSTANCE)hModule;
+		break;
+	case DLL_THREAD_ATTACH:
+		break;
+	case DLL_THREAD_DETACH:
+		break;
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+
+	return TRUE;
+}
+
+// Gets a treeview item handle by name
+HTREEITEM GetTVItemByName(HWND hWnd, HTREEITEM hItem,
+                         char *lpItemName)
+{
+    // If hItem is NULL, start search from root item.
+    if (hItem == NULL)
+        hItem = (HTREEITEM)SendMessage(hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0);
+
+    while (hItem != NULL)
+    {
+        char szBuffer[MAX_DATA_BUF+1];
+        TV_ITEM item;
+
+        item.hItem = hItem;
+        item.mask = TVIF_TEXT | TVIF_CHILDREN;
+        item.pszText = szBuffer;
+        item.cchTextMax = MAX_DATA_BUF;
+        SendMessage(hWnd, TVM_GETITEM, 0, (LPARAM)&item);
+
+        // Did we find it?
+        if (lstrcmpi(szBuffer, lpItemName) == 0)
+            return hItem;
+
+        // Check whether we have child items.
+        if (item.cChildren)
+        {
+            // Recursively traverse child items.
+            HTREEITEM hItemFound, hItemChild;
+
+            hItemChild = (HTREEITEM)SendMessage(hWnd, TVM_GETNEXTITEM,
+                                                TVGN_CHILD, (LPARAM)hItem);
+            hItemFound = GetTVItemByName(hWnd, hItemChild, lpItemName);
+
+            // Did we find it?
+            if (hItemFound != NULL)
+                return hItemFound;
+        }
+
+        // Go to next sibling item.
+        hItem = (HTREEITEM)SendMessage(hWnd, TVM_GETNEXTITEM,
+                                       TVGN_NEXT, (LPARAM)hItem);
+    }
+
+    // Not found.
+    return NULL;
+} 
+
+#define pCW ((CWPSTRUCT*)lParam)
+
+// Hook procedure, does most of the work for various 32bit custom control
+// routines
+LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
+{	
+	//// List Views ////
+	if (pCW->message == WM_LV_GETTEXT) {
+		*g_szBuffer = NUL;
+		int iItem = pCW->wParam;
+		ListView_GetItemText(g_hWnd, iItem, 0, g_szBuffer, MAX_DATA_BUF);
+		::UnhookWindowsHookEx( g_hHook );
+	} else if (pCW->message == WM_LV_SELBYINDEX) {
+		int iCount = ListView_GetItemCount(g_hWnd);
+		int iSel = pCW->wParam;
+		// Clear out any previous selections
+		if (ListView_GetSelectedCount(g_hWnd) > 0) {
+			for (int i = 0; i < iCount; i++) {
+				ListView_SetItemState(g_hWnd, i, 0, LVIS_SELECTED);
+			}
+		}
+		// Select item
+		ListView_SetItemState(g_hWnd, iSel, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+		g_bRetVal = ListView_EnsureVisible(g_hWnd, iSel, FALSE);
+		::UnhookWindowsHookEx( g_hHook );
+	} else if (pCW->message == WM_LV_SELBYTEXT) {
+		char szItem[MAX_DATA_BUF+1] = "";
+		int iCount = ListView_GetItemCount(g_hWnd);
+		// Clear out any previous selections
+		if (ListView_GetSelectedCount(g_hWnd) > 0) {
+			for (int i = 0; i < iCount; i++) {
+				ListView_SetItemState(g_hWnd, i, 0, LVIS_SELECTED);
+			}
+		}
+		// Look for item
+		for (int i = 0; i < iCount; i++) {
+			ListView_GetItemText(g_hWnd, i, 0, szItem, MAX_DATA_BUF);
+			if (lstrcmpi(g_szBuffer, szItem) == 0) {
+				// Found it, select it
+				ListView_SetItemState(g_hWnd, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+				g_bRetVal = ListView_EnsureVisible(g_hWnd, i, FALSE);	
+				break;
+			}
+		}
+		::UnhookWindowsHookEx( g_hHook );
+	} else if (pCW->message == WM_TV_SELBYPATH) {
+	//// Tree Views ////
+		char szName[MAX_DATA_BUF+1] = "";
+		size_t pos = 0, len = 0;
+		HTREEITEM hItem = NULL;
+
+		g_bRetVal = FALSE; // Assume failure
+
+		len = strlen(g_szBuffer);
+		// Move through supplied tree view path, updating hItem appropriately
+		for (size_t x = 0; x < len; x++) {
+			if (g_szBuffer[x] == '|') {
+				if (*szName) {
+					hItem = GetTVItemByName(g_hWnd, hItem, szName);
+					memset(&szName, 0, MAX_DATA_BUF);
+					pos = 0;
+				}
+			} else {
+				szName[pos++] = g_szBuffer[x];
+			}
+		}
+
+		if (*szName) {
+			// Just a root item, no path delimiters (|)
+			// OR a trailing child item?
+			hItem = GetTVItemByName(g_hWnd, hItem, szName);
+		}
+
+		// Select Item if handle obtained
+		g_bRetVal = hItem ? (BOOL)TreeView_SelectItem(g_hWnd, hItem) : FALSE;
+		TreeView_EnsureVisible(g_hWnd, hItem);
+
+		::UnhookWindowsHookEx( g_hHook );
+	} else if (pCW->message == WM_TC_GETTEXT) {
+	//// Tab Control ////
+		TCITEM tcItem;
+		int iItem = pCW->wParam;
+		*g_szBuffer = NUL;
+		tcItem.pszText = g_szBuffer;
+		tcItem.cchTextMax = MAX_DATA_BUF;
+		tcItem.mask = TCIF_TEXT;
+
+		g_bRetVal = TabCtrl_GetItem(g_hWnd, iItem, &tcItem);
+		::UnhookWindowsHookEx( g_hHook );
+	} else if (pCW->message == WM_TC_SELBYINDEX) {
+		int iItem = pCW->wParam;
+		g_bRetVal = FALSE; // Assume failure
+		if (iItem < TabCtrl_GetItemCount(g_hWnd)) {
+			TabCtrl_SetCurFocus(g_hWnd, iItem);
+			g_bRetVal = TRUE;
+		}
+		::UnhookWindowsHookEx( g_hHook );
+	} else if (pCW->message == WM_TC_SELBYTEXT) {
+		TCITEM tcItem;
+		char szName[MAX_DATA_BUF+1] = "";
+		int iCount = TabCtrl_GetItemCount(g_hWnd);
+		tcItem.pszText = szName;
+		tcItem.cchTextMax = MAX_DATA_BUF;
+		tcItem.mask = TCIF_TEXT;
+		for (int i = 0; i < iCount; i++) {
+			TabCtrl_GetItem(g_hWnd, i, &tcItem);
+			// Is Tab item we want?
+			if (lstrcmpi(g_szBuffer, szName) == 0) {
+				// ... then set focus to it
+				TabCtrl_SetCurFocus(g_hWnd, i);
+				break;
+			}
+		}
+		::UnhookWindowsHookEx( g_hHook );
+	}
+
+	return ::CallNextHookEx(g_hHook, code, wParam, lParam);
+}
+
+// The following several routines all inject "ourself" into a remote process
+// and performs some work.
+int GetLVItemText(HWND hWnd, int iItem, char *lpString)
+{	
+	g_hWnd = hWnd;
+
+	// Hook the thread, that "owns" our control
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL) {
+		*lpString = NUL;
+		return 0;
+	}
+	
+	if (WM_LV_GETTEXT == NULL)
+		WM_LV_GETTEXT = RegisterWindowMessage("WM_LV_GETTEXT_RM");
+
+	// By the time SendMessage returns, 
+	// g_szBuffer already contains the text.
+	SendMessage(hWnd, WM_LV_GETTEXT, iItem, 0);
+	lstrcpy(lpString, g_szBuffer);
+
+	return (int)strlen(lpString);
+}
+
+int GetLVItemCount(HWND hWnd)
+{
+	return ListView_GetItemCount(hWnd);
+}
+
+BOOL SelLVItem(HWND hWnd, int iItem)
+{
+	g_hWnd = hWnd;
+
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL)
+		return FALSE;
+	
+	if (WM_LV_SELBYINDEX == NULL)
+		WM_LV_SELBYINDEX = RegisterWindowMessage("WM_LV_SELBYINDEX_RM");
+
+	SendMessage(hWnd, WM_LV_SELBYINDEX, iItem, 0);
+
+	return g_bRetVal;
+}
+
+BOOL SelLVItemText(HWND hWnd, char *lpItem)
+{
+	g_hWnd = hWnd;
+
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+	 			g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL)
+		return FALSE;
+	
+	if (WM_LV_SELBYTEXT == NULL)
+		WM_LV_SELBYTEXT = RegisterWindowMessage("WM_LV_SELBYTEXT_RM");
+
+	lstrcpy(g_szBuffer, lpItem);
+	SendMessage(hWnd, WM_LV_SELBYTEXT, 0, 0);
+
+	return g_bRetVal;
+}
+
+BOOL SelTVItemPath(HWND hWnd, char *lpPath)
+{	
+	g_hWnd = hWnd;
+
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL)
+		return FALSE;
+	
+	if (WM_TV_SELBYPATH == NULL)
+		WM_TV_SELBYPATH = RegisterWindowMessage("WM_TV_SELBYPATH_RM");
+	
+	lstrcpy(g_szBuffer, lpPath);
+	SendMessage(hWnd, WM_TV_SELBYPATH, 0, 0);
+	return g_bRetVal;
+}
+
+int GetTCItemText(HWND hWnd, int iItem, char *lpString)
+{	
+	g_hWnd = hWnd;
+
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL) {
+		*lpString = NUL;
+		return 0;
+	}
+	
+	if (WM_TC_GETTEXT == NULL)
+		WM_TC_GETTEXT = RegisterWindowMessage("WM_TC_GETTEXT_RM");
+
+	SendMessage(hWnd, WM_TC_GETTEXT, iItem, 0);
+	strcpy(lpString, g_szBuffer);
+
+	return (int)strlen(lpString);
+}
+
+BOOL SelTCItem(HWND hWnd, int iItem)
+{	
+	g_hWnd = hWnd;
+
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL)
+		return FALSE;
+	
+	if (WM_TC_SELBYINDEX == NULL)
+		WM_TC_SELBYINDEX = RegisterWindowMessage("WM_TC_SELBYINDEX_RM");
+	
+	SendMessage(hWnd, WM_TC_SELBYINDEX, iItem, 0);
+	return g_bRetVal;
+}
+
+BOOL SelTCItemText(HWND hWnd, char *szText)
+{	
+	g_hWnd = hWnd;
+
+	// Hook the thread, that "owns" our control
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL)
+		return FALSE;
+	
+	if (WM_TC_SELBYTEXT == NULL)
+		WM_TC_SELBYTEXT = ::RegisterWindowMessage("WM_TC_SELBYTEXT_RM");
+	
+	lstrcpy(g_szBuffer, szText);
+	SendMessage(hWnd, WM_TC_SELBYTEXT, 0, 0);
+	return g_bRetVal;
+}
+
+
+int GetTCItemCount(HWND hWnd)
+{
+	return TabCtrl_GetItemCount(hWnd);
+}
 
 
 int cvtkey(
@@ -149,7 +496,7 @@ int GetNum(
 	tmp[pos++] = s[i++];
 	(*len)++;
     }
-    tmp[pos] = '\0';
+    tmp[pos] = NUL;
     res = atoi(tmp);
     safefree(tmp);
     return res;
@@ -205,7 +552,7 @@ void procbrace(
 		  j++;
 		  (*len)++;
 		}
-		tmp[m]='\0';
+		tmp[m]=NUL;
 		
 		if (s[i+j]==' ') {  /* read count */
 		  *count=GetNum(s,i+j+1,len);
@@ -219,7 +566,7 @@ void procbrace(
 		
 		/* chop token to 3 characters or less */
 		if (strlen(tmp)>3) 
-			tmp[3]='\0';
+			tmp[3]=NUL;
 
 		/* handle pause specially */
 		if (strcmp(tmp,"PAU")==0) {
@@ -403,6 +750,73 @@ MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest
 PROTOTYPES: DISABLE
 
 void
+GetListViewContents(hWnd)
+	HWND hWnd
+PPCODE:
+	char szItem[MAX_DATA_BUF+1] = "";
+	int iCount = GetLVItemCount(hWnd);
+	for (int i = 0; i < iCount; i++) {
+		GetLVItemText(hWnd, i, szItem);
+	        XPUSHs(sv_2mortal(newSVpv(szItem, 0)));
+	}
+
+BOOL
+SelListViewItem(hWnd, iItem)
+	HWND hWnd
+	int iItem
+CODE:
+	RETVAL = SelLVItem(hWnd, iItem);
+OUTPUT:
+	RETVAL
+
+BOOL
+SelListViewItemText(hWnd, lpItem)
+	HWND hWnd
+	char *lpItem
+CODE:
+	RETVAL = SelLVItemText(hWnd, lpItem);
+OUTPUT:
+	RETVAL
+
+void
+GetTabItems(hWnd)
+	HWND hWnd
+PPCODE:
+	char szItem[MAX_DATA_BUF+1] = "";
+	int iCount = GetTCItemCount(hWnd);
+	for (int i = 0; i < iCount; i++) {
+		GetTCItemText(hWnd, i, szItem);
+	        XPUSHs(sv_2mortal(newSVpv(szItem, 0)));
+	}
+
+BOOL
+SelTabItem(hWnd, iItem)
+	HWND hWnd
+	int iItem
+CODE:
+	RETVAL = SelTCItem(hWnd, iItem);
+OUTPUT:
+	RETVAL
+
+BOOL
+SelTabItemText(hWnd, lpItem)
+	HWND hWnd
+	char *lpItem
+CODE:
+	RETVAL = SelTCItemText(hWnd, lpItem);
+OUTPUT:
+	RETVAL
+
+BOOL
+SelTreeViewItemPath(hWnd, lpPath)
+	HWND hWnd
+	char *lpPath
+CODE:
+	RETVAL = SelTVItemPath(hWnd, lpPath);
+OUTPUT:
+	RETVAL
+
+void
 GetCursorPos()
 INIT:
   POINT pt;
@@ -459,14 +873,23 @@ SendMouseMoveAbs(x,y)
 
 void
 MouseMoveAbsPix(x,y)
-	int x;
+    int x;
     int y;
-    PREINIT:
-        int mickey_x = MulDiv(x, 0x10000, GetSystemMetrics(SM_CXSCREEN));
-        int mickey_y = MulDiv(y, 0x10000, GetSystemMetrics(SM_CYSCREEN));
-	CODE:
-        simple_mouse(MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE, mickey_x, mickey_y);
+PREINIT:
+    int mickey_x = MulDiv(x, 0x10000, GetSystemMetrics(SM_CXSCREEN));
+    int mickey_y = MulDiv(y, 0x10000, GetSystemMetrics(SM_CYSCREEN));
+CODE:
+    simple_mouse(MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE, mickey_x, mickey_y);
 
+
+#ifndef WHEEL_DELTA
+#define WHEEL_DELTA 120
+#endif
+void
+MouseMoveWheel(dwChange)
+    DWORD dwChange
+CODE:
+    mouse_event(MOUSEEVENTF_WHEEL, 0, 0, (dwChange*WHEEL_DELTA), 0);
 
 void
 SendKeysImp(s, wait)
@@ -958,7 +1381,7 @@ IsKeyPressed(name)
     int found;
     int len = strlen(name);
     if (len >= 3) 
-        name[3]='\0';
+        name[3]=NUL;
     found = findvkey(name, &vkey);
     if (found) {
         OutputDebugString("Trying key\n");
