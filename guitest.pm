@@ -1,5 +1,5 @@
 3#
-# $Id: guitest.pm,v 1.19 2004/11/14 02:31:34 ctrondlp Exp $
+# $Id: guitest.pm,v 1.20 2004/11/14 02:35:33 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -993,6 +993,7 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
     Selects a tree view item based off a "path".
 
     SelTreeViewItemPath($window, "Machine|Processors");
+    SelTreeViewItemPath($window, "Item");
 
 =cut
 

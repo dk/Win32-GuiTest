@@ -492,6 +492,7 @@ DESCRIPTION
             Selects a tree view item based off a "path".
 
             SelTreeViewItemPath($window, "Machine|Processors");
+            SelTreeViewItemPath($window, "Item");
 
   DibSect
     A class to manage a Windows DIB section. Currently limited in
