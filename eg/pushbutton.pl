@@ -1,5 +1,6 @@
-#! perl -w
-# vim: ts=4
+#!/usr/bin/perl
+# $Id: pushbutton.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+#
 
 use strict;
 use Win32::GuiTest qw/

@@ -1,8 +1,8 @@
-=pod
- - This script has been written by Jarek Jurasz jurasz@imb.uni-karlsruhe.de
- - selectively show/hide a group of windows
- - side effect: showing the window activates it
-=cut
+#!/usr/bin/perl
+# $Id: showwin.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+# This script has been written by Jarek Jurasz jurasz@imb.uni-karlsruhe.de
+# selectively show/hide a group of windows
+# side effect: showing the window activates it
 
 use Win32::GuiTest qw(:ALL :SW);
 

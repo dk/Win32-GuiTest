@@ -1,4 +1,6 @@
-#! perl
+#!/usr/bin/perl
+# $Id: selecttabitem.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+#
 
 use Win32::GuiTest qw(GetWindowID GetChildWindows GetWindowText
     GetForegroundWindow PostMessage PushButton SendKeys SelectTabItem);

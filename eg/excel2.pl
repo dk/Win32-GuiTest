@@ -1,7 +1,9 @@
-#
+#!/usr/bin/perl
+# $Id: excel2.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
 # Exercise Win32::GuiTest using MS-Excel. Will only work with non-localized
 # versions of Excel (hard-coded hot-keys).
 #
+
 use Win32::GuiTest qw(FindWindowLike GetWindowText 
 SetForegroundWindow SendKeys);
 

@@ -1,8 +1,9 @@
-# $Id: keypress.pl,v 1.1 2004/03/16 01:37:20 ctrondlp Exp $
-#
+#!/usr/bin/perl
+# $Id: keypress.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
 # This example shows an easy way to check for certain keystrokes.
 # The IsKeyPressed function takes a string with the name of the key.
 # This names are the same ones as for SendKeys. 
+
 use Win32::GuiTest qw/SendKeys IsKeyPressed/;
 
 # Wait until user presses several

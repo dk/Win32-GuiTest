@@ -1,8 +1,8 @@
-=pod
- - This script has been written by Jarek Jurasz jurasz@imb.uni-karlsruhe.de
- - Save a given window as BMP file
- - Copy the contents to the clipboard
-=cut
+#!/usr/bin/perl
+# $Id: winbmp.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+# This script has been written by Jarek Jurasz jurasz@imb.uni-karlsruhe.de
+# Save a given window as BMP file
+# Copy the contents to the clipboard
 
 
 use Win32::GuiTest qw(:ALL);

@@ -1,4 +1,6 @@
-#! perl -w 
+#!/usr/bin/perl
+# $Id: iswindowstyle.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+#
 
 use Win32::GuiTest qw/:FUNC :LVS/;
 

@@ -1,9 +1,8 @@
-#! perl -w
-# vim: ts=4
-#
-# $Id: waitwindow.pl,v 1.1 2004/03/16 01:37:20 ctrondlp Exp $
+#!/usr/bin/perl
+# $Id: waitwindow.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
 # Slightly modified from version submitted by anonymous contributor.
 #
+
 use strict;
 use Win32::GuiTest qw/
 	IsWindow

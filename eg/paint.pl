@@ -1,3 +1,7 @@
+#!/usr/bin/perl
+# $Id: paint.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+#
+
 use Win32::GuiTest qw(FindWindowLike SetForegroundWindow 
     SendMouse);
 
