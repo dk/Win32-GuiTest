@@ -233,3 +233,14 @@
 
     - Included initial script recording application; which is still a
       work-in-progress. (DKP)
+
+TBD.
+
+     - Add more examles in eg directory (SZABGAB)
+
+     - Tests using Test::More now (SZABGAB)
+
+     - Some more documentation (SZABGAB)
+
+
+
