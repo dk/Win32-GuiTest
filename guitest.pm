@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.21 2004/11/15 17:27:59 ctrondlp Exp $
+# $Id: guitest.pm,v 1.22 2004/11/17 00:21:52 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -119,8 +119,9 @@ require AutoLoader;
         TabCtrl_SetCurSel TabCtrl_GetItemCount WMGetText WMSetText WaitWindow
         WaitWindowLike SendRawKey WindowFromPoint
         GetSubMenu GetMenuItemIndex GetMenuItemId GetMenuItemCount GetMenuItemInfo 
-        GetListViewContents SelListViewItem SelListViewItemText GetTabItems
-	SelTabItem SelTabItemText SelTreeViewItemPath MouseMoveWheel
+        GetListViewContents SelListViewItem SelListViewItemText IsListViewItemSel
+	GetTabItems SelTabItem SelTabItemText IsTabItemSel
+        SelTreeViewItemPath MouseMoveWheel
 
     )],
     VARS => [ qw(
@@ -970,6 +971,12 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 
 =cut
 
+=item IsListViewItemSel($window, $txt)
+
+   Determines if the specified list view item is selected.
+
+=cut
+
 =item GetTabItems($window)
 
     Returns a list of a tab control's labels.
@@ -985,6 +992,12 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 =item SelTabItemText($window, $txt)
 
     Selects a tab based off text label.
+
+=cut
+
+=item IsTabItemSel($window, $txt)
+
+   Determines if the specified tab item is selected.
 
 =cut
 

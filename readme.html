@@ -109,8 +109,8 @@ include more GUI testing functions).</p>
    <a href="http://groups.yahoo.com/group/perlguitest/join">http://groups.yahoo.com/group/perlguitest/join</a></p>
 <p>Also, an initial version of a script recording application has been written to use with this 
 module.  A copy of it may be found with this distribution (Recorder\Win32GuiTest.exe)
-or can be obtained at <a href="http://dkp.itgo.com">http://dkp.itgo.com</a></p>
-<p>If the documentation of the functions is not satisfactory, you can 
+or can be obtained at <a href="http://sourceforge.net/projects/winguitest">http://sourceforge.net/projects/winguitest</a></p>
+<p>If the documentation of these functions is not satisfactory, you can 
 try running a search on <a href="http://msdn.microsoft.com/">http://msdn.microsoft.com/</a> using the name of the function. 
 Some of these functions are described there.</p>
 <p>The alternate distribution of this module - the one you are looking at now - has
@@ -243,7 +243,7 @@ containing one or more of the following substrings:
         SendRButtonUp()
         SendRButtonDown()
         SendMouseMoveRel(x,y)
-    SendMouseMoveAbs(x,y)</pre>
+        SendMouseMoveAbs(x,y)</pre>
 </dd>
 <p></p>
 <dt><strong><a name="item_mousemoveabspix"><code>MouseMoveAbsPix($x,$y)</code></a></strong><br />
@@ -283,7 +283,7 @@ undef matches everything.</p>
 </dt>
 <dd>
 <pre>
-    Returns the Id of the specified window.</pre>
+    Returns the control Id of the specified window.</pre>
 </dd>
 <dt><strong><a name="item_pushbutton"><code>PushButton($button[,$delay])</code></a></strong><br />
 </dt>
@@ -736,6 +736,12 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 <pre>
     Selects an item in the list view based off text.</pre>
 </dd>
+<dt><strong><a name="item_islistviewitemsel">IsListViewItemSel($window, $txt)</a></strong><br />
+</dt>
+<dd>
+<pre>
+   Determines if the specified list view item is selected.</pre>
+</dd>
 <dt><strong><a name="item_gettabitems"><code>GetTabItems($window)</code></a></strong><br />
 </dt>
 <dd>
@@ -753,6 +759,12 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 <dd>
 <pre>
     Selects a tab based off text label.</pre>
+</dd>
+<dt><strong><a name="item_istabitemsel">IsTabItemSel($window, $txt)</a></strong><br />
+</dt>
+<dd>
+<pre>
+   Determines if the specified tab item is selected.</pre>
 </dd>
 <dt><strong><a name="item_seltreeviewitempath">SelTreeViewItemPath($window, $path)</a></strong><br />
 </dt>

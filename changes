@@ -246,4 +246,4 @@ TBD.
        SelListViewItem, SelListViewItemText, GetTabItems,
        SelTabItem, SelTabItemText, SelTreeViewItemPath (DKP)
      - Added basic mouse wheel support: MouseMoveWheel (DKP)
-
+     - Added IsListViewItemSel and IsTabItemSel (DKP)

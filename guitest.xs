@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.12 2004/11/14 02:31:34 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.13 2004/11/17 00:21:52 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -44,9 +44,11 @@ char g_szBuffer[MAX_DATA_BUF+1] = {NUL};
 UINT WM_LV_GETTEXT = 0;
 UINT WM_LV_SELBYINDEX = 0;
 UINT WM_LV_SELBYTEXT = 0;
+UINT WM_LV_ISSEL = 0;
 UINT WM_TC_GETTEXT = 0;
 UINT WM_TC_SELBYINDEX = 0;
 UINT WM_TC_SELBYTEXT = 0;
+UINT WM_TC_ISSEL = 0;
 UINT WM_TV_SELBYPATH = 0;
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
@@ -116,8 +118,22 @@ HTREEITEM GetTVItemByName(HWND hWnd, HTREEITEM hItem,
 
     // Not found.
     return NULL;
-} 
+}
 
+int TabCtrl_GetItemText(HWND hwnd, int iItem, char *lpString, size_t sizeStr)
+{
+	TCITEM tcItem;
+	tcItem.pszText = lpString;
+	tcItem.cchTextMax = sizeStr;
+	tcItem.mask = TCIF_TEXT;
+	
+	assert(lpString != NULL);
+	*lpString = NUL;	
+	TabCtrl_GetItem(g_hWnd, iItem, &tcItem);
+
+	return (int)strlen(lpString);
+}
+		
 #define pCW ((CWPSTRUCT*)lParam)
 
 // Hook procedure, does most of the work for various 32bit custom control
@@ -163,6 +179,24 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		::UnhookWindowsHookEx( g_hHook );
+	} else if (pCW->message == WM_LV_ISSEL) {
+		char szItem[MAX_DATA_BUF+1] = "";
+		int iCount = ListView_GetItemCount(g_hWnd);
+		g_bRetVal = FALSE; // Assume false
+		// Are there any selected?	
+		if (ListView_GetSelectedCount(g_hWnd) > 0) {
+			// Look for item
+			for (int i = 0; i < iCount; i++) {
+				ListView_GetItemText(g_hWnd, i, 0, szItem, MAX_DATA_BUF);
+				if (lstrcmpi(g_szBuffer, szItem) == 0) {
+					// Found it, determine if currently selected
+					if (ListView_GetItemState(g_hWnd, i, LVIS_SELECTED) & LVIS_SELECTED) {
+						g_bRetVal = TRUE;
+					}
+				}
+			}
+		}
+		::UnhookWindowsHookEx( g_hHook );
 	} else if (pCW->message == WM_TV_SELBYPATH) {
 	//// Tree Views ////
 		char szName[MAX_DATA_BUF+1] = "";
@@ -198,14 +232,8 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 		::UnhookWindowsHookEx( g_hHook );
 	} else if (pCW->message == WM_TC_GETTEXT) {
 	//// Tab Control ////
-		TCITEM tcItem;
 		int iItem = pCW->wParam;
-		*g_szBuffer = NUL;
-		tcItem.pszText = g_szBuffer;
-		tcItem.cchTextMax = MAX_DATA_BUF;
-		tcItem.mask = TCIF_TEXT;
-
-		g_bRetVal = TabCtrl_GetItem(g_hWnd, iItem, &tcItem);
+		g_bRetVal = (BOOL)TabCtrl_GetItemText(g_hWnd, iItem, g_szBuffer, MAX_DATA_BUF);
 		::UnhookWindowsHookEx( g_hHook );
 	} else if (pCW->message == WM_TC_SELBYINDEX) {
 		int iItem = pCW->wParam;
@@ -216,20 +244,26 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 		}
 		::UnhookWindowsHookEx( g_hHook );
 	} else if (pCW->message == WM_TC_SELBYTEXT) {
-		TCITEM tcItem;
 		char szName[MAX_DATA_BUF+1] = "";
 		int iCount = TabCtrl_GetItemCount(g_hWnd);
-		tcItem.pszText = szName;
-		tcItem.cchTextMax = MAX_DATA_BUF;
-		tcItem.mask = TCIF_TEXT;
 		for (int i = 0; i < iCount; i++) {
-			TabCtrl_GetItem(g_hWnd, i, &tcItem);
+			TabCtrl_GetItemText(g_hWnd, i, szName, MAX_DATA_BUF);
 			// Is Tab item we want?
 			if (lstrcmpi(g_szBuffer, szName) == 0) {
 				// ... then set focus to it
 				TabCtrl_SetCurFocus(g_hWnd, i);
 				break;
 			}
+		}
+		::UnhookWindowsHookEx( g_hHook );
+	} else if (pCW->message == WM_TC_ISSEL) {
+		char szName[MAX_DATA_BUF+1] = "";
+		int iItem = TabCtrl_GetCurFocus(g_hWnd);
+		g_bRetVal = FALSE; // Assume false
+		TabCtrl_GetItemText(g_hWnd, iItem, szName, MAX_DATA_BUF);
+		if (lstrcmpi(g_szBuffer, szName) == 0) {
+			// Yes, selected
+			g_bRetVal = TRUE;
 		}
 		::UnhookWindowsHookEx( g_hHook );
 	}
@@ -260,11 +294,6 @@ int GetLVItemText(HWND hWnd, int iItem, char *lpString)
 	lstrcpy(lpString, g_szBuffer);
 
 	return (int)strlen(lpString);
-}
-
-int GetLVItemCount(HWND hWnd)
-{
-	return ListView_GetItemCount(hWnd);
 }
 
 BOOL SelLVItem(HWND hWnd, int iItem)
@@ -300,6 +329,29 @@ BOOL SelLVItemText(HWND hWnd, char *lpItem)
 	SendMessage(hWnd, WM_LV_SELBYTEXT, 0, 0);
 
 	return g_bRetVal;
+}
+
+BOOL IsLVItemSel(HWND hWnd, char *lpItem)
+{
+	g_hWnd = hWnd;
+
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+	 			g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL)
+		return FALSE;
+	
+	if (WM_LV_ISSEL == NULL)
+		WM_LV_ISSEL = RegisterWindowMessage("WM_LV_ISSEL_RM");
+
+	lstrcpy(g_szBuffer, lpItem);
+	SendMessage(hWnd, WM_LV_ISSEL, 0, 0);
+
+	return g_bRetVal;
+}
+
+int GetLVItemCount(HWND hWnd)
+{
+	return ListView_GetItemCount(hWnd);
 }
 
 BOOL SelTVItemPath(HWND hWnd, char *lpPath)
@@ -373,6 +425,24 @@ BOOL SelTCItemText(HWND hWnd, char *szText)
 	return g_bRetVal;
 }
 
+
+BOOL IsTCItemSel(HWND hWnd, char *lpItem)
+{
+	g_hWnd = hWnd;
+
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+	 			g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL)
+		return FALSE;
+	
+	if (WM_TC_ISSEL == NULL)
+		WM_TC_ISSEL = RegisterWindowMessage("WM_TC_ISSEL_RM");
+
+	lstrcpy(g_szBuffer, lpItem);
+	SendMessage(hWnd, WM_TC_ISSEL, 0, 0);
+
+	return g_bRetVal;
+}
 
 int GetTCItemCount(HWND hWnd)
 {
@@ -778,6 +848,15 @@ CODE:
 OUTPUT:
 	RETVAL
 
+BOOL
+IsListViewItemSel(hWnd, lpItem)
+	HWND hWnd
+	char *lpItem
+CODE:
+	RETVAL = IsLVItemSel(hWnd, lpItem);
+OUTPUT:
+	RETVAL
+
 void
 GetTabItems(hWnd)
 	HWND hWnd
@@ -804,6 +883,15 @@ SelTabItemText(hWnd, lpItem)
 	char *lpItem
 CODE:
 	RETVAL = SelTCItemText(hWnd, lpItem);
+OUTPUT:
+	RETVAL
+
+BOOL
+IsTabItemSel(hWnd, lpItem)
+	HWND hWnd
+	char *lpItem
+CODE:
+	RETVAL = IsTCItemSel(hWnd, lpItem);
 OUTPUT:
 	RETVAL
 
