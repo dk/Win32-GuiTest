@@ -1,5 +1,5 @@
 NAME
-    Win32::GuiTest (alternate distribution) - Perl GUI Test Utilities
+    Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.
 
 SYNOPSIS
       use Win32::GuiTest qw(FindWindowLike GetWindowText 
@@ -424,6 +424,9 @@ DESCRIPTION
 
     bool DibSect::Destroy()
             Destroys the contents of the DIB section.
+
+VERSION
+        1.50.1-ad
 
 CHANGES
     Moved to the CHANGES file.

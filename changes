@@ -211,7 +211,7 @@
     - Added use of AttachWin() for those functions that require the
       window to be attached to the calling thread's message queue.
 
-1.50.1-ad ??? ??? ?? ??:??:?? ????
+1.50.1-ad Thu Apr 08 20:45:00 2004
 
     - Fixed crash with MenuSelect when used on MDI applications with documents
       maximized. (DKP)
@@ -221,6 +221,3 @@
     - Added WindowFromPoint function and wptr.pl example script. (DKP)
 
     - Added the MouseClick function and documentation. (DKP)
-
-
-

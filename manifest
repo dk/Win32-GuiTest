@@ -23,6 +23,7 @@ eg/tab.pl
 eg/waitwindow.pl
 eg/which.pl
 eg/winbmp.pl
+eg/wptr.pl
 guitest.pm
 guitest.xs
 lib/win32/guitest/cmd.pm
@@ -30,14 +31,11 @@ lib/win32/guitest/guitest.pc
 makedist.pl
 makefile.pl
 makepod.bat
-manifest
+MANIFEST
 manifest.skip
 perlobject.map
 readme
 readme.html
-t/basic.t
-t/cpl.t
-t/which.t
 typemap
 win32-guitest.ppd
 win32-guitest.tar.gz

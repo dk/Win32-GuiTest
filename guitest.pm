@@ -1,10 +1,10 @@
 #
-# $Id: guitest.pm,v 1.7 2004/04/02 02:27:18 ctrondlp Exp $
+# $Id: guitest.pm,v 1.8 2004/04/09 02:09:10 ctrondlp Exp $
 #
 
 =head1 NAME
 
-Win32::GuiTest (alternate distribution) - Perl GUI Test Utilities
+Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.
 
 =head1 SYNOPSIS
 
@@ -142,7 +142,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.50';
+$VERSION = '1.50.1-ad';
 
 $debug = 0;
 
@@ -909,9 +909,10 @@ Destroys the contents of the DIB section.
 
 1;
 __END__
+
 =head1 VERSION
 
-    1.4
+    1.50.1-ad
 
 =head1 CHANGES
 
