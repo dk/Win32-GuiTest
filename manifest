@@ -19,6 +19,8 @@ eg/showcpl.pl
 eg/showmouse.pl
 eg/showwin.pl
 eg/spy--.pl
+eg/spy.pl
+eg/start.pl
 eg/tab.pl
 eg/waitwindow.pl
 eg/which.pl
