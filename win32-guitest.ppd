@@ -1,6 +1,6 @@
 <SOFTPKG NAME="Win32-GuiTest" VERSION="1,50,3-ad,0">
     <TITLE>Win32-GuiTest</TITLE>
-    <ABSTRACT>Alternate distribution of Perl GUI Test Utilities.</ABSTRACT>
+    <ABSTRACT>Perl GUI Test Utilities.</ABSTRACT>
     <AUTHOR>Dennis K. Paulsen (ctrondlp@cpan.org)</AUTHOR>
     <IMPLEMENTATION>
         <OS NAME="MSWin32" />

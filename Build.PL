@@ -2,15 +2,14 @@ use strict;
 use warnings;
 use Module::Build;
 
-# $Id: Build.PL,v 1.2 2004/07/15 07:09:24 szabgab Exp $
+# $Id: Build.PL,v 1.3 2005/02/08 19:02:43 ctrondlp Exp $
 
 # preliminary version, not working yet.
 
 my $builder = Module::Build->new(
 	module_name         => 'Win32::GuiTest',
 	license             => 'perl',
-	dist_author         => 'Dennis K. Paulsen <ctrondlpaulsden@yahoo.com>',  # Alternate distribution
-	#dist_author         =>  'Ernesto Guisado <erngui@acm.org>', # original author
+	dist_author         => 'Dennis K. Paulsen <ctrondlp@cpan.org>, Ernesto Guisado <erngui@acm.org>',
 	dist_version_from   => 'guitest.pm',
 	dynamic_config      => 1,
 #	dist_abstract       => '', # should be fetched from the dist_version_from

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Id: makefile.pl,v 1.5 2005/02/03 01:02:19 ctrondlp Exp $
+# $Id: makefile.pl,v 1.6 2005/02/08 19:03:08 ctrondlp Exp $
 #
 
 use ExtUtils::MakeMaker;
@@ -25,8 +25,7 @@ my @make = (
 # Add additional settings for the creation of PPD files
 if ($ExtUtils::MakeMaker::VERSION >= 5.43) {
     push @make, 'ABSTRACT_FROM' => 'guitest.pm';
-    push @make, 'AUTHOR' => 'Dennis K. Paulsen (ctrondlp@cpan.org)'; # Alternate distribution
-#    push @make, 'AUTHOR' => 'Ernesto Guisado (erngui@acm.org)';
+    push @make, 'AUTHOR' => 'Dennis K. Paulsen (ctrondlp@cpan.org), Ernesto Guisado (erngui@acm.org)';
 }
 
 WriteMakefile(@make);

@@ -1,5 +1,5 @@
 NAME
-    Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.
+    Win32::GuiTest - Perl GUI Test Utilities.
 
 SYNOPSIS
       use Win32::GuiTest qw(FindWindowLike GetWindowText 
@@ -72,10 +72,9 @@ DESCRIPTION
     running a search on http://msdn.microsoft.com/ using the name of the
     function. Some of these functions are described there.
 
-    The alternate distribution of this module - the one you are looking at
-    now - has its own CVS repository at
-    http://sourceforge.net/projects/winguitest Patches to both the code and
-    the documentation are welcome.
+    This distribution of the module - the one you are looking at now - has
+    its own CVS repository at http://sourceforge.net/projects/winguitest
+    Patches to both the code and the documentation are welcome.
 
   Functions
     $debug

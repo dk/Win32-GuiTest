@@ -1,10 +1,10 @@
 #
-# $Id: guitest.pm,v 1.29 2005/02/03 01:02:19 ctrondlp Exp $
+# $Id: guitest.pm,v 1.30 2005/02/08 19:03:08 ctrondlp Exp $
 #
 
 =head1 NAME
 
-Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.
+Win32::GuiTest - Perl GUI Test Utilities.
 
 =head1 SYNOPSIS
 
@@ -80,7 +80,7 @@ If the documentation of these functions is not satisfactory, you can
 try running a search on http://msdn.microsoft.com/ using the name of the function. 
 Some of these functions are described there.
 
-The alternate distribution of this module - the one you are looking at now - has
+This distribution of the module - the one you are looking at now - has
 its own CVS repository at http://sourceforge.net/projects/winguitest
 Patches to both the code and the documentation are welcome.
 
