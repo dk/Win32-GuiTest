@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Module::Build;
 
-# $Id: Build.PL,v 1.1 2004/07/15 06:47:27 szabgab Exp $
+# $Id: Build.PL,v 1.2 2004/07/15 07:09:24 szabgab Exp $
 
 # preliminary version, not working yet.
 
@@ -12,10 +12,12 @@ my $builder = Module::Build->new(
 	dist_author         => 'Dennis K. Paulsen <ctrondlpaulsden@yahoo.com>',  # Alternate distribution
 	#dist_author         =>  'Ernesto Guisado <erngui@acm.org>', # original author
 	dist_version_from   => 'guitest.pm',
-#	dist_abstract       => 'Managing a directory structure on an HTTP server',
+	dynamic_config      => 1,
+#	dist_abstract       => '', # should be fetched from the dist_version_from
 #	create_makefile_pl  => 'traditional',
 #	create_readme       => 1,
 #	script_files        => ['eg/spy.pl'],
+	xs_files            => { 'guitest.xs' => 'guitest.cpp' },
 #	requires            => {
 #		'Test::More'                => 0.47,
 #	},
@@ -28,7 +30,6 @@ __END__
 
 my @make = (
     'OBJECT'    => 'GuiTest$(OBJ_EXT) DibSect$(OBJ_EXT)'  ,
-    'XS'	=> { 'guitest.xs' => 'guitest.cpp' },
     'TYPEMAPS'  => ['perlobject.map' ],
 #    'XSOPT' => '-c++'
 #    'CCFLAGS' => '-MD -DWIN32 -Z7 -DDEBUG -D_DEBUG',
