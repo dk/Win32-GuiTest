@@ -218,6 +218,6 @@
 
     - Implemented pertinent parts of Jonathan A's patch for CygWin Perl. (DKP)
 
-    - Added WindowFromPoint function. (DKP)
+    - Added WindowFromPoint function and wptr.pl example script. (DKP)
 
 
