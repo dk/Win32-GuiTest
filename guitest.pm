@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.17 2004/07/22 20:01:23 szabgab Exp $
+# $Id: guitest.pm,v 1.18 2004/07/28 11:45:12 szabgab Exp $
 #
 
 =head1 NAME
@@ -151,8 +151,9 @@ require AutoLoader;
         VK_RSHIFT VK_LCONTROL VK_RCONTROL VK_LMENU VK_RMENU VK_PROCESSKEY VK_ATTN
         VK_CRSEL VK_EXSEL VK_EREOF VK_PLAY VK_ZOOM VK_NONAME VK_PA1 VK_OEM_CLEAR
         KEYEVENTF_EXTENDEDKEY KEYEVENTF_KEYUP
-    )]
+    )],
 );
+#getLW
 
 @EXPORT_OK= ();
 { my $ref;

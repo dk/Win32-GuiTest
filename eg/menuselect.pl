@@ -1,8 +1,7 @@
 #!perl -w
-# $Id: menuselect.pl,v 1.7 2004/07/22 23:35:18 ctrondlp Exp $
+# $Id: menuselect.pl,v 1.8 2004/07/28 11:45:13 szabgab Exp $
 
 # Example how to get the names of the menus
-# Does not work yet as the backend is not there yet !
 
 use strict;
 
@@ -26,9 +25,39 @@ print Dumper \%h;
 %h = GetMenuItemInfo($submenu, 4);   # Separator in the File menu
 print Dumper \%h;
 
-
+print "===================\n";
+menu_parse($menu);
 
 #MenuSelect("&Archivo|&Salir");
 
 # Close the menu and notepad
 SendKeys("{ESC}%{F4}");
+
+
+# this function receives a menu id and prints as much information about that menu and 
+# all its submenues as it can
+# One day we might include this in the distributionor in some helper module
+sub menu_parse {
+	my ($menu, $depth) = @_;
+	$depth ||= 0;
+	
+	foreach my $i (0..GetMenuItemCount($menu)-1) {
+		my %h = GetMenuItemInfo($menu, $i);
+		print "   " x $depth;
+		print "$i  ";
+		print $h{text} if $h{type} and $h{type} eq "string"; 
+		print "------" if $h{type} and $h{type} eq "separator"; 
+		print "UNKNOWN" if not $h{type};
+		print "\n";
+		
+		my $submenu = GetSubMenu($menu, $i);
+		if ($submenu) {
+			menu_parse($submenu, $depth+1);
+		}
+	}
+}
+
+
+SendKeys("%{F4}");
+
+

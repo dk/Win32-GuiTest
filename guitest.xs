@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.10 2004/07/22 20:04:05 szabgab Exp $
+ *  $Id: guitest.xs,v 1.11 2004/07/28 11:45:12 szabgab Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -17,6 +17,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "dibsect.h"
+/* #include "afxwin.h" */
 
 
 #ifdef __cplusplus
@@ -994,7 +995,7 @@ INIT:
 PPCODE:
     memset(buff, 0, sizeof(buff));
     minfo.cbSize = sizeof(MENUITEMINFO);
-    minfo.fMask = MIIM_DATA | MIIM_TYPE;
+    minfo.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_TYPE | MIIM_STATE;
     minfo.dwTypeData = buff;
     minfo.cch = sizeof(buff);
 
@@ -1006,11 +1007,25 @@ PPCODE:
     	    r = strlen(minfo.dwTypeData);
             XPUSHs(sv_2mortal(newSVpv("text", 4)));
             XPUSHs(sv_2mortal(newSVpv(minfo.dwTypeData, r)));
-	} 
-       	if (minfo.fType == MFT_SEPARATOR) { 
+	} else if (minfo.fType == MFT_SEPARATOR) { 
             XPUSHs(sv_2mortal(newSVpv("separator", 9)));
+	} else {
+            XPUSHs(sv_2mortal(newSVpv("unknown", 7)));
 	}
+        XPUSHs(sv_2mortal(newSVpv("fstate", 6)));
+        XPUSHs(sv_2mortal(newSViv(minfo.fState)));
+        XPUSHs(sv_2mortal(newSVpv("ftype", 5)));
+        XPUSHs(sv_2mortal(newSViv(minfo.fType)));
     }
+
+#void
+#getLW(hWnd)
+#    HWND hWnd;
+#INIT:
+#   CWnd myWnd;
+#PPCODE:
+#    myWnd = CWnd::FromHandle(hWnd);
+#    XPUSHs(sv_2mortal(newSVpv("type", 4)));
 
 
 int 
