@@ -1,8 +1,8 @@
 #!perl -w
-# $Id: menuselect.pl,v 1.6 2004/07/22 20:01:24 szabgab Exp $
+# $Id: menuselect.pl,v 1.7 2004/07/22 23:35:18 ctrondlp Exp $
 
-# Example how to get the names of the menues
-# Dows not work yet as the backend is not there yet !
+# Example how to get the names of the menus
+# Does not work yet as the backend is not there yet !
 
 use strict;
 
