@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.14 2004/07/15 19:35:17 szabgab Exp $
+# $Id: guitest.pm,v 1.15 2004/07/19 20:20:03 szabgab Exp $
 #
 
 =head1 NAME
@@ -116,6 +116,10 @@ require AutoLoader;
         SetWindowPos ShowWindow TabCtrl_SetCurFocus TabCtrl_GetCurFocus
         TabCtrl_SetCurSel TabCtrl_GetItemCount WMGetText WMSetText WaitWindow
         WaitWindowLike SendRawKey WindowFromPoint
+        GetSubMenu
+        GetMenuItemIndex
+        GetMenuItemId
+
     )],
     VARS => [ qw(
         $debug
@@ -576,6 +580,17 @@ sub FindAndCheck {
     }
 }
 
+=item GetMenu
+
+Using the corresponding library function (see MSDN) it returns a MenuID number
+
+= item GetMenuItemIndex($curr, $menu);
+
+$curr is a MenuId and $menu is the (localized !) name of the menu including the hot
+key:  "Rep&eate"  
+Returns the index of the menu item (-1 if not found) 
+
+GetMenuItemCount
 
 =item MenuSelect($menupath,$window,$menu)
 
@@ -610,10 +625,10 @@ sub MenuSelectItem {
     my $curr = $start;
     DbgShow "'$items'\n";
     my @menus = split('\|', $items);
-    for (@menus) {
-        DbgShow "'$_'\n";
+    foreach my $menu (@menus) {
+        DbgShow "'$menu'\n";
         # Look for menu item in current menu level
-        $mi = GetMenuItemIndex($curr, $_);
+        $mi = GetMenuItemIndex($curr, $menu);
         return 0 if $mi == -1; # Error, item not found
         # Go to next menu level
         my $next = GetSubMenu($curr, $mi);
@@ -730,6 +745,9 @@ Returns a handle to the desktop window
 =item HWND GetWindow(hwnd,uCmd) *
 
 =item SV * GetWindowText(hwnd) *
+
+Get the text name of the window as shown on the top of it.
+Beware, this is text depends on localization.
 
 =item $class = GetClassName(hwnd) *
 
@@ -961,6 +979,80 @@ Destroys the contents of the DIB section.
 
 1;
 __END__
+
+
+=head1 DEVELOPMENT
+
+If you would like to participate in the development of this module there are 
+several thing that need to be done. For some of them you only need Perl
+and the latest source of the module from CVS for others you'll also need to 
+have a C++ compiler.
+
+To get the lates source code you need a CVS client and then do the following:
+
+cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest login
+cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest co Win32-GuiTest
+
+See more detailed explanations here http://sourceforge.net/projects/winguitest/
+
+
+To setup a development environment for compiling the C++ code you can either buy
+Visual Studio with Visual C++ or you can download a few things free of charge from 
+Microsoft. There might be other ways too we have not explored.
+
+The instructions to get the free environment are here:
+
+From http://www.microsoft.com/ download and install:
+
+ 1) Microsoft .NET Framework Version 1.1 Redistributable Package
+ 2) .NET Framework SDK Version 1.1
+
+
+This is not enough as there are a number of header files and libraries that are 
+not included in these distributions. You can get them from Microsoft in two additional
+downloads. For these you will have to be using Internet Explorer.
+Visit 
+
+  http://www.microsoft.com/msdownload/platformsdk/sdkupdate/
+
+and install 
+
+ 1) Core SDK
+ 2) Microsoft Data Access Components 2.7
+
+
+Before you can compile you'll have to open a command prompt and execute the
+C<sdkvars.bat> script from the.NET SDK that will set a number of environment
+variables. In addition you'll have to run the C<setenv.bat> you got with the 
+Core SDK (and located in C:\Program Files\Microsoft SDK) with the appropriate
+parameters. For me this was /XP32 /RETAIL
+
+After this you will probably be able to do the normal cycle:
+perl makefile.pl
+nmake
+nmake test
+
+
+=head1 TODO
+
+Here are a few items where help would be welcome. 
+
+=head2 Perl only
+
+ Improve Tests
+ Improve documentation
+ Add more examples and explain them
+
+=head2 C++ compiler needed
+
+ Add more calls to the C++ backend
+ Fix current calls
+
+
+ 
+
+=back
+
 
 =head1 VERSION
 
