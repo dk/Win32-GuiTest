@@ -1,5 +1,5 @@
 #!perl -w
-# $Id: menuselect.pl,v 1.5 2004/07/21 17:47:31 szabgab Exp $
+# $Id: menuselect.pl,v 1.6 2004/07/22 20:01:24 szabgab Exp $
 
 # Example how to get the names of the menues
 # Dows not work yet as the backend is not there yet !
@@ -12,10 +12,20 @@ system "start notepad";
 sleep 1;
 
 my $menu = GetMenu(GetForegroundWindow());
-print "$menu\n";
-print GetSubMenu($menu, 0),"\n";
+print "Menu: $menu\n";
+my $submenu = GetSubMenu($menu, 0);
+print "Submenu: $submenu\n";
 print "Count:", GetMenuItemCount($menu), "\n";
-exit;
+
+use Data::Dumper;
+
+my %h = GetMenuItemInfo($menu, 1);   # Edit on the main menu
+print Dumper \%h;
+%h = GetMenuItemInfo($submenu, 1);   # Open in the File menu
+print Dumper \%h;
+%h = GetMenuItemInfo($submenu, 4);   # Separator in the File menu
+print Dumper \%h;
+
 
 
 #MenuSelect("&Archivo|&Salir");

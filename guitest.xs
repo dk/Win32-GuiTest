@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.8 2004/07/21 21:33:55 szabgab Exp $
+ *  $Id: guitest.xs,v 1.9 2004/07/22 20:01:23 szabgab Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -981,6 +981,37 @@ CODE:
     RETVAL = GetSubMenu(hMenu, nPos);
 OUTPUT:
     RETVAL
+
+# experimental code by SZABGAB
+
+void
+GetMenuItemInfo(hMenu, uItem)
+    HMENU hMenu;
+    UINT uItem;
+INIT:
+    MENUITEMINFO minfo;
+    char buff[256] = "";   /* Menu Data Buffer */
+PPCODE:
+    memset(buff, 0, sizeof(buff));
+    minfo.cbSize = sizeof(MENUITEMINFO);
+    minfo.fMask = MIIM_DATA | MIIM_TYPE;
+    minfo.dwTypeData = buff;
+    minfo.cch = sizeof(buff);
+
+    if (GetMenuItemInfo(hMenu, uItem, TRUE, &minfo)) {
+        XPUSHs(sv_2mortal(newSVpv("type", 4)));
+       	if (minfo.fType == MFT_STRING) { 
+            XPUSHs(sv_2mortal(newSVpv("string", 6)));
+    	    int r;
+    	    r = strlen(minfo.dwTypeData);
+            XPUSHs(sv_2mortal(newSVpv("text", 4)));
+            XPUSHs(sv_2mortal(newSVpv(minfo.dwTypeData, r)));
+	} 
+       	if (minfo.fType == MFT_SEPARATOR) { 
+            XPUSHs(sv_2mortal(newSVpv("separator", 9)));
+	}
+    }
+
 
 int 
 GetMenuItemCount(hMenu)

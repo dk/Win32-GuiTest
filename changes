@@ -237,10 +237,10 @@
 TBD.
 
      - Add more examles in eg directory (SZABGAB)
-
      - Tests using Test::More now (SZABGAB)
-
      - Some more documentation (SZABGAB)
-
+     - Explanation how to setup development environment (SZABGAB)
+     - A number of new exported methods regarding Menu items
+       such as GetMenuItemInfo 
 
 

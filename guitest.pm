@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.16 2004/07/21 21:33:55 szabgab Exp $
+# $Id: guitest.pm,v 1.17 2004/07/22 20:01:23 szabgab Exp $
 #
 
 =head1 NAME
@@ -122,6 +122,7 @@ require AutoLoader;
         GetMenuItemIndex
         GetMenuItemId
 	GetMenuItemCount
+	GetMenuItemInfo
 
     )],
     VARS => [ qw(
@@ -607,6 +608,18 @@ Simple Examples:
 
     # Exit foreground application through system menu
     MenuSelect("&Close", 0, GetSystemMenu(GetForegroundWindow(), FALSE));
+
+=item GetMenuItemInfo($menuHndl, $cnt)
+
+Receives a menu handler (one we got from GetMenu or GetSubMenu) and
+a number (which is the location of the item within the given menu).
+
+Returns a hash of which there are currently 2 keys:
+type can be either "string" or "separator"  - this is the type of the menu item
+text is the visible text of the menu item (provided only for "string" type)
+
+WARNING: This is an experimental function. Its behavior might change.
+ 
 
 =cut
 
