@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.15 2004/11/20 16:00:27 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.16 2004/12/11 16:20:54 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -1177,7 +1177,9 @@ HWND
 SetFocus(hWnd)
     HWND hWnd
     CODE:
+  		AttachWin(hWnd, TRUE);
         RETVAL = SetFocus(hWnd);
+		AttachWin(hWnd, FALSE);
     OUTPUT:
         RETVAL
 

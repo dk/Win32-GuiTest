@@ -247,3 +247,5 @@ TBD.
        SelTabItem, SelTabItemText, SelTreeViewItemPath (DKP)
      - Added basic mouse wheel support: MouseMoveWheel (DKP)
      - Added IsListViewItemSel and IsTabItemSel (DKP)
+     - Updated SetFocus routine with AttachWin code (DKP)
+
