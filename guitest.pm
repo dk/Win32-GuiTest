@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.28 2004/12/23 18:49:44 ctrondlp Exp $
+# $Id: guitest.pm,v 1.29 2005/02/03 01:02:19 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -162,7 +162,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.50.2-ad';
+$VERSION = '1.50.3-ad';
 
 $debug = 0;
 
@@ -1200,7 +1200,7 @@ Here are a few items where help would be welcome.
 
 =head1 VERSION
 
-    1.50.2-ad
+    1.50.3-ad
 
 =head1 CHANGES
 

@@ -1,7 +1,7 @@
 #!perl -w
 BEGIN { $| = 1; }
 
-# $Id: basic.t,v 1.4 2004/07/19 20:17:58 szabgab Exp $
+# $Id: basic.t,v 1.5 2005/02/03 01:02:20 ctrondlp Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -44,6 +44,8 @@ is(@edits, 1, "Edit window found within notepad");
 
 # Get the contents (should be the GuiTest.pm file)
 my $content = WMGetText($edits[0]);
+# Make CRLF into LF
+$content =~ s/\r\n/\n/gs;
 SendKeys("%{F4}");
 open(GUI_FILE, "<guitest.pm");
 my @lines = <GUI_FILE>;

@@ -214,27 +214,27 @@
 1.50.1-ad Thu Apr 08 20:45:00 2004
 
     - Fixed crash with MenuSelect when used on MDI applications with documents
-      maximized. (DKP)
+      maximized. (CTRONDLP)
 
-    - Implemented pertinent parts of Jonathan A's patch for CygWin Perl. (DKP)
+    - Implemented pertinent parts of Jonathan A's patch for CygWin Perl. (CTRONDLP)
 
-    - Added WindowFromPoint function and wptr.pl example script. (DKP)
+    - Added WindowFromPoint function and wptr.pl example script. (CTRONDLP)
 
-    - Added the MouseClick function and documentation. (DKP)
+    - Added the MouseClick function and documentation. (CTRONDLP)
 
 1.50.2-ad Sun May 30 12:40:00 2004
 
     - Push*Button() functions will now correctly not manipulate disabled
-      buttons. (DKP)
+      buttons. (CTRONDLP)
 
-    - Fixed various compiler warnings. (DKP)
+    - Fixed various compiler warnings. (CTRONDLP)
 
-    - Minor updates to the documentation. (DKP)
+    - Minor updates to the documentation. (CTRONDLP)
 
     - Included initial script recording application; which is still a
-      work-in-progress. (DKP)
+      work-in-progress. (CTRONDLP)
 
-TBD.
+1.50.3-ad Wed Feb 02 17:42:00 2005
 
      - Add more examles in eg directory (SZABGAB)
      - Tests using Test::More now (SZABGAB)
@@ -244,8 +244,7 @@ TBD.
        such as GetMenuItemInfo 
      - Added support for some 32bit controls: GetListViewContents, 
        SelListViewItem, SelListViewItemText, GetTabItems,
-       SelTabItem, SelTabItemText, SelTreeViewItemPath (DKP)
-     - Added basic mouse wheel support: MouseMoveWheel (DKP)
-     - Added IsListViewItemSel and IsTabItemSel (DKP)
-     - Updated SetFocus routine with AttachWin code (DKP)
-
+       SelTabItem, SelTabItemText, SelTreeViewItemPath (CTRONDLP)
+     - Added basic mouse wheel support: MouseMoveWheel (CTRONDLP)
+     - Added IsListViewItemSel and IsTabItemSel (CTRONDLP)
+     - Updated SetFocus routine with AttachWin code (CTRONDLP)

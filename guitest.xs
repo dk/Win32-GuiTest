@@ -1,12 +1,12 @@
 /* 
- *  $Id: guitest.xs,v 1.17 2004/12/23 18:49:44 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.18 2005/02/03 01:02:19 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
  *  in Dr.Dobbs <http://www.ddj.com/ddj/1997/careers1/wil2.htm>
  *	
  *  Copyright (c) 1998-2002 by Ernesto Guisado <erngui@acm.org>
- *  Copyright (c) 2004 by Dennis K. Paulsen <ctrondlpaulsden@yahoo.com>
+ *  Copyright (c) 2004 by Dennis K. Paulsen <ctrondlp@cpan.org>
  *
  *  You may distribute under the terms of either the GNU General Public
  *  License or the Artistic License.
