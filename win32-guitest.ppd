@@ -1,10 +1,10 @@
-<SOFTPKG NAME="Win32-GuiTest" VERSION="1,50,1-ad,0">
-	<TITLE>Win32-GuiTest</TITLE>
-	<ABSTRACT>Alternate distribution of Perl GUI Test Utilities.</ABSTRACT>
-	<AUTHOR>Dennis K. Paulsen (ctrondlpaulsden@yahoo.com)</AUTHOR>
-	<IMPLEMENTATION>
-		<OS NAME="MSWin32" />
-		<ARCHITECTURE NAME="MSWin32-x86-multi-thread" />
-		<CODEBASE HREF="Win32-GuiTest.tar.gz"/>
-	</IMPLEMENTATION>
+<SOFTPKG NAME="Win32-GuiTest" VERSION="1,50,2-ad,0">
+    <TITLE>Win32-GuiTest</TITLE>
+    <ABSTRACT>Alternate distribution of Perl GUI Test Utilities.</ABSTRACT>
+    <AUTHOR>Dennis K. Paulsen (ctrondlpaulsden@yahoo.com)</AUTHOR>
+    <IMPLEMENTATION>
+        <OS NAME="MSWin32" />
+        <ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.8" />
+        <CODEBASE HREF="Win32-GuiTest.tar.gz"/>
+    </IMPLEMENTATION>
 </SOFTPKG>
