@@ -1,6 +1,8 @@
-#!/usr/bin/perl
-# $Id: excel.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+#!perl -w
+# $Id: excel.pl,v 1.4 2004/07/19 20:20:58 szabgab Exp $
 #
+
+use strict;
 
 use Win32::GuiTest qw(FindWindowLike GetWindowText SetForegroundWindow);
 
