@@ -513,6 +513,14 @@ DESCRIPTION
 
             SelTreeViewItemPath($window, "Item");
 
+    GetTreeViewSelPath($window)
+           Returns a string containing the path (i.e., "parent|child") of
+           the currently selected tree view item.
+
+           $oldpath = GetTreeViewSelPath($window);
+           SelTreeViewItemPath($window, "Parent|Child");
+           SelTreeViewItemPath($window, $oldpath);
+
   DibSect
     A class to manage a Windows DIB section. Currently limited in
     functionality to 24-bit images. Pulled from old code into GuiTest when I

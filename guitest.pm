@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.25 2004/11/17 21:07:32 ctrondlp Exp $
+# $Id: guitest.pm,v 1.26 2004/11/20 16:00:24 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -33,7 +33,7 @@ Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.
 
     See more details in the DEVELOPMENT section elswhere in this document.
 
-If you are using ActivePerl 5.6 
+If you are using ActivePerl 5.6
 (http://www.activestate.com/Products/ActivePerl/index.html) 
 you can install the binary package I am including instead. You will need 
 to enter PPM (Perl Package Manager) from the command-line. Once you have 
@@ -121,8 +121,7 @@ require AutoLoader;
         GetSubMenu GetMenuItemIndex GetMenuItemId GetMenuItemCount GetMenuItemInfo 
         GetListViewContents SelListViewItem SelListViewItemText IsListViewItemSel
 	GetTabItems SelTabItem SelTabItemText IsTabItemSel
-        SelTreeViewItemPath MouseMoveWheel
-
+        SelTreeViewItemPath GetTreeViewSelPath MouseMoveWheel
     )],
     VARS => [ qw(
         $debug
@@ -1020,6 +1019,17 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
     SelTreeViewItemPath($window, "Machine|Processors");
 
     SelTreeViewItemPath($window, "Item");
+
+=cut
+
+=item GetTreeViewSelPath($window)
+
+   Returns a string containing the path (i.e., "parent|child") of
+   the currently selected tree view item.
+
+   $oldpath = GetTreeViewSelPath($window);
+   SelTreeViewItemPath($window, "Parent|Child");
+   SelTreeViewItemPath($window, $oldpath);
 
 =cut
 

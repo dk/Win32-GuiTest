@@ -74,7 +74,7 @@
     nmake install</pre>
 <pre>
     See more details in the DEVELOPMENT section elswhere in this document.</pre>
-<p>If you are using ActivePerl 5.6 
+<p>If you are using ActivePerl 5.6
 (http://www.activestate.com/Products/ActivePerl/index.html) 
 you can install the binary package I am including instead. You will need 
 to enter PPM (Perl Package Manager) from the command-line. Once you have 
@@ -795,6 +795,19 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 <dd>
 <pre>
     SelTreeViewItemPath($window, &quot;Item&quot;);</pre>
+</dd>
+<dt><strong><a name="item_gettreeviewselpath"><code>GetTreeViewSelPath($window)</code></a></strong><br />
+</dt>
+<dd>
+<pre>
+   Returns a string containing the path (i.e., &quot;parent|child&quot;) of
+   the currently selected tree view item.</pre>
+</dd>
+<dd>
+<pre>
+   $oldpath = GetTreeViewSelPath($window);
+   SelTreeViewItemPath($window, &quot;Parent|Child&quot;);
+   SelTreeViewItemPath($window, $oldpath);</pre>
 </dd>
 </dl>
 <p>

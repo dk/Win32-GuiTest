@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.14 2004/11/17 17:57:31 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.15 2004/11/20 16:00:27 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -50,6 +50,7 @@ UINT WM_TC_SELBYINDEX = 0;
 UINT WM_TC_SELBYTEXT = 0;
 UINT WM_TC_ISSEL = 0;
 UINT WM_TV_SELBYPATH = 0;
+UINT WM_TV_GETSELPATH = 0;
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
@@ -145,7 +146,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 		*g_szBuffer = NUL;
 		int iItem = pCW->wParam;
 		ListView_GetItemText(g_hWnd, iItem, 0, g_szBuffer, MAX_DATA_BUF);
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_LV_SELBYINDEX) {
 		int iCount = ListView_GetItemCount(g_hWnd);
 		int iSel = pCW->wParam;
@@ -159,7 +160,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 		// Select item
 		ListView_SetItemState(g_hWnd, iSel, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 		g_bRetVal = ListView_EnsureVisible(g_hWnd, iSel, FALSE);
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_LV_SELBYTEXT) {
 		char szItem[MAX_DATA_BUF+1] = "";
 		int iCount = ListView_GetItemCount(g_hWnd);
@@ -180,7 +181,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 		}
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_LV_ISSEL) {
 		char szItem[MAX_DATA_BUF+1] = "";
 		int iCount = ListView_GetItemCount(g_hWnd);
@@ -198,7 +199,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 				}
 			}
 		}
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_TV_SELBYPATH) {
 	//// Tree Views ////
 		char szName[MAX_DATA_BUF+1] = "";
@@ -231,12 +232,41 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 		g_bRetVal = hItem ? (BOOL)TreeView_SelectItem(g_hWnd, hItem) : FALSE;
 		TreeView_EnsureVisible(g_hWnd, hItem);
 
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
+	} else if (pCW->message == WM_TV_GETSELPATH) {
+		char szText[MAX_DATA_BUF+1] = "";
+		char szTmp[MAX_DATA_BUF+1] = "";	
+		TVITEM tvItem = {NUL};
+		HTREEITEM hItem = TreeView_GetSelection(g_hWnd);
+		*g_szBuffer = NUL;
+
+		tvItem.mask = TVIF_TEXT;
+		tvItem.pszText = szText;
+		tvItem.cchTextMax = MAX_DATA_BUF;
+		do {
+			tvItem.hItem = hItem;
+			TreeView_GetItem(g_hWnd, &tvItem);
+
+			// Add in child path text if any
+			if (*szTmp)
+				lstrcat(szText, szTmp);
+
+			hItem = TreeView_GetParent(g_hWnd, hItem);
+			if (hItem) {
+				// Has parent, so store delimiter and path text thus far
+				sprintf(szTmp, "|%s", szText);
+			} else {
+				// No parent, so store complete path thus far
+				lstrcpy(szTmp, szText);
+			}
+		} while (hItem);
+		lstrcpy(g_szBuffer, szTmp);	
+		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_TC_GETTEXT) {
 	//// Tab Control ////
 		int iItem = pCW->wParam;
 		g_bRetVal = (BOOL)TabCtrl_GetItemText(g_hWnd, iItem, g_szBuffer, MAX_DATA_BUF);
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_TC_SELBYINDEX) {
 		int iItem = pCW->wParam;
 		g_bRetVal = FALSE; // Assume failure
@@ -244,7 +274,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 			TabCtrl_SetCurFocus(g_hWnd, iItem);
 			g_bRetVal = TRUE;
 		}
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_TC_SELBYTEXT) {
 		char szName[MAX_DATA_BUF+1] = "";
 		int iCount = TabCtrl_GetItemCount(g_hWnd);
@@ -257,7 +287,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 		}
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_TC_ISSEL) {
 		char szName[MAX_DATA_BUF+1] = "";
 		int iItem = TabCtrl_GetCurFocus(g_hWnd);
@@ -267,10 +297,10 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 			// Yes, selected
 			g_bRetVal = TRUE;
 		}
-		::UnhookWindowsHookEx( g_hHook );
+		UnhookWindowsHookEx(g_hHook);
 	}
 
-	return ::CallNextHookEx(g_hHook, code, wParam, lParam);
+	return CallNextHookEx(g_hHook, code, wParam, lParam);
 }
 
 // The following several routines all inject "ourself" into a remote process
@@ -373,6 +403,24 @@ BOOL SelTVItemPath(HWND hWnd, char *lpPath)
 	return g_bRetVal;
 }
 
+int GetTVSelPath(HWND hWnd, char *lpPath)
+{
+	g_hWnd = hWnd;
+
+	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
+				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
+	if (g_hHook == NULL)
+		return FALSE;
+	
+	if (WM_TV_GETSELPATH == NULL)
+		WM_TV_GETSELPATH = RegisterWindowMessage("WM_TV_GETSELPATH_RM");
+	
+	SendMessage(hWnd, WM_TV_GETSELPATH, 0, 0);
+	lstrcpy(lpPath, g_szBuffer);
+
+	return (int)strlen(lpPath);
+}
+
 int GetTCItemText(HWND hWnd, int iItem, char *lpString)
 {	
 	g_hWnd = hWnd;
@@ -388,7 +436,7 @@ int GetTCItemText(HWND hWnd, int iItem, char *lpString)
 		WM_TC_GETTEXT = RegisterWindowMessage("WM_TC_GETTEXT_RM");
 
 	SendMessage(hWnd, WM_TC_GETTEXT, iItem, 0);
-	strcpy(lpString, g_szBuffer);
+	lstrcpy(lpString, g_szBuffer);
 
 	return (int)strlen(lpString);
 }
@@ -420,7 +468,7 @@ BOOL SelTCItemText(HWND hWnd, char *szText)
 		return FALSE;
 	
 	if (WM_TC_SELBYTEXT == NULL)
-		WM_TC_SELBYTEXT = ::RegisterWindowMessage("WM_TC_SELBYTEXT_RM");
+		WM_TC_SELBYTEXT = RegisterWindowMessage("WM_TC_SELBYTEXT_RM");
 	
 	lstrcpy(g_szBuffer, szText);
 	SendMessage(hWnd, WM_TC_SELBYTEXT, 0, 0);
@@ -905,6 +953,16 @@ SelTreeViewItemPath(hWnd, lpPath)
 	char *lpPath
 CODE:
 	RETVAL = SelTVItemPath(hWnd, lpPath);
+OUTPUT:
+	RETVAL
+
+SV*
+GetTreeViewSelPath(hWnd)
+	HWND hWnd
+CODE:
+	char szPath[MAX_DATA_BUF+1] = "";
+	int len = GetTVSelPath(hWnd, szPath);
+	RETVAL = newSVpv(szPath, len);
 OUTPUT:
 	RETVAL
 
