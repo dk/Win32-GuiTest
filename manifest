@@ -1,6 +1,6 @@
 changes
-dibsect.h
 dibsect.cpp
+dibsect.h
 eg/ask.pl
 eg/excel.pl
 eg/excel2.pl
@@ -31,11 +31,15 @@ lib/win32/guitest/guitest.pc
 makedist.pl
 makefile.pl
 makepod.bat
-MANIFEST
-manifest.skip
+MANIFEST			This list of files
+MANIFEST.SKIP
 perlobject.map
+pod2htmd.tmp
+pod2htmi.tmp
 readme
 readme.html
+Recorder/Copying.txt
+Recorder/README.txt
+Recorder/Win32GuiTest.exe
+t/std.t
 typemap
-win32-guitest.ppd
-win32-guitest.tar.gz

@@ -430,7 +430,7 @@ DESCRIPTION
             Destroys the contents of the DIB section.
 
 VERSION
-        1.50.1-ad
+        1.50.2-ad
 
 CHANGES
     Moved to the CHANGES file.
