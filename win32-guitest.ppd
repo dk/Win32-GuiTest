@@ -1,0 +1,10 @@
+<SOFTPKG NAME="Win32-GuiTest" VERSION="1,50,0,0">
+	<TITLE>Win32-GuiTest</TITLE>
+	<ABSTRACT>Perl GUI Test Utilities</ABSTRACT>
+	<AUTHOR>Ernesto Guisado (erngui@acm.org)</AUTHOR>
+	<IMPLEMENTATION>
+		<OS NAME="MSWin32" />
+		<ARCHITECTURE NAME="MSWin32-x86-multi-thread" />
+		<CODEBASE HREF="Win32-GuiTest.tar.gz"/>
+	</IMPLEMENTATION>
+</SOFTPKG>

@@ -1,0 +1,422 @@
+NAME
+    Win32::GuiTest - Perl GUI Test Utilities
+
+SYNOPSIS
+      use Win32::GuiTest qw(FindWindowLike GetWindowText 
+        SetForegroundWindow SendKeys);
+
+      $Win32::GuiTest::debug = 0; # Set to "1" to enable verbose mode
+
+      my @windows = FindWindowLike(0, "^Microsoft Excel", "^XLMAIN\$");
+      for (@windows) {
+          print "$_>\t'", GetWindowText($_), "'\n";
+          SetForegroundWindow($_);
+          SendKeys("%fn~a{TAB}b{TAB}{BS}{DOWN}");
+      }
+
+INSTALLATION
+        perl makefile.pl
+        nmake
+        nmake test
+        nmake install
+
+    If you are using ActivePerl 5.6
+    (http://www.activestate.com/Products/ActivePerl/index.html) you can
+    install the binary package I am including instead. You will need to
+    enter PPM (Perl Package Manager) from the command-line. Once you have
+    extracted the files I send you to a directory of your machine, enter PPM
+    and do like this:
+
+        C:\TEMP>ppm
+        PPM interactive shell (2.0) - type 'help' for available commands.
+        PPM> install C:\temp\win32-guitest.ppd
+        Install package 'C:\temp\win32-guitest.ppd?' (y/N): Y
+        Retrieving package 'C:\temp\win32-guitest.ppd'...
+        Writing C:\Perl\site\lib\auto\Win32\GuiTest\.packlist
+        PPM>
+
+    I extracted them to 'c:\temp', please use the directory where you
+    extracted the files instead.
+
+DESCRIPTION
+    Most GUI test scripts I have seen/written for Win32 use some variant of
+    Visual Basic (e.g. MS-VB or MS-Visual Test). The main reason is the
+    availability of the SendKeys function.
+
+    A nice way to drive Win32 programs from a test script is to use OLE
+    Automation (ActiveX Scripting), but not all Win32 programs support this
+    interface. That is where SendKeys comes handy.
+
+    Some time ago Al Williams published a Delphi version in Dr. Dobb's
+    (http://www.ddj.com/ddj/1997/careers1/wil2.htm). I ported it to C and
+    packaged it using h2xs...
+
+    The tentative name for this module is Win32::GuiTest (mostly because I
+    plan to include more GUI testing functions).
+
+    I've created a Yahoo Group for the module that you can join at
+    http://groups.yahoo.com/group/perlguitest/join
+
+  Functions
+
+    $debug
+        When set enables the verbose mode.
+
+    SendKeys($keys[,$delay])
+        Sends keystrokes to the active window as if typed at the keyboard
+        using the optional delay between keystrokes (default is 50 ms and
+        should be OK for most uses).
+
+        The keystrokes to send are specified in KEYS. There are several
+        characters that have special meaning. This allows sending control
+        codes and modifiers:
+
+                ~ means ENTER
+                + means SHIFT 
+                ^ means CTRL 
+                % means ALT
+
+        The parens allow character grouping. You may group several
+        characters, so that a specific keyboard modifier applies to all of
+        them.
+
+        E.g. SendKeys("ABC") is equivalent to SendKeys("+(abc)")
+
+        The curly braces are used to quote special characters
+        (SendKeys("{+}{{}") sends a '+' and a '{'). You can also use them to
+        specify certain named actions:
+
+                Name          Action
+
+                {BACKSPACE}   Backspace
+                {BS}          Backspace
+                {BKSP}        Backspace
+                {BREAK}       Break
+                {CAPS}        Caps Lock
+                {DELETE}      Delete
+                {DOWN}        Down arrow
+                {END}         End
+                {ENTER}       Enter (same as ~)
+                {ESCAPE}      Escape
+                {HELP}        Help key
+                {HOME}        Home
+                {INSERT}      Insert
+                {LEFT}        Left arrow
+                {NUMLOCK}     Num lock
+                {PGDN}        Page down
+                {PGUP}        Page up
+                {PRTSCR}      Print screen
+                {RIGHT}       Right arrow
+                {SCROLL}      Scroll lock
+                {TAB}         Tab
+                {UP}          Up arrow
+                {PAUSE}       Pause
+                {F1}          Function Key 1
+                ...           ...
+                {F24}         Function Key 24
+                {SPC}         Spacebar
+                {SPACE}       Spacebar
+                {SPACEBAR}    Spacebar
+                {LWI}         Left Windows Key
+                {RWI}         Right Windows Key 
+                {APP}         Open Context Menu Key
+
+        All these named actions take an optional integer argument, like in
+        {RIGHT 5}. For all of them, except PAUSE, the argument means a
+        repeat count. For PAUSE it means the number of milliseconds SendKeys
+        should pause before proceding.
+
+        In this implementation, SendKeys always returns after sending the
+        keystrokes. There is no way to tell if an application has processed
+        those keys when the function returns.
+
+    SendMouse($command)
+        This function emulates mouse input. The COMMAND parameter is a
+        string containing one or more of the following substrings:
+
+                {LEFTDOWN}    left button down
+                {LEFTUP}      left button up
+                {MIDDLEDOWN}  middle button down
+                {MIDDLEUP}    middle button up
+                {RIGHTDOWN}   right button down
+                {RIGHTUP}     right button up
+                {LEFTCLICK}   left button single click
+                {MIDDLECLICK} middle button single click
+                {RIGHTCLICK}  right button single click
+                {ABSx,y}      move to absolute coordinate ( x, y )
+                {RELx,y}      move to relative coordinate ( x, y )
+
+        Note: Absolute mouse coordinates range from 0 to 65535. Relative
+        coordinates can be positive or negative. If you need pixel
+        coordinates you can use MouseMoveAbsPix.
+
+        Also equivalent low-level functions are available:
+
+            SendLButtonUp()
+                SendLButtonDown()
+                SendMButtonUp()
+                SendMButtonDown()
+                SendRButtonUp()
+                SendRButtonDown()
+                SendMouseMoveRel(x,y)
+            SendMouseMoveAbs(x,y)
+
+    MouseMoveAbsPix($x,$y)
+        Move the mouse cursor to the screen pixel indicated as parameter.
+
+          # Moves to x=200, y=100 in pixel coordinates.
+          MouseMoveAbsPix(200, 100); 
+
+    FindWindowLike($window,$titleregex,$classregex,$childid)
+        Finds the window handles of the windows matching the specified
+        parameters and returns them as a list.
+
+        You may specify the handle of the window to search under. The
+        routine searches through all of this windows children and their
+        children recursively. If 'undef' then the routine searches through
+        all windows. There is also a regexp used to match against the text
+        in the window caption and another regexp used to match against the
+        text in the window class. If you pass a child ID number, the
+        functions will only match windows with this id. In each case undef
+        matches everything.
+
+    PushButton($button[,$delay])
+        Equivalent to
+
+            PushChildButton(GetForegroundWindow, BUTTON, DELAY)
+
+    PushChildButton($parent,$button[,$delay])
+        Allows generating a mouse click on a particular button.
+
+        parent - the parent window of the button
+
+        button - either the text in a button (e.g. "Yes") or the control ID
+        of a button.
+
+        delay - the time (0.25 means 250 ms) to wait between the mouse down
+        and the mouse up event. This is useful for debugging.
+
+    WaitWindowLike($parent,$wndtitle,$wndclass,$wndid,$depth,$wait)
+        Function which allows one to wait for a window to appear vs. using
+        hard waits (e.g. sleep 2).
+
+        parent - Where to start (parent window)
+
+        wndtitle - Regexp for the window title
+
+        wndclass - Regexp for the window class name
+
+        wndid - Numeric Window or Control ID
+
+        depth - How deep should we search before we stop
+
+        wait - How many seconds should we wait before giving up
+
+    WaitWindow($wndtitle,[$wait])
+        Minimal version of WaitWindowLike. Only requires the window title
+        regexp. You can also specify the wait timeout in seconds.
+
+        wndtitle - Regexp for the window title
+
+        wait - How many seconds should we wait before giving up
+
+    MenuSelect($menupath,$window,$menu)
+        Allows selecting a menu programmatically.
+
+        Simple Examples: # Exit foreground application through application
+        menu. MenuSelect("&File|E&xit");
+
+            # Exit foreground application through system menu
+            MenuSelect("&Close", 0, GetSystemMenu(GetForegroundWindow(), FALSE));
+
+    $text = WMGetText($hwnd) *
+        Sends a WM_GETTEXT to a window and returns its contents
+
+    $set = WMSetText(hwnd,text) *
+        Sends a WM_SETTEXT to a window setting its contents
+
+    ($x,$y) = GetCursorPos() *
+        Retrieves the cursor's position,in screen coordinates as (x,y)
+        array.
+
+    GetCaretPos()
+        Retrieves the caret's position, in client coordinates as (x,y)
+        array. (Like Windows function)
+
+    HWND SetFocus(hWnd)
+        Sets the keyboard focus to the specified window
+
+    HWND GetDesktopWindow() *
+        Returns a handle to the desktop window
+
+    HWND GetWindow(hwnd,uCmd) *
+    SV * GetWindowText(hwnd) *
+    $class = GetClassName(hwnd) *
+    HWND GetParent(hwnd) *
+    long GetWindowLong(hwnd,index) *
+    BOOL SetForegroundWindow(hWnd) *
+        See corresponding Windows functions.
+
+    @wnds = GetChildWindows(hWnd)
+        Like EnumChildWindows
+
+    BOOL IsChild(hWndParent,hWnd) *
+        See corresponding Windows function.
+
+    $depth = GetChildDepth(hAncestor,hChild)
+    $res = SendMessage(hwnd,msg,wParam,lParam) *
+    $res = PostMessage(hwnd,msg,wParam,lParam) *
+        See corresponding Windows functions.
+
+    CheckButton(hwnd)
+    UnCheckButton(hwnd)
+    GrayOutButton(hwnd)
+    BOOL IsCheckedButton(hwnd)
+    BOOL IsGrayedButton(hwnd)
+        The names say it.
+
+    BOOL IsWindow(hwnd) *
+    ($x,$y) = ScreenToClient(hwnd,x,y) *
+    ($x,$y) = ClientToScreen(hwnd,x,y) *
+    ($x,$y) = GetCaretPos(hwnd) *A
+    HWND SetFocus(hWnd) *A
+    HWND GetFocus(hwnd) *A
+    HWND GetActiveWindow(hwnd) *A
+    HWND GetForegroundWindow() *
+    HWND SetActiveWindow(hwnd) *A
+    BOOL EnableWindow(hwnd,fEnable) *
+    BOOL IsWindowEnabled(hwnd)*
+    BOOL IsWindowVisible(hwnd)*
+    BOOL ShowWindow(hwnd,nCmdShow) *A
+        See corresponding Windows functions.
+
+    ($x,$y) = ScreenToNorm(x,y)
+        Returns normalised coordinates of given point (0-FFFF as a fraction
+        of screen resolution)
+
+    ($x,$y) = NormToScreen(x,y)
+        The opposite transformation
+
+    ($x,$y) = GetScreenRes()
+        Returns screen resolution
+
+    ($l,$t,$r,$b) = GetWindowRect(hWnd) *
+    ($l,$t,$r,$b) = GetClientRect(hWnd) *
+        See corresponding Windows functions.
+
+    $txt = GetComboText(hwnd,index)
+    $txt = GetListText(hwnd,index)
+    @lst = GetComboContents(hWnd)
+    @lst = GetListContents(hWnd)
+        Fetch the contents of the list and combo boxes.
+
+    IsKeyPressed($key)
+        Wrapper around the GetAsyncKeyState API function. Returns TRUE if
+        the user presses the specified key.
+
+            IsKeyPressed("ESC");
+            IsKeyPressed("A");
+            IsKeyPressed("DOWN"); 
+
+    SendRawKey($virtualkey,$flags)
+        Wrapper around keybd_event. Allows sending low-level keys. The first
+        argument is any of the VK_* constants. The second argument can be 0,
+        KEYEVENTF_EXTENDEDKEY, KEYEVENTF_KEYUP or a combination of them.
+
+            KEYEVENTF_EXTENDEDKEY - Means it is an extended key (i.e. to distinguish between arrow keys on the numeric keypad and elsewhere). 
+            KEYEVENTF_KEYUP       - Means keyup. Unspecified means keydown.
+ 
+           #Example
+           use Win32::GuiTest qw/:FUNC :VK/;
+
+           while (1) {
+               SendRawKey(VK_DOWN, KEYEVENTF_EXTENDEDKEY); 
+               SendKeys "{PAUSE 200}";
+           }
+
+  DibSect
+
+    A class to manage a Windows DIB section. Currently limited in
+    functionality to 24-bit images. Pulled from old code into GuiTest when I
+    (jurasz@imb.uni-karlsruhe.de) needed to create several grayscale screen
+    dumps.
+
+    Possible future extenstions: other color resolutions, loading,
+    comparison of bitmaps, getting from clipboard.
+
+    Synopsis:
+
+      $ds = new Win32::GuiTest::DibSect;
+      $ds->CopyWindow($w);
+      $ds->ToGrayScale();
+      $ds->SaveAs("bla.bmp");
+      $ds->ToClipboard();
+
+    bool DibSect::CopyClient(hwnd,[rect])
+            Copy a client area of given window (or possibly its subset) into
+            a given DibSect. The rectangle may be optionally passed as a
+            reference to 4-element array. To get the right result make sure
+            the window you want to copy is not obscured by others.
+
+    bool DibSect::CopyWindow(hwnd)
+            Copy the window rectangle. Equivalent to
+
+              $ds->CopyClient(GetDesktopWindow(), \@{[GetWindowRect($w)]});
+
+    bool DibSect::SaveAs(szFile)
+            Save the current contents of the DIB section in a given file.
+            With 24-bit resolution it can grow quite big, so I immediately
+            convert them to PNG (direct writing of PNG seemed to complicated
+            to implement).
+
+    bool DibSect::Invert()
+            Invert the colors in a current DIB section.
+
+    bool DibSect::ToGrayScale()
+            Convert the DibSection to the gray scale. Note that it is still
+            encoded as 24-bit BMP for simplicity.
+
+    bool DibSect::ToClipboard()
+            Copies the DibSect to clipboard (as an old-fashioned metafile),
+            so that it can be further processed with your favourite image
+            processing software, for example automatically using SendKeys.
+
+    bool DibSect::Destroy()
+            Destroys the contents of the DIB section.
+
+CHANGES
+    Moved to the CHANGES file.
+
+COPYRIGHT
+    The SendKeys function is based on the Delphi sourcecode published by Al
+    Williams <http://www.al-williams.com/awc/> in Dr.Dobbs
+    <http://www.ddj.com/ddj/1997/careers1/wil2.htm>.
+
+    Copyright (c) 1998-2002 Ernesto Guisado. All rights reserved. This
+    program is free software; You may distribute it and/or modify it under
+    the same terms as Perl itself.
+
+AUTHOR
+    Ernesto Guisado (erngui@acm.org), http://triumvir.org
+
+    Jarek Jurasz (jurasz@imb.uni-karlsruhe.de),
+    http://www.uni-karlsruhe.de/~gm07 wrote DibSect and some other pieces
+    (see `Changes' for details).
+
+CREDITS
+    Thanks very much to:
+
+    Johannes Maehner
+    Ben Shern
+    Phill Wolf
+    Mauro
+    Sohrab Niramwalla
+    Frank van Dijk
+    Jarek Jurasz
+    Wilson P. Snyder II
+    Rudi Farkas
+    Anonymous
+    Paul Covington
+    ...and more...
+        for code, suggestions and bug fixes.
+
