@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.1 2004/03/16 01:37:20 ctrondlp Exp $
+# $Id: guitest.pm,v 1.2 2004/03/17 23:15:17 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -99,7 +99,7 @@ require AutoLoader;
         SendRButtonDown SendRButtonUp SetActiveWindow SetForegroundWindow
         SetWindowPos ShowWindow TabCtrl_SetCurFocus TabCtrl_GetCurFocus
         TabCtrl_SetCurSel TabCtrl_GetItemCount WMGetText WMSetText WaitWindow
-        WaitWindowLike SendRawKey
+        WaitWindowLike SendRawKey WindowFromPoint
     )],
     VARS => [ qw(
         $debug

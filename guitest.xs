@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.4 2004/03/17 02:41:20 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.5 2004/03/17 23:15:17 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -1101,7 +1101,18 @@ CODE:
     BYTE scan = MapVirtualKey(vk, 0);
     keybd_event(vk, scan, flags, 0);
 
-
+HWND
+WindowFromPoint(x, y)
+    int x;
+    int y;
+PREINIT:
+    POINT pt;
+CODE:
+    pt.x = x;
+    pt.y = y;
+    RETVAL = WindowFromPoint(pt);
+OUTPUT:
+    RETVAL
 
 
 MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest::DibSect
