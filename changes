@@ -221,3 +221,8 @@
     - Added WindowFromPoint function and wptr.pl example script. (DKP)
 
     - Added the MouseClick function and documentation. (DKP)
+
+?.??.?-ad ??? ??? ?? ??:??:?? ????
+
+    - Push*Button() functions will now correctly not manipulate disabled
+      buttons. (DKP)

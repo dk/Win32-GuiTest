@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.8 2004/04/09 02:09:10 ctrondlp Exp $
+# $Id: guitest.pm,v 1.9 2004/05/18 01:04:55 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -431,15 +431,16 @@ sub PushChildButton {
     $delay = 0 unless defined($delay);
     for my $child (GetChildWindows($parent)) {
         # Is correct text or correct window ID?
-	if (MatchTitleOrId($child, $button)) {
-            # Need to use PostMessage.  SendMessage won't return when certain dialogs come up.
+	if (MatchTitleOrId($child, $button) && IsWindowEnabled($child)) {
+	    # Need to use PostMessage.  SendMessage won't return when certain dialogs come up.
 	    PostMessage($child, WM_LBUTTONDOWN(), 0, 0);
 	    # Allow for user to see that button is being pressed by waiting some ms.
 	    select(undef, undef, undef, $delay) if $delay;
-            PostMessage($child, WM_LBUTTONUP(), 0, 0);
-            return;
+          PostMessage($child, WM_LBUTTONUP(), 0, 0);
+	    return(1);
 	}
     }
+    return(0);
 }
 
 =item WaitWindowLike($parent,$wndtitle,$wndclass,$wndid,$depth,$wait)
