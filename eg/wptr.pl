@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: wptr.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+# $Id: wptr.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
 #
 
 # Module Pragmas
@@ -7,15 +7,8 @@ use strict;
 use warnings;
 
 # Module Imports
-use Win32::GuiTest qw/
-	GetCursorPos
-	GetClassName
-	GetWindowText
-	GetWindowRect
-	WindowFromPoint
-	GetWindowID
-	IsKeyPressed
-/;
+use Win32::GuiTest qw(GetCursorPos GetClassName GetWindowText
+	GetWindowRect WindowFromPoint GetWindowID IsKeyPressed);
 use Win32::Clipboard;
 
 # Module Level Variables

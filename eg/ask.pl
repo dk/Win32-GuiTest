@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: ask.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+# $Id: ask.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
 #
 
 use Win32::GuiTest::Cmd ':ALL';
@@ -20,4 +20,3 @@ my $exe = AskForExe("Where is your net setup program?",
 print "\nAddress '$address'\n";
 print "Dir     '$dir'\n";
 print "Exe     '$exe'\n";
-

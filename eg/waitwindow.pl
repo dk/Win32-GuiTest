@@ -1,18 +1,11 @@
 #!/usr/bin/perl
-# $Id: waitwindow.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+# $Id: waitwindow.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
 # Slightly modified from version submitted by anonymous contributor.
 #
 
 use strict;
-use Win32::GuiTest qw/
-	IsWindow
-	FindWindowLike
-	SendKeys
-	PushButton
-        WaitWindow
-        /;
- 
-
+use Win32::GuiTest qw(IsWindow FindWindowLike SendKeys
+	PushButton WaitWindow); 
 
 
 # Test WaitWindow()

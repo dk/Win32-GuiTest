@@ -1,16 +1,10 @@
 #!/usr/bin/perl
-# $Id: pushbutton.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+# $Id: pushbutton.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
 #
 
 use strict;
-use Win32::GuiTest qw/
-    PushButton
-    FindWindowLike 
-    SetForegroundWindow
-    SendKeys
-    WaitWindow
-    IsWindow
-    /;
+use Win32::GuiTest qw(PushButton FindWindowLike SetForegroundWindow
+    SendKeys WaitWindowIsWindow);
 
 				  
 # Test PushButton()
@@ -33,4 +27,3 @@ SendKeys("C:\\temp\\PushButton.txt");
 # Push &Save to save and exit
 PushButton("&Save");
 #PushButton("&Guardar");
-

@@ -1,10 +1,10 @@
 #!/usr/bin/perl
-# $Id: fonts.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+# $Id: fonts.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
 # Use Win32::GuiTest to get a list of supported fonts from a
 # dialog box.
 # By Ernesto Guisado (erngui@acm.org).
 
-use Win32::GuiTest qw/SendKeys FindWindowLike GetComboContents/;
+use Win32::GuiTest qw(SendKeys FindWindowLike GetComboContents);
 
 sub FontTxt { "Fuente"; } # i18n
 sub OpenFont { "%ef"; }   # i18n
