@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.13 2004/05/30 18:01:15 ctrondlp Exp $
+# $Id: guitest.pm,v 1.14 2004/07/15 19:35:17 szabgab Exp $
 #
 
 =head1 NAME
@@ -73,6 +73,14 @@ I've created a Yahoo Group for the module that you can join at
 Also, an initial version of a script recording application has been written to use with this 
 module.  A copy of it may be found with this distribution (Recorder\Win32GuiTest.exe)
 or can be obtained at http://dkp.itgo.com
+
+If the documentation of the functions is not satisfactory, you can 
+try running a search on http://msdn.microsoft.com/ using the name of the function. 
+Some of these functions are described there.
+
+The alternate distribution of this module - the one you are looking at now - has
+its own CVS repository at http://sourceforge.net/projects/winguitest
+Patches to both the code and the documentation are welcome.
 
 =cut
 
@@ -725,7 +733,17 @@ Returns a handle to the desktop window
 
 =item $class = GetClassName(hwnd) *
 
+Using the same Windows library function returns the name
+of the class wo which the specified window belongs.
+
+See MSDN for more details.
+
+You can also check out MSDN to see an overview of the Window Classes.
+
 =item HWND GetParent(hwnd) *
+
+A library function (see MSDN) to return the WindowID of the parent window.
+See MSDN for the special cases.
 
 =item long GetWindowLong(hwnd,index) *
 
@@ -735,19 +753,48 @@ See corresponding Windows functions.
 
 =item @wnds = GetChildWindows(hWnd)
 
-Like EnumChildWindows
+Using EnumChildWindows library function (see MSDN) it returns the WindowID 
+of each child window. If the children have their own children the function
+returns them too until the tree ends.
 
 =item BOOL IsChild(hWndParent,hWnd) *
 
-See corresponding Windows function.
+Using the corresponding library function (see MSDN) it returns true
+if the second window is an immediate child or a descendant window of
+the first window.
 
 =item $depth = GetChildDepth(hAncestor,hChild)
 
-=item $res = SendMessage(hwnd,msg,wParam,lParam) *
+Using the GetParent library function in a loop, returns the distance
+between an ancestor window and a child (descendant) window.
+
+Features/bugs:
+If the given "ancsetor" is not really an ancestor, the return value is the distance of child from the root window (0)
+If you supply the same id for both the ancestor and the child you get 1.
+If the ancestor you are checking is not 0 then the distance given is 1 larger than it should be.
+
+see eg\get_child_depth.pl
+
+=item $res = SendMessage(hWnd,Msg,wParam,lParam) *
+
+This is a library function (see MSDN) used by a number of the functions provided by
+Win32::GuiTest. It sends the specified message to a window or windows.
+HWnd is the WindowID or HWND_BROADCAST to send message to all top level windows.
+     Message is not sent to child windows. (If I understand this correctly this means
+     it is sent to all the immediate children of the root window (0).
+Msg  the message
+wParam additional parameter
+lParam additioanl parameter
+
+It is most likely you won't use this directly but through one of the functions
+implemented already in Win32::GuiTest.
+
+See the guitest.xs for some examples.
+
 
 =item $res = PostMessage(hwnd,msg,wParam,lParam) *
 
-See corresponding Windows functions.
+See corresponding Windows library function in MSDN.
 
 =item CheckButton(hwnd) 
 
