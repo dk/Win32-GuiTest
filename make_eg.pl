@@ -5,11 +5,8 @@ use strict;
 # every time building a new distribtion.
 # We should also make sure the file is included in the distribution and
 # installed on the target machines.
-
  
-# TODO: maybe use only the files which are also mentioned in the manifest
 # Written by Gabor Szabo <gabor@pti.co.il>
-
 
 
 open my $out, ">Examples.pm";
@@ -33,8 +30,14 @@ the distribution and take the files from the eg directory.
 END
 
 
+open(MAN, "<manifest");
+my @manifest = <MAN>;
+close(MAN);
 
-foreach my $file (<eg\\*.pl>)  {
+foreach my $file (@manifest)  {
+	chomp $file;
+	next if $file !~ m{eg/.*\.pl};
+
 	print $out "\n=head2 $file\n\n";
 	open my $fh, "<", $file;
 	my @lines = <$fh>;
