@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.9 2004/05/18 01:04:55 ctrondlp Exp $
+# $Id: guitest.pm,v 1.10 2004/05/19 21:30:09 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -398,7 +398,7 @@ sub PushButton {
     my $button = shift;
     my $delay  = shift;
 
-    PushChildButton(GetForegroundWindow(), $button, $delay);
+    return PushChildButton(GetForegroundWindow(), $button, $delay);
 }
 
 =item PushChildButton($parent,$button[,$delay])
