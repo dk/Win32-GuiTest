@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: wptr.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+# $Id: wptr.pl,v 1.4 2004/07/22 22:25:13 ctrondlp Exp $
 #
 
 # Module Pragmas
@@ -8,7 +8,7 @@ use warnings;
 
 # Module Imports
 use Win32::GuiTest qw(GetCursorPos GetClassName GetWindowText
-	GetWindowRect WindowFromPoint GetWindowID IsKeyPressed);
+	GetWindowRect WindowFromPoint GetWindowID IsKeyPressed WMGetText);
 use Win32::Clipboard;
 
 # Module Level Variables
@@ -68,6 +68,7 @@ sub GetWindowInfo {
 	$info = $info . "# Window ID: " . GetWindowID($hwnd) . "\r\n";
 	my ($left, $top, $right, $bottom) = GetWindowRect($hwnd);
 	$info = $info . "# Window Rect: ($left, $top) - ($right, $bottom)\r\n";
+print "Text: " . WMGetText($hwnd) . "\r\n";
 	return($info);
 }
 
