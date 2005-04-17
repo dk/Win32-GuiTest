@@ -1,4 +1,4 @@
-changes
+CHANGES
 dibsect.cpp
 dibsect.h
 eg/ask.pl
@@ -27,13 +27,13 @@ eg/waitwindow.pl
 eg/which.pl
 eg/winbmp.pl
 eg/wptr.pl
-guitest.pm
-guitest.xs
+GuiTest.pm
+GuiTest.xs
 Examples.pm
 lib/win32/guitest/cmd.pm
 lib/win32/guitest/guitest.pc
 makedist.pl
-makefile.pl
+Makefile.PL
 makepod.bat
 MANIFEST			This list of files
 MANIFEST.SKIP

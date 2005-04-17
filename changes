@@ -248,3 +248,9 @@
      - Added basic mouse wheel support: MouseMoveWheel (CTRONDLP)
      - Added IsListViewItemSel and IsTabItemSel (CTRONDLP)
      - Updated SetFocus routine with AttachWin code (CTRONDLP)
+
+? ? ? ? ? ?
+
+     - Added some code to Makefile.PL to help with environments
+       where file name case is of concern. (CTRONDLP)
+
