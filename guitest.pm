@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.30 2005/02/08 19:03:08 ctrondlp Exp $
+# $Id: guitest.pm,v 1.31 2005/05/06 02:34:05 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -118,7 +118,7 @@ require AutoLoader;
         SetWindowPos ShowWindow TabCtrl_SetCurFocus TabCtrl_GetCurFocus
         TabCtrl_SetCurSel TabCtrl_GetItemCount WMGetText WMSetText WaitWindow
         WaitWindowLike SendRawKey WindowFromPoint
-        GetSubMenu GetMenuItemIndex GetMenuItemId GetMenuItemCount GetMenuItemInfo 
+        GetSubMenu GetMenuItemIndex GetMenuItemID GetMenuItemCount GetMenuItemInfo 
         GetListViewContents SelListViewItem SelListViewItemText IsListViewItemSel
 	GetTabItems SelTabItem SelTabItemText IsTabItemSel
         SelTreeViewItemPath GetTreeViewSelPath MouseMoveWheel 
