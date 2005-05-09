@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.31 2005/05/06 02:34:05 ctrondlp Exp $
+# $Id: guitest.pm,v 1.32 2005/05/09 23:49:59 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -356,7 +356,7 @@ sub FindWindowLike {
     my $hWndStart  = shift || GetDesktopWindow(); # Where to start
     my $windowre = shift; # Regexp
     my $classre  = shift; # Regexp
-    my $ID         = shift; # Op. ID
+    my $ID         = shift; # Control/Op. ID
     my $maxlevel   = shift; 
 
     my @found;

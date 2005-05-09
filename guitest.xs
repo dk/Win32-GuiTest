@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.18 2005/02/03 01:02:19 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.19 2005/05/09 23:49:59 ctrondlp Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -140,8 +140,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 	//// List Views ////
 	if (pCW->message == WM_LV_GETTEXT) {
 		*g_szBuffer = NUL;
-		int iItem = pCW->wParam;
-		ListView_GetItemText(g_hWnd, iItem, 0, g_szBuffer, MAX_DATA_BUF);
+		ListView_GetItemText(g_hWnd, (int)pCW->wParam /*iItem*/, 0, g_szBuffer, MAX_DATA_BUF);
 		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_LV_SELBYINDEX) {
 		int iCount = ListView_GetItemCount(g_hWnd);
@@ -304,6 +303,10 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 HHOOK SetHook(HWND hWnd, UINT &uMsg, char *lpMsgId)
 {
 	g_hWnd = hWnd;
+
+	// Give up rest of time slice, so g_hHook assignment and 
+	// SetWindowsHook will process.
+	Sleep(0);
 
 	// Hook the thread, that "owns" our control
 	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
