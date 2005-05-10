@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.32 2005/05/09 23:49:59 ctrondlp Exp $
+# $Id: guitest.pm,v 1.33 2005/05/10 00:00:49 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -385,14 +385,11 @@ sub FindWindowLike {
             (!$classre  || $sClassname =~ /$classre/))
         {
             DbgShow("Matched $1\n") if $1;
-            if (!$ID) {   
+			# If ID not supplied OR child window ID equals
+			# the one supplied.
+            if ((not defined($ID)) || (defined($sID) && $sID == $ID)) {   
                 # If find a match add handle to array:   
-		push @found, $hwnd;
-            } elsif ($sID) {   
-                if ($sID == $ID) {
-                    # If find a match add handle to array:
-                    push @found, $hwnd;
-                }   
+				push @found, $hwnd;
             }   
             DbgShow("Window Found(" . 
                 "Text  : '$sWindowText'" .
@@ -1253,6 +1250,8 @@ Thanks very much to:
 =item Rudi Farkas
 
 =item Paul Covington
+
+=item Piotr Kaluski
 
 =item ...and more...
 

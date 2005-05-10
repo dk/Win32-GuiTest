@@ -254,4 +254,5 @@
      - Added some code to Makefile.PL to help with environments
        where file name case is of concern. (CTRONDLP)
      - Fixed case of GetMenuItemID
+     - FindWindowLike will now handle control Ids = 0.
 
