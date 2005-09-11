@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.34 2005/09/11 10:55:31 pkaluski Exp $
+# $Id: guitest.pm,v 1.35 2005/09/11 13:01:04 pkaluski Exp $
 #
 
 =head1 NAME
@@ -104,27 +104,102 @@ require AutoLoader;
 
 %EXPORT_TAGS=(
     FUNC => [ qw(
-        AllocateVirtualBuffer CheckButton ClientToScreen EnableWindow FindWindowLike
-        FreeVirtualBuffer GetActiveWindow GetCaretPos GetChildDepth GetChildWindows GetClassName
-        GetComboContents GetComboText GetCursorPos GetDesktopWindow GetFocus
-        GetForegroundWindow GetListContents GetListText GetMenu GetParent
-        GetScreenRes GetSystemMenu GetWindow GetWindowID GetWindowLong
-        GetWindowRect GetWindowText IsCheckedButton IsChild IsGrayedButton
-        IsKeyPressed IsWindow IsWindowEnabled IsWindowStyle IsWindowStyleEx
-        IsWindowVisible MenuSelect MouseClick MouseMoveAbsPix NormToScreen PostMessage
-        PushButton PushChildButton PushChildById ReadFromVirtualBuffer ScreenToClient ScreenToNorm SelectTabItem
-        SendKeys SendLButtonDown SendLButtonUp SendMButtonDown SendMButtonUp
-        SendMessage SendMouse SendMouseMoveAbs SendMouseMoveRel
-        SendRButtonDown SendRButtonUp SetActiveWindow SetFocus SetForegroundWindow
-        SetWindowPos ShowWindow TabCtrl_SetCurFocus TabCtrl_GetCurFocus
-        TabCtrl_SetCurSel TabCtrl_GetItemCount WaitForReady WMGetText WMSetText WaitWindow
-        WaitWindowLike SendRawKey WindowFromPoint WriteToVirtualBuffer
-        GetSubMenu GetMenuItemIndex GetMenuItemID GetMenuItemCount GetMenuItemInfo 
-        GetListViewContents 
-        SelListViewItem SelListViewItemText IsListViewItemSel
-        GetTabItems SelTabItem SelTabItemText IsTabItemSel
-        SelTreeViewItemPath GetTreeViewSelPath MouseMoveWheel
-        SelComboItem SelComboItemText SelComboString
+        AllocateVirtualBuffer
+        CheckButton
+        ClientToScreen
+        EnableWindow
+        FindWindowLike
+        FreeVirtualBuffer
+        GetActiveWindow
+        GetCaretPos
+        GetChildDepth
+        GetChildWindows
+        GetClassName
+        GetComboContents
+        GetComboText
+        GetCursorPos
+        GetDesktopWindow
+        GetFocus
+        GetForegroundWindow
+        GetListContents
+        GetListText
+        GetListViewContents
+        GetMenu
+        GetMenuItemCount
+        GetMenuItemID
+        GetMenuItemIndex
+        GetMenuItemInfo
+        GetParent
+        GetScreenRes
+        GetSubMenu
+        GetSystemMenu
+        GetTabItems
+        GetTreeViewSelPath
+        GetWindow
+        GetWindowID
+        GetWindowLong
+        GetWindowRect
+        GetWindowText
+        IsCheckedButton
+        IsChild
+        IsGrayedButton
+        IsKeyPressed
+        IsListViewItemSel
+        IsTabItemSel
+        IsWindow
+        IsWindowEnabled
+        IsWindowStyle
+        IsWindowStyleEx
+        IsWindowVisible
+        MenuSelect
+        MouseClick
+        MouseMoveAbsPix
+        MouseMoveWheel
+        NormToScreen
+        PostMessage
+        PushButton
+        PushChildButton
+        PushChildById
+        ReadFromVirtualBuffer
+        ScreenToClient
+        ScreenToNorm
+        SelComboItem
+        SelComboItemText
+        SelComboString
+        SelListViewItem
+        SelListViewItemText
+        SelTabItem
+        SelTabItemText
+        SelTreeViewItemPath
+        SelectTabItem
+        SendKeys
+        SendLButtonDown
+        SendLButtonUp
+        SendMButtonDown
+        SendMButtonUp
+        SendMessage
+        SendMouse
+        SendMouseMoveAbs
+        SendMouseMoveRel
+        SendRawKey
+        SendRButtonDown
+        SendRButtonUp
+        SetActiveWindow
+        SetFocus
+        SetForegroundWindow
+        SetWindowPos
+        ShowWindow
+        TabCtrl_GetCurFocus
+        TabCtrl_GetItemCount
+        TabCtrl_SetCurFocus
+        TabCtrl_SetCurSel
+        WMGetText
+        WMSetText
+        WaitForReady
+        WaitWindow
+        WaitWindowLike
+        WindowFromPoint
+        WriteToVirtualBuffer
     )],
     VARS => [ qw(
         $debug
