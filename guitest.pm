@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.33 2005/05/10 00:00:49 ctrondlp Exp $
+# $Id: guitest.pm,v 1.34 2005/09/11 10:55:31 pkaluski Exp $
 #
 
 =head1 NAME
@@ -33,12 +33,13 @@ Win32::GuiTest - Perl GUI Test Utilities.
 
     See more details in the DEVELOPMENT section elswhere in this document.
 
-If you are using ActivePerl 5.6
-(http://www.activestate.com/Products/ActivePerl/index.html) 
-you can install the binary package I am including instead. You will need 
-to enter PPM (Perl Package Manager) from the command-line. Once you have 
-extracted the files I send you to a directory of your machine, enter PPM
- and do like this:
+You can get the most recent release from 
+L<http://www.sourceforge.net/projects/winguitest>. The package will
+contain Win32-GuiTest.ppd file and Win32-GuiTest.tar.gz file, 
+which is all that you need to use
+ppm. If you put those 2 files in C:\TEMP directory, the installation
+should look as follows.  Enter PPM (Perl Package Manager) from the 
+command-line and type commands as below
 
     C:\TEMP>ppm
     PPM interactive shell (2.0) - type 'help' for available commands.
@@ -103,26 +104,27 @@ require AutoLoader;
 
 %EXPORT_TAGS=(
     FUNC => [ qw(
-        CheckButton ClientToScreen EnableWindow FindWindowLike
-        GetActiveWindow GetCaretPos GetChildDepth GetChildWindows GetClassName
+        AllocateVirtualBuffer CheckButton ClientToScreen EnableWindow FindWindowLike
+        FreeVirtualBuffer GetActiveWindow GetCaretPos GetChildDepth GetChildWindows GetClassName
         GetComboContents GetComboText GetCursorPos GetDesktopWindow GetFocus
         GetForegroundWindow GetListContents GetListText GetMenu GetParent
         GetScreenRes GetSystemMenu GetWindow GetWindowID GetWindowLong
         GetWindowRect GetWindowText IsCheckedButton IsChild IsGrayedButton
         IsKeyPressed IsWindow IsWindowEnabled IsWindowStyle IsWindowStyleEx
         IsWindowVisible MenuSelect MouseClick MouseMoveAbsPix NormToScreen PostMessage
-        PushButton PushChildButton ScreenToClient ScreenToNorm SelectTabItem
+        PushButton PushChildButton PushChildById ReadFromVirtualBuffer ScreenToClient ScreenToNorm SelectTabItem
         SendKeys SendLButtonDown SendLButtonUp SendMButtonDown SendMButtonUp
         SendMessage SendMouse SendMouseMoveAbs SendMouseMoveRel
         SendRButtonDown SendRButtonUp SetActiveWindow SetFocus SetForegroundWindow
         SetWindowPos ShowWindow TabCtrl_SetCurFocus TabCtrl_GetCurFocus
-        TabCtrl_SetCurSel TabCtrl_GetItemCount WMGetText WMSetText WaitWindow
-        WaitWindowLike SendRawKey WindowFromPoint
+        TabCtrl_SetCurSel TabCtrl_GetItemCount WaitForReady WMGetText WMSetText WaitWindow
+        WaitWindowLike SendRawKey WindowFromPoint WriteToVirtualBuffer
         GetSubMenu GetMenuItemIndex GetMenuItemID GetMenuItemCount GetMenuItemInfo 
-        GetListViewContents SelListViewItem SelListViewItemText IsListViewItemSel
-	GetTabItems SelTabItem SelTabItemText IsTabItemSel
-        SelTreeViewItemPath GetTreeViewSelPath MouseMoveWheel 
-        SelComboItem SelComboItemText
+        GetListViewContents 
+        SelListViewItem SelListViewItemText IsListViewItemSel
+        GetTabItems SelTabItem SelTabItemText IsTabItemSel
+        SelTreeViewItemPath GetTreeViewSelPath MouseMoveWheel
+        SelComboItem SelComboItemText SelComboString
     )],
     VARS => [ qw(
         $debug
@@ -279,13 +281,13 @@ Note: Absolute mouse coordinates range from 0 to 65535.
 Also equivalent low-level functions are available:
 
     SendLButtonUp()
-        SendLButtonDown()
-        SendMButtonUp()
-        SendMButtonDown()
-        SendRButtonUp()
-        SendRButtonDown()
-        SendMouseMoveRel(x,y)
-        SendMouseMoveAbs(x,y)
+    SendLButtonDown()
+    SendMButtonUp()
+    SendMButtonDown()
+    SendRButtonUp()
+    SendRButtonDown()
+    SendMouseMoveRel(x,y)
+    SendMouseMoveAbs(x,y)
 
 =cut
 
@@ -473,6 +475,35 @@ sub PushChildButton {
     }
     return(0);
 }
+
+=item PushChildById( $parent, $button, $level, $delay )
+
+Allows pushing a button, which control id is eqaul to a given parameter.
+C<PushChildButton> tries to match parameter against control id or
+caption.
+PushChildById matches only against control id. Secondly, PushChildById
+allows specifying search depth in the windows hierarchy tree.
+The default is 2, which means that only direct children will be
+pushed.
+
+=cut
+
+sub PushChildById 
+{
+    my $parent = shift;
+    my $button = shift;
+    my $level = shift;
+    my $delay = shift;
+    $level = 2 unless defined( $level );
+    $delay = 0 unless defined($ delay );
+    my @buttons = FindWindowLike( $parent, undef, undef, $button, $level );
+    PostMessage($buttons[ 0 ], WM_LBUTTONDOWN(), 0, 0);
+    # Allow for user to see that button is being pressed by waiting some ms.
+    select(undef, undef, undef, $delay) if $delay;
+    PostMessage($buttons[ 0 ], WM_LBUTTONUP(), 0, 0);
+    return;
+}
+
 
 =item WaitWindowLike($parent,$wndtitle,$wndclass,$wndid,$depth,$wait)
 
@@ -759,6 +790,86 @@ sub MouseClick {
     return(0);
 }
 
+=item $buf_str = AllocateVirtualBuffer( $hwnd, $size )
+
+Allocates memory in the address space of the process, which is an owner of
+a window identified by $hwnd. Returns a reference to a hash, which has 2 elements:
+
+=over 8
+
+=item ptr - address of the allocated memory
+
+=item process - process handle (in the Win32 meaning, as returned by Win32 OpenProcess
+API function
+
+=back
+
+=cut
+
+sub AllocateVirtualBuffer
+{
+    my $hwnd = shift;
+    my $size = shift;
+    my ( $ptr, $process ) = AllocateVirtualBufferImp( $hwnd, $size );
+    my $ret = {};
+    $ret->{ 'ptr' } = $ptr;
+    $ret->{ 'process' } = $process;
+
+    return $ret;
+}
+
+=item $value = ReadFromVirtualBuffer( $buf_str, $size )
+
+Read from a memory in the address space of the other process.
+C<$buf_str> is a reference to a hash returned by AllocateVirtualBuffer.
+
+Returns read value.
+
+=cut
+
+sub ReadFromVirtualBuffer
+{
+    my $buf_str = shift;
+    my $size    = shift;
+    my $value = ReadFromVirtualBufferImp( $buf_str->{ 'process' },
+                                          $buf_str->{ 'ptr' },
+                                          $size );
+    return $value;
+}
+
+=item WriteToVirtualBuffer( $buf_str, $value )
+
+Write to a memory in the address space of the other process.
+C<$buf_str> is a reference to a hash returned by AllocateVirtualBuffer.
+C<$value> is a value to be copied.
+
+=cut
+
+sub WriteToVirtualBuffer
+{
+    my $buf_str = shift;
+    my $value   = shift;
+    WriteToVirtualBufferImp( $buf_str->{ 'process' },
+                             $buf_str->{ 'ptr' },
+                             $value );
+}
+
+=item FreeVirtualBuffer( $buf_str )
+
+Frees memory allocated by AllocateVirtualBuffer
+
+=cut
+
+sub FreeVirtualBuffer
+{
+    my $buf_str = shift;
+    FreeVirtualBufferImp( $buf_str->{ 'process' },
+                          $buf_str->{ 'ptr' } );
+
+}
+
+
+
 =item $text = WMGetText($hwnd) *
 
 Sends a WM_GETTEXT to a window and returns its contents
@@ -1030,6 +1141,113 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
 
 =cut
 
+sub SelTreeViewItemPath
+{
+    my $hwnd = shift;
+    my $path = shift;
+    my $max_buf = shift;
+    my $delay = shift;
+
+    if( !$max_buf ){
+        $max_buf = 124;
+    }
+    if( !$delay ){
+        $delay = 0.50;
+    }
+    
+    my @parts = split( /\|/, $path );
+ 
+    my $tvitem;
+    eval{
+        $tvitem = AllocateVirtualBuffer( $hwnd, 50 );
+    };
+    if( $@ ){
+        die "Allocation failed with message ---> $@";
+    }
+    
+    my $text_buf = AllocateVirtualBuffer( $hwnd, $max_buf );
+ 
+    my $hItem = SendMessage( $hwnd, TVM_GETNEXTITEM(), TVGN_ROOT(), 0 );
+    $hItem = TVPathWalk( $hwnd, 
+                         $tvitem, 
+                         $text_buf, 
+                         $hItem, 
+                         $max_buf, 
+                         $delay, 
+                         @parts );
+    SendMessage( $hwnd, TVM_SELECTITEM(), TVGN_CARET(), $hItem );
+    FreeVirtualBuffer( $tvitem );
+    FreeVirtualBuffer( $text_buf );
+    return;
+}
+
+#
+# Helper method. Used by SelTreeViewItemPath to find an item in the tree
+# view.
+#
+sub TVPathWalk
+{
+    my $hwnd     = shift;
+    my $tvitem   = shift;
+    my $text_buf = shift;
+    my $hItem    = shift;
+    my $max_buf  = shift;
+    my $delay    = shift;
+    my @parts    = @_;
+    SendMessage( $hwnd, TVM_ENSUREVISIBLE(), 0, $hItem );
+    while( $hItem != 0 ){
+        my $str_long = pack( "L L L L L L L L L L", 
+            0x41, #mask (TVIF_TEXT | TVIF_CHILDREN)
+            $hItem, #hItem
+            0, #state
+            0, #stateMask
+            $text_buf->{ 'ptr' }, #pszText
+            100, #cchTextMax
+            0, #iImage
+            0, #iSelectedImage
+            0, #cChildren
+            0  #lParam 
+                            );
+
+        WriteToVirtualBuffer( $tvitem, $str_long );
+        SendMessage( $hwnd, TVM_GETITEM(), 0, $tvitem->{ 'ptr' } ); 
+        my $text = ReadFromVirtualBuffer( $text_buf, $max_buf );
+        $text =~ s/\0.+$//;
+        my $struct = ReadFromVirtualBuffer( $tvitem, 40 );
+        my @fields = unpack( "L10", $struct );
+        if( $text eq $parts[ 0 ] ){
+            SendMessage( $hwnd, TVM_EXPAND(), TVE_EXPAND(), $hItem );
+            #
+            # Give the node some time to expand...
+            #
+            select(undef, undef, undef, $delay) if $delay;
+            if( @parts == 1 ){
+                return $hItem;
+            }
+            if( $fields[ 8 ] ){
+                my $hChild = SendMessage( $hwnd, 
+                                       TVM_GETNEXTITEM(),
+                                       TVGN_CHILD(),
+                                       $hItem );
+                shift( @parts );
+                return TVPathWalk( $hwnd, 
+                                   $tvitem, 
+                                   $text_buf, 
+                                   $hChild, 
+                                   $max_buf, 
+                                   $delay, 
+                                   @parts );
+            }
+        }else{
+            $hItem = SendMessage( $hwnd, 
+                                  TVM_GETNEXTITEM(), 
+                                  TVGN_NEXT(), 
+                                  $hItem );
+        }
+    }
+    return 0;
+}    
+
 =item GetTreeViewSelPath($window)
 
    Returns a string containing the path (i.e., "parent|child") of
@@ -1175,6 +1393,10 @@ After this you will probably be able to do the normal cycle:
  or run
 
  perl makedist.pl
+
+=head1 SEE ALSO
+
+Module's documentation is available at L<http://www.piotrkaluski.com/files/winguitest/docs/index.html>.
 
 =head1 TODO
 
