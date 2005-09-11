@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.19 2005/05/09 23:49:59 ctrondlp Exp $
+ *  $Id: guitest.xs,v 1.20 2005/09/11 11:07:08 pkaluski Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -442,6 +442,66 @@ int GetTCItemCount(HWND hWnd)
 	return TabCtrl_GetItemCount(hWnd);
 }
 
+/*
+ * Piotr Kaluski <pkaluski@piotrkaluski.com>
+ * 
+ * WaitForWindowInputIdle is a wrapper for WaitForInputIdle Win32 function.
+ * The function waits until the application is ready to accept input 
+ * (keyboard keys, mouse clicks). It is useful, for actions, which take a long
+ * time to complete. Instead of putting sleeps of arbitrary length, we can just
+ * wait until the application is ready to respond. Original function takes
+ * a process handle as an input. However, in GUI tests we more often operate
+ * on windows then on applications. 
+ * NOTE: Unfortunatelly, this function not always works, so before using
+ * it, check that is works in your environment
+ * 
+ */ 
+DWORD WaitForWindowInputIdle( HWND hwnd, DWORD milliseconds )
+{
+    DWORD pid = 0;
+    DWORD dwThreadId = GetWindowThreadProcessId( hwnd, &pid );
+    HANDLE hProcess = OpenProcess( PROCESS_ALL_ACCESS, TRUE, pid );
+    if( hProcess == NULL ){
+        LPVOID lpMsgBuf;
+        DWORD dw = GetLastError(); 
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR) &lpMsgBuf,
+            0, NULL );
+        warn( "OpenProcess failed with error %d: %s",
+                dw, lpMsgBuf );
+    }
+    //printf( "Calling WaitForInputIdle for pid %ld\n", pid );
+    DWORD result = WaitForInputIdle( hProcess, milliseconds );
+    if( result == WAIT_FAILED ){
+        LPVOID lpMsgBuf;
+        DWORD dw = GetLastError(); 
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR) &lpMsgBuf,
+            0, NULL );
+        warn( "WaitForInputIdle failed with error %d: %s",
+                dw, lpMsgBuf );
+    }else{
+        if( result == WAIT_TIMEOUT ){
+    //        printf( "WaitForInputIdle returned after TIME OUT" );
+        }
+        if( result == 0 ){
+    //        printf( "WaitForInputIdle returned after wait was satisfied" );
+        }
+    }
+            
+    return result;
+}
+      
 
 int cvtkey(
 	const char* s,
@@ -806,11 +866,174 @@ GetTextHelper(HWND hwnd, int index, UINT lenmsg, UINT textmsg)
     return sv;
 }
 
-
+/*
+ * Piotr Kaluski <pkaluski@piotrkaluski.com>
+ * 
+ * OpenProcessForWindow opens a process, which is an owner of a window
+ * identified by hWnd.
+ * 
+ */ 
+HANDLE OpenProcessForWindow( HWND hWnd )
+{
+    DWORD pid = 0;
+    DWORD dwThreadId = GetWindowThreadProcessId( hWnd, &pid );
+    HANDLE hProcess = OpenProcess( PROCESS_ALL_ACCESS, TRUE, pid );
+    if( hProcess == NULL ){
+        LPVOID lpMsgBuf;
+        DWORD dw = GetLastError(); 
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR) &lpMsgBuf,
+            0, NULL );
+        warn( "OpenProcess failed with error %d: %s",
+                dw, lpMsgBuf );
+    }
+    return hProcess;
+}
 
 MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest		
 
 PROTOTYPES: DISABLE
+
+######################################################################
+# Allocates memory in address space of a process, which owns window
+# hWnd.
+#
+######################################################################
+
+void
+AllocateVirtualBufferImp( hWnd, memSize )
+    HWND hWnd
+    SIZE_T memSize
+PPCODE:
+    HANDLE hProcess = OpenProcessForWindow( hWnd );
+	LPVOID pBuffer = VirtualAllocEx( hProcess, NULL, memSize, 
+		           MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    if( pBuffer == NULL ){
+        LPVOID lpMsgBuf;
+        DWORD dw = GetLastError(); 
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR) &lpMsgBuf,
+            0, NULL );
+        die( "VirtualAllocEx failed with error %d: %s",
+                dw, lpMsgBuf );
+    }else{
+        XPUSHs( sv_2mortal( newSVuv( ( LONG )pBuffer ) ) );
+        XPUSHs( sv_2mortal( newSVuv( ( LONG )hProcess ) ) );
+    }
+
+
+######################################################################
+# Frees memory allocated by AllocateVirtualBuffer.
+#
+######################################################################
+
+void
+FreeVirtualBufferImp( hProcess, pBuffer )
+    LONG hProcess
+    LONG pBuffer 
+    PPCODE:
+	    BOOL result = VirtualFreeEx( ( HANDLE )hProcess, 
+                                     ( LPVOID )pBuffer, 
+                                       0, 
+                                       0x8000 );
+        if( !result ){
+            LPVOID lpMsgBuf;
+            DWORD dw = GetLastError(); 
+            FormatMessage(
+                FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+                FORMAT_MESSAGE_FROM_SYSTEM,
+                NULL,
+                dw,
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                (LPTSTR) &lpMsgBuf,
+                0, NULL );
+            die( "VirtualFreeEx failed with error %d: %s",
+                    dw, lpMsgBuf );
+        }
+
+
+######################################################################
+# Read from memory allocated by AllocateVirtualBuffer.
+#
+######################################################################
+
+void
+ReadFromVirtualBufferImp( hProcess, pVirtBuffer, memSize )
+    LONG hProcess
+    LONG pVirtBuffer
+    SIZE_T memSize
+PPCODE:
+    SIZE_T copied = 0;
+    char *pLocBuff = ( char *)safemalloc( memSize + 1 );
+    if( !ReadProcessMemory( ( HANDLE ) hProcess,
+                            ( LPVOID )pVirtBuffer,
+                            pLocBuff,
+                            memSize,
+                            &copied ) )
+    {
+        LPVOID lpMsgBuf;
+        DWORD dw = GetLastError(); 
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR) &lpMsgBuf,
+            0, NULL );
+        die( "ReadProcessMemory failed with error %d: %s",
+                dw, lpMsgBuf );
+    }else{
+        XPUSHs( sv_2mortal( newSVpv( pLocBuff, memSize ) ) );
+        safefree( pLocBuff ); 
+    }
+
+
+######################################################################
+# Write to memory allocated by AllocateVirtualBuffer.
+#
+######################################################################
+
+void 
+WriteToVirtualBufferImp( hProcess, pVirtBuffer, value )
+    LONG hProcess
+    LONG pVirtBuffer
+    SV* value
+PPCODE:
+    SIZE_T copied = 0;
+    STRLEN memSize = 0;
+    char* pLocBuffer = SvPV( value, memSize ); 
+    if( !WriteProcessMemory( ( HANDLE )hProcess,
+                             ( LPVOID )pVirtBuffer,
+                             pLocBuffer,
+                             memSize,
+                             &copied ) )
+    {
+        LPVOID lpMsgBuf;
+        DWORD dw = GetLastError(); 
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR) &lpMsgBuf,
+            0, NULL );
+        die( "WriteProcessMemory failed with error %d: %s",
+                dw, lpMsgBuf );
+    }
+
+
 
 void
 GetListViewContents(hWnd)
@@ -887,15 +1110,6 @@ IsTabItemSel(hWnd, lpItem)
 	char *lpItem
 CODE:
 	RETVAL = IsTCItemSel(hWnd, lpItem);
-OUTPUT:
-	RETVAL
-
-BOOL
-SelTreeViewItemPath(hWnd, lpPath)
-	HWND hWnd
-	char *lpPath
-CODE:
-	RETVAL = SelTVItemPath(hWnd, lpPath);
 OUTPUT:
 	RETVAL
 
@@ -1485,6 +1699,31 @@ CODE:
 	}
 OUTPUT:
 	RETVAL
+
+
+#########################################################################
+# Selects combo item, which starts with a given string
+#
+#########################################################################
+
+DWORD
+SelComboString( hWnd, lpItem, start_idx = 0 )
+    HWND hWnd;
+    char *lpItem;
+    DWORD start_idx;
+CODE:
+    int result = 0;
+    result = SendMessage(hWnd,
+                         CB_SELECTSTRING,
+                         start_idx,
+                         LPARAM( lpItem ) );
+    if( result == CB_ERR ){
+        RETVAL = -1;
+    }else{
+        RETVAL = result;
+    }
+OUTPUT:
+    RETVAL
 	
 void 
 GetListContents(hWnd)
@@ -1710,6 +1949,25 @@ CODE:
     pt.x = x;
     pt.y = y;
     RETVAL = WindowFromPoint(pt);
+OUTPUT:
+    RETVAL
+
+
+#####################################################################
+# Waits for input idle for the application, which owns the window
+# hWnd. It is a wrapper around WaitForInputIdle Win32 API. 
+# Does not always work as expected, seams to be not that reliable
+# mechanism. But it's better then nothing and there are still some
+# cases when it works
+# 
+######################################################################
+
+DWORD
+WaitForReady( hWnd, dwMilliseconds = 30000 )
+    HWND hWnd;
+    DWORD dwMilliseconds;
+CODE:
+    RETVAL = WaitForWindowInputIdle( hWnd, dwMilliseconds );
 OUTPUT:
     RETVAL
 
