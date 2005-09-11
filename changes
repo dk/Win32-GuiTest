@@ -255,4 +255,16 @@
        where file name case is of concern. (CTRONDLP)
      - Fixed case of GetMenuItemID
      - FindWindowLike will now handle control Ids = 0.
+     - Added following functions:
+        * AllocateVirtualBuffer
+        * FreeVirtualBuffer
+        * ReadFromVirtualBuffer
+        * WriteToVirtualBuffer
+       All those functions can be implementing marshaling when sending
+       messages to advanced controls
+        * WaitForReady
+        * SelComboString
+        * PushChildById
+     - Rewriten function SelTreeViewItemPath
+     - Modified POD in GuiTest.pm in INSTALLATION section. Added SEE ALSO
 
