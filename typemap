@@ -10,6 +10,7 @@ UINT                    T_UV
 REGSAM			T_UV
 WPARAM                  T_UV
 LPARAM                  T_IV
+SIZE_T                  T_UV
 DibSect *         O_OBJECT
 
 #############################################################################
