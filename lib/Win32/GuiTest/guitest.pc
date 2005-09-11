@@ -47,6 +47,19 @@ sub LVS_ICON	{ 0x0000; }
 sub LVS_LIST	{ 0x0003; } 
 sub LVS_SMALLICON	{ 0x0002; }
 
+sub TVM_EXPAND        { 0x1100 + 2; }
+sub TVM_GETNEXTITEM   { 0x1100 + 10; }
+sub TVM_SELECTITEM    { 0x1100 + 11; }
+sub TVM_GETITEM       { 0x1100 + 12; }
+sub TVM_ENSUREVISIBLE { 0x1100 + 20; }
+
+sub TVGN_ROOT   { 0; }
+sub TVGN_NEXT   { 1; }
+sub TVGN_CHILD  { 4; }
+sub TVGN_CARET  { 9; }
+
+sub TVE_EXPAND  { 2; }
+
 ### From winuser.h
 sub KEYEVENTF_EXTENDEDKEY { 0x0001; }
 sub KEYEVENTF_KEYUP       { 0x0002; }
