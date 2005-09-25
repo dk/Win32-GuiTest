@@ -267,4 +267,5 @@
         * PushChildById
      - Rewriten function SelTreeViewItemPath
      - Modified POD in GuiTest.pm in INSTALLATION section. Added SEE ALSO
+     - Added Rafe Lafrance's GetPopupHandle
 

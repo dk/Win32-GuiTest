@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.20 2005/09/11 11:07:08 pkaluski Exp $
+ *  $Id: guitest.xs,v 1.21 2005/09/25 07:32:27 pkaluski Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -38,6 +38,7 @@ HINSTANCE g_hDLL = NULL;
 // Used by hooking/injected routines
 HWND g_hWnd = 0;
 HHOOK g_hHook = NULL;
+HWND g_popup = 0;   //Hold's popup menu's handle
 BOOL g_bRetVal = 0;
 char g_szBuffer[MAX_DATA_BUF+1] = {NUL};
 UINT WM_LV_GETTEXT = 0;
@@ -50,6 +51,7 @@ UINT WM_TC_SELBYTEXT = 0;
 UINT WM_TC_ISSEL = 0;
 UINT WM_TV_SELBYPATH = 0;
 UINT WM_TV_GETSELPATH = 0;
+UINT WM_INITMENUPOPUPX = WM_INITMENUPOPUP;  //Only needed to conform with SetHook()'s calling convention
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
@@ -293,7 +295,10 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 			g_bRetVal = TRUE;
 		}
 		UnhookWindowsHookEx(g_hHook);
-	}
+    } else if (pCW->message == WM_INITMENUPOPUP) {
+		g_popup = (HWND) pCW->wParam;
+		UnhookWindowsHookEx(g_hHook);
+    }
 
 	return CallNextHookEx(g_hHook, code, wParam, lParam);
 }
@@ -894,6 +899,23 @@ HANDLE OpenProcessForWindow( HWND hWnd )
     }
     return hProcess;
 }
+
+////////////////////////////////////////////////////////////////////////////
+HWND PopupHandleGet(HWND hWnd, int x, int y, int wait) {
+    g_popup = 0;
+    if (SetHook(hWnd, WM_INITMENUPOPUPX, "WM_INITMENUPOPUP_RM") == NULL)
+        return 0;
+    int mickey_x = MulDiv(x, 0x10000, GetSystemMetrics(SM_CXSCREEN));
+    int mickey_y = MulDiv(y, 0x10000, GetSystemMetrics(SM_CYSCREEN));
+    simple_mouse(MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE, mickey_x, mickey_y);
+    simple_mouse(MOUSEEVENTF_RIGHTDOWN, 0, 0);
+    simple_mouse(MOUSEEVENTF_RIGHTUP,   0, 0);
+    Sleep(wait);
+    if (g_popup == 0)
+        UnhookWindowsHookEx(g_hHook);
+    return g_popup;
+}
+
 
 MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest		
 
@@ -1970,6 +1992,19 @@ CODE:
     RETVAL = WaitForWindowInputIdle( hWnd, dwMilliseconds );
 OUTPUT:
     RETVAL
+
+############################################################################
+HWND
+GetPopupHandle(hWnd, x, y, wait=50)
+    HWND hWnd;
+    int x;
+    int y;
+    int wait;
+CODE:
+    RETVAL = PopupHandleGet(hWnd, x, y, wait);
+OUTPUT:
+    RETVAL
+############################################################################
 
 
 MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest::DibSect
