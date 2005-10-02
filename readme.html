@@ -23,11 +23,12 @@
 	</ul>
 
 	<li><a href="#development">DEVELOPMENT</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
 	<li><a href="#todo">TODO</a></li>
 	<ul>
 
 		<li><a href="#perl_only">Perl only</a></li>
-		<li><a href="#c___compiler_needed">C++ compiler needed</a></li>
+		<li><a href="#c++_compiler_needed">C++ compiler needed</a></li>
 	</ul>
 
 	<li><a href="#version">VERSION</a></li>
@@ -74,12 +75,13 @@
     nmake install</pre>
 <pre>
     See more details in the DEVELOPMENT section elswhere in this document.</pre>
-<p>If you are using ActivePerl 5.6
-(http://www.activestate.com/Products/ActivePerl/index.html) 
-you can install the binary package I am including instead. You will need 
-to enter PPM (Perl Package Manager) from the command-line. Once you have 
-extracted the files I send you to a directory of your machine, enter PPM
- and do like this:</p>
+<p>You can get the most recent release from 
+<a href="http://www.sourceforge.net/projects/winguitest">http://www.sourceforge.net/projects/winguitest</a>. The package will
+contain Win32-GuiTest.ppd file and Win32-GuiTest.tar.gz file, 
+which is all that you need to use
+ppm. If you put those 2 files in C:\TEMP directory, the installation
+should look as follows.  Enter PPM (Perl Package Manager) from the 
+command-line and type commands as below</p>
 <pre>
     C:\TEMP&gt;ppm
     PPM interactive shell (2.0) - type 'help' for available commands.
@@ -120,7 +122,7 @@ Patches to both the code and the documentation are welcome.</p>
 </p>
 <h2><a name="functions">Functions</a></h2>
 <dl>
-<dt><strong><a name="item__24debug">$debug</a></strong><br />
+<dt><strong><a name="item_%24debug">$debug</a></strong><br />
 </dt>
 <dd>
 When set enables the verbose mode.
@@ -237,13 +239,13 @@ containing one or more of the following substrings:
 <dd>
 <pre>
     SendLButtonUp()
-        SendLButtonDown()
-        SendMButtonUp()
-        SendMButtonDown()
-        SendRButtonUp()
-        SendRButtonDown()
-        SendMouseMoveRel(x,y)
-        SendMouseMoveAbs(x,y)</pre>
+    SendLButtonDown()
+    SendMButtonUp()
+    SendMButtonDown()
+    SendRButtonUp()
+    SendRButtonDown()
+    SendMouseMoveRel(x,y)
+    SendMouseMoveAbs(x,y)</pre>
 </dd>
 <p></p>
 <dt><strong><a name="item_mousemoveabspix"><code>MouseMoveAbsPix($x,$y)</code></a></strong><br />
@@ -310,6 +312,18 @@ of a button.</p>
 <dd>
 <p>delay - the time (0.25 means 250 ms) to wait between the mouse down
 and the mouse up event. This is useful for debugging.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_pushchildbyid">PushChildById( $parent, $button, $level, $delay )</a></strong><br />
+</dt>
+<dd>
+Allows pushing a button, which control id is eqaul to a given parameter.
+<a href="#item_pushchildbutton"><code>PushChildButton</code></a> tries to match parameter against control id or
+caption.
+PushChildById matches only against control id. Secondly, PushChildById
+allows specifying search depth in the windows hierarchy tree.
+The default is 2, which means that only direct children will be
+pushed.
 </dd>
 <p></p>
 <dt><strong><a name="item_waitwindowlike"><code>WaitWindowLike($parent,$wndtitle,$wndclass,$wndid,$depth,$wait)</code></a></strong><br />
@@ -464,6 +478,43 @@ button up.</p>
 <pre>
     # Click on Calculator parent window itself
     MouseClick('Calculator', GetDesktopWindow());</pre>
+</dd>
+<p></p>
+<dt><strong><a name="item_allocatevirtualbuffer">$buf_str = AllocateVirtualBuffer( $hwnd, $size )</a></strong><br />
+</dt>
+<dd>
+Allocates memory in the address space of the process, which is an owner of
+a window identified by $hwnd. Returns a reference to a hash, which has 2 elements:
+</dd>
+<dl>
+<dt><strong><a name="item_ptr_%2d_address_of_the_allocated_memory">ptr - address of the allocated memory</a></strong><br />
+</dt>
+<dt><strong><a name="item_handle">process - process handle (in the Win32 meaning, as returned by Win32 OpenProcess
+API function</a></strong><br />
+</dt>
+</dl>
+<dt><strong><a name="item_readfromvirtualbuffer">$value = ReadFromVirtualBuffer( $buf_str, $size )</a></strong><br />
+</dt>
+<dd>
+Read from a memory in the address space of the other process.
+<code>$buf_str</code> is a reference to a hash returned by AllocateVirtualBuffer.
+</dd>
+<dd>
+<p>Returns read value.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_writetovirtualbuffer">WriteToVirtualBuffer( $buf_str, $value )</a></strong><br />
+</dt>
+<dd>
+Write to a memory in the address space of the other process.
+<code>$buf_str</code> is a reference to a hash returned by AllocateVirtualBuffer.
+<code>$value</code> is a value to be copied.
+</dd>
+<p></p>
+<dt><strong><a name="item_freevirtualbuffer">FreeVirtualBuffer( $buf_str )</a></strong><br />
+</dt>
+<dd>
+Frees memory allocated by AllocateVirtualBuffer
 </dd>
 <p></p>
 <dt><strong><a name="item_wmgettext">$text = <code>WMGetText($hwnd)</code> *</a></strong><br />
@@ -821,6 +872,16 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
    SelTreeViewItemPath($window, &quot;Parent|Child&quot;);
    SelTreeViewItemPath($window, $oldpath);</pre>
 </dd>
+<dt><strong><a name="item_getpopuphandle">$hpopup = GetPopupHandle($hwnd, $x, $y, [$wait])</a></strong><br />
+</dt>
+<dd>
+<pre>
+   This function gets the handle of a popup window generated by
+   right-clicking at the $x and $y screen coordinates (absolute). An
+   optional delay can be entered which will wait the given number of
+   milliseconds after the right-click for the window to appear (default
+   is 50). Zero is returned when no popup menu is found.</pre>
+</dd>
 </dl>
 <p>
 </p>
@@ -944,6 +1005,11 @@ parameters. For me this was /XP32 /RETAIL</p>
 <p>
 </p>
 <hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p>Module's documentation is available at <a href="http://www.piotrkaluski.com/files/winguitest/docs/index.html">http://www.piotrkaluski.com/files/winguitest/docs/index.html</a>.</p>
+<p>
+</p>
+<hr />
 <h1><a name="todo">TODO</a></h1>
 <p>Here are a few items where help would be welcome.</p>
 <p>
@@ -955,7 +1021,7 @@ parameters. For me this was /XP32 /RETAIL</p>
  Add more examples and explain them</pre>
 <p>
 </p>
-<h2><a name="c___compiler_needed">C++ compiler needed</a></h2>
+<h2><a name="c++_compiler_needed">C++ compiler needed</a></h2>
 <pre>
  Add more calls to the C++ backend
  Fix current calls</pre>
@@ -1013,7 +1079,7 @@ details).</p>
 </dt>
 <dt><strong><a name="item_jarek_jurasz">Jarek Jurasz</a></strong><br />
 </dt>
-<dt><strong><a name="item_wilson_p_2e_snyder_ii">Wilson P. Snyder II</a></strong><br />
+<dt><strong><a name="item_wilson_p%2e_snyder_ii">Wilson P. Snyder II</a></strong><br />
 </dt>
 <dt><strong><a name="item_rudi_farkas">Rudi Farkas</a></strong><br />
 </dt>
@@ -1021,7 +1087,7 @@ details).</p>
 </dt>
 <dt><strong><a name="item_piotr_kaluski">Piotr Kaluski</a></strong><br />
 </dt>
-<dt><strong><a name="item__2e_2e_2eand_more_2e_2e_2e">...and more...</a></strong><br />
+<dt><strong><a name="item_%2e%2e%2eand_more%2e%2e%2e">...and more...</a></strong><br />
 </dt>
 <dd>
 for code, suggestions and bug fixes.
