@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.37 2005/10/02 13:03:13 pkaluski Exp $
+# $Id: guitest.pm,v 1.38 2005/10/02 16:32:53 pkaluski Exp $
 #
 
 =head1 NAME
@@ -1503,7 +1503,7 @@ Here are a few items where help would be welcome.
 
 =head1 VERSION
 
-    1.50.3-ad
+    1.50.4
 
 =head1 CHANGES
 
