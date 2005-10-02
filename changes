@@ -249,7 +249,7 @@
      - Added IsListViewItemSel and IsTabItemSel (CTRONDLP)
      - Updated SetFocus routine with AttachWin code (CTRONDLP)
 
-? ? ? ? ? ?
+1.50.4 Sun Oct 02 15:00:00 2005
 
      - Added some code to Makefile.PL to help with environments
        where file name case is of concern. (CTRONDLP)
