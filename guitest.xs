@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.21 2005/09/25 07:32:27 pkaluski Exp $
+ *  $Id: guitest.xs,v 1.22 2005/11/29 03:19:38 pkaluski Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -142,7 +142,9 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 	//// List Views ////
 	if (pCW->message == WM_LV_GETTEXT) {
 		*g_szBuffer = NUL;
-		ListView_GetItemText(g_hWnd, (int)pCW->wParam /*iItem*/, 0, g_szBuffer, MAX_DATA_BUF);
+		int iItem = pCW->wParam;
+		int iSubItem = pCW->lParam;
+		ListView_GetItemText(g_hWnd, iItem, iSubItem, g_szBuffer, MAX_DATA_BUF);
 		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_LV_SELBYINDEX) {
 		int iCount = ListView_GetItemCount(g_hWnd);
@@ -325,7 +327,8 @@ HHOOK SetHook(HWND hWnd, UINT &uMsg, char *lpMsgId)
 
 // The following several routines all inject "ourself" into a remote process
 // and performs some work.
-int GetLVItemText(HWND hWnd, int iItem, char *lpString)
+
+int GetLVItemText(HWND hWnd, int iItem, int iSubItem, char *lpString)
 {	
 	if (SetHook(hWnd, WM_LV_GETTEXT, "WM_LV_GETTEXT_RM") == NULL) {
 		*lpString = NUL;
@@ -334,7 +337,7 @@ int GetLVItemText(HWND hWnd, int iItem, char *lpString)
 	
 	// By the time SendMessage returns, 
 	// g_szBuffer already contains the text.
-	SendMessage(hWnd, WM_LV_GETTEXT, iItem, 0);
+	SendMessage(hWnd, WM_LV_GETTEXT, iItem, iSubItem );
 	lstrcpy(lpString, g_szBuffer);
 
 	return (int)strlen(lpString);
@@ -370,11 +373,6 @@ BOOL IsLVItemSel(HWND hWnd, char *lpItem)
 	SendMessage(hWnd, WM_LV_ISSEL, 0, 0);
 
 	return g_bRetVal;
-}
-
-int GetLVItemCount(HWND hWnd)
-{
-	return ListView_GetItemCount(hWnd);
 }
 
 BOOL SelTVItemPath(HWND hWnd, char *lpPath)
@@ -1056,17 +1054,25 @@ PPCODE:
     }
 
 
-
-void
-GetListViewContents(hWnd)
+SV*
+GetListViewItem(hWnd, iItem, iSubItem )
 	HWND hWnd
-PPCODE:
+	int iItem
+    int iSubItem
+CODE:
 	char szItem[MAX_DATA_BUF+1] = "";
-	int iCount = GetLVItemCount(hWnd);
-	for (int i = 0; i < iCount; i++) {
-		GetLVItemText(hWnd, i, szItem);
-        XPUSHs(sv_2mortal(newSVpv(szItem, 0)));
-	}
+	GetLVItemText(hWnd, iItem, iSubItem, szItem);
+	RETVAL = newSVpv(szItem, 0);
+OUTPUT:
+	RETVAL
+
+int
+GetListViewItemCount(hWnd)
+	HWND hWnd
+CODE:
+	RETVAL = ListView_GetItemCount(hWnd);
+OUTPUT:
+	RETVAL
 
 BOOL
 SelListViewItem(hWnd, iItem, bMulti=FALSE)
@@ -1094,6 +1100,22 @@ IsListViewItemSel(hWnd, lpItem)
 	char *lpItem
 CODE:
 	RETVAL = IsLVItemSel(hWnd, lpItem);
+OUTPUT:
+	RETVAL
+
+HWND
+GetListViewHeader(hWnd)
+	HWND hWnd
+CODE:
+	RETVAL = ListView_GetHeader(hWnd);
+OUTPUT:
+	RETVAL
+
+int
+GetHeaderColumnCount(hWnd)
+	HWND hWnd
+CODE:
+	RETVAL = Header_GetItemCount(hWnd);
 OUTPUT:
 	RETVAL
 

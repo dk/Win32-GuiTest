@@ -269,3 +269,8 @@
      - Modified POD in GuiTest.pm in INSTALLATION section. Added SEE ALSO
      - Added Rafe Lafrance's GetPopupHandle
 
+1.50.5 Tue Nov 29 15:00:00 2005
+
+     - Added multicolumn GetListViewContents, implemented by Denis Howe.
+       Thanks to Charles Kuo for testing this
+

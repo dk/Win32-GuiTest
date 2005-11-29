@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.38 2005/10/02 16:32:53 pkaluski Exp $
+# $Id: guitest.pm,v 1.39 2005/11/29 03:19:38 pkaluski Exp $
 #
 
 =head1 NAME
@@ -1148,11 +1148,30 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
        SendKeys "{PAUSE 200}";
    }
 
-=item GetListViewContents($window)
+=item C<GetListViewContents($handle)>
 
-    Returns a list of the contents of the specified list view.
+    Return the items of the list view with C<$handle> as a list, each
+	element of which is a reference to an array containing the values
+	in each column.
 
 =cut
+
+sub GetListViewContents
+{
+	my $lv = shift;
+	my @res;
+	my $item_count = GetListViewItemCount($lv);
+	my $header = GetListViewHeader($lv);
+	my $column_count = $header ? GetHeaderColumnCount($header) : 1;
+	# Items are numbered from 0
+	for my $item_index (0..$item_count-1)
+	{
+		# Sub-items are numbered from 1
+		push @res, [map(GetListViewItem($lv, $item_index, $_),
+						0..$column_count - 1)];
+	}
+	return @res;
+}
 
 =item SelListViewItem($window, $idx, [$multi_select])
 
