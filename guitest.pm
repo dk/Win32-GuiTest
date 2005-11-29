@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.39 2005/11/29 03:19:38 pkaluski Exp $
+# $Id: guitest.pm,v 1.40 2005/11/29 03:50:46 pkaluski Exp $
 #
 
 =head1 NAME
@@ -240,7 +240,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.50.4';
+$VERSION = '1.50.5';
 
 $debug = 0;
 
