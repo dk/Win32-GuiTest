@@ -9,7 +9,7 @@ use strict;
 # Written by Gabor Szabo <gabor@pti.co.il>
 
 
-open my $out, ">Examples.pm";
+open my $out, ">lib/Win32/GuiTest/Examples.pm" or die "Cannot open lib/Win32/GuiTest/Examples.pm:$!\n";
 print $out <<END;
 package Win32::GuiTest::Examples;
 1;
@@ -41,7 +41,10 @@ foreach my $file (@manifest)  {
 	print $out "\n=head2 $file\n\n";
 	open my $fh, "<", $file;
 	my @lines = <$fh>;
-	print $out "    $_" foreach @lines;
+	for ( @lines) {
+		next if /^#\s*\$Id/;
+		print $out "    $_";
+	}
 }
 
 print $out <<END;
