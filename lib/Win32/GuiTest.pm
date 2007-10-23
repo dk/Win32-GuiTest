@@ -1,5 +1,5 @@
 #
-# $Id: GuiTest.pm,v 1.1 2007/10/23 11:31:44 pkaluski Exp $
+# $Id: GuiTest.pm,v 1.2 2007/10/23 18:23:17 pkaluski Exp $
 #
 
 =head1 NAME
@@ -1557,7 +1557,10 @@ sub TVPathWalk
                                    $max_buf, 
                                    $delay, 
                                    @parts );
-            }
+            }else{
+                carp "No children under $parts[ 0 ]";
+                return 0;
+            } 
         }else{
             $hItem = SendMessage( $hwnd, 
                                   TVM_GETNEXTITEM(), 
@@ -1565,6 +1568,7 @@ sub TVPathWalk
                                   $hItem );
         }
     }
+    carp "No such child $parts[ 0 ]";
     return 0;
 }    
 
