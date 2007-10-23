@@ -82,8 +82,8 @@ DESCRIPTION
 
     SendKeys($keys[,$delay])
         Sends keystrokes to the active window as if typed at the keyboard
-        using the optional delay between keystrokes (default is 50 ms and
-        should be OK for most uses).
+        using the optional delay between key-up and key-down messages
+        (default is 25 ms and should be OK for most uses).
 
         The keystrokes to send are specified in KEYS. There are several
         characters that have special meaning. This allows sending control
@@ -96,7 +96,7 @@ DESCRIPTION
 
         The parens allow character grouping. You may group several
         characters, so that a specific keyboard modifier applies to all of
-        them.
+        them. Groups can be enclosed in groups.
 
         E.g. SendKeys("ABC") is equivalent to SendKeys("+(abc)")
 
@@ -139,6 +139,10 @@ DESCRIPTION
                 {RWI}         Right Windows Key 
                 {APP}         Open Context Menu Key
 
+        or supply a number that will be treated as a VK code. Note that a
+        single-digit number will be treated as a character, so prepend these
+        with '0'.
+
         All these named actions take an optional integer argument, like in
         {RIGHT 5}. For all of them, except PAUSE, the argument means a
         repeat count. For PAUSE it means the number of milliseconds SendKeys
@@ -147,6 +151,10 @@ DESCRIPTION
         In this implementation, SendKeys always returns after sending the
         keystrokes. There is no way to tell if an application has processed
         those keys when the function returns.
+
+        Unicode characters in $keys are translated into set of ALT+NUMPAD
+        keystrokes. Note that not all applications can understand unicode
+        input.
 
     SendMouse($command)
         This function emulates mouse input. The COMMAND parameter is a
@@ -483,6 +491,7 @@ DESCRIPTION
     @lst = GetListContents(hWnd)
         Fetch the contents of the list and combo boxes.
 
+    GetAsyncKeyState($key)
     IsKeyPressed($key)
         Wrapper around the GetAsyncKeyState API function. Returns TRUE if
         the user presses the specified key.
@@ -490,6 +499,7 @@ DESCRIPTION
             IsKeyPressed("ESC");
             IsKeyPressed("A");
             IsKeyPressed("DOWN"); 
+            IsKeyPressed( VK_DOWN);
 
     SendRawKey($virtualkey,$flags)
         Wrapper around keybd_event. Allows sending low-level keys. The first
@@ -507,8 +517,11 @@ DESCRIPTION
                SendKeys "{PAUSE 200}";
            }
 
-    GetListViewContents($window)
-            Returns a list of the contents of the specified list view.
+    VkKeyScan(int)
+    "GetListViewContents($handle)"
+            Return the items of the list view with C<$handle> as a list, each
+                element of which is a reference to an array containing the values
+                in each column.
 
     SelListViewItem($window, $idx, [$multi_select])
             Selects an item in the list view based off an index (zero-based).
@@ -613,6 +626,24 @@ DESCRIPTION
     bool DibSect::Destroy()
             Destroys the contents of the DIB section.
 
+UNICODE SUPPORT
+    Currently (2007) there's no consensus about unicode input in Perl, so
+    the module declares function "UnicodeSemantics" that sets whether
+    information queried from windows should use A or W syscalls. The
+    function that support this differentiation, and produce different
+    results depending on value set to "UnicodeSemantics" is:
+
+    "GetWindowText", and all its callers, - FindWindowLike, WaitWindow,
+    WaitWindowLike
+
+    "SendKeys" translated unicode characters into set of ALT+NUMPAD
+    keystrokes. Note that not all applications can understand unicode input.
+
+    UnicodeSemantics [BOOL]
+        If a boolean parameter is set, changes the semantics flag for
+        functions that return results of either A or W syscalls. If the
+        parameter is not set, returns the current value of the flag.
+
 DEVELOPMENT
     If you would like to participate in the development of this module there
     are several thing that need to be done. For some of them you only need
@@ -695,12 +726,6 @@ TODO
      Possibly Java interfaces
      Retreive the list of the menu of a given window.
 
-VERSION
-        1.50.3-ad
-
-CHANGES
-    Moved to the CHANGES file.
-
 COPYRIGHT
     The SendKeys function is based on the Delphi sourcecode published by Al
     Williams <http://www.al-williams.com/awc/> in Dr.Dobbs
@@ -719,6 +744,9 @@ AUTHORS
 
     Dennis K. Paulsen (ctrondlp@cpan.org) wrote various pieces (See
     "Changes" for details).
+
+    Dmitry Karasik (dmitry@karasik.eu.org) added support for unicode and
+    cygwin/mingw.
 
 CREDITS
     Thanks very much to:
