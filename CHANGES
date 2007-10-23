@@ -274,3 +274,23 @@
      - Added multicolumn GetListViewContents, implemented by Denis Howe.
        Thanks to Charles Kuo for testing this
 
+1.51 Fri Sep 28 10:58:05 CEST 2007
+
+     - Compile and pass tests under cygwin; file cases and locations rearranged
+     - Calculator test fixed
+     - Add POD tests, remove explicit podchecker and pod2html calls
+     - Remove various obsolete targets (ppm,Build.PL,readme.html) and shape up Makefile.PL
+       for modern ExtUtils::MakeMaker 
+
+1.52 Fri Oct 5 16:00 CEST 2007
+     - IsKeyPressed and SendKeys recognize integers as VK codes
+
+
+1.53 Sat Oct 6 14:00 CEST 2007
+     - Add UnicodeSemantics()
+     - GetWindowText and its called (FindWindowLike etc) can operate in Unicode now
+
+1.54 Tue Oct 9 10:00 CEST 2007
+     - SendKeys rewritten in Perl to allow more powerful grouping and to understand
+       unicode.
+      
