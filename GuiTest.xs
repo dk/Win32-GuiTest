@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.22 2005/11/29 03:19:38 pkaluski Exp $
+ *  $Id: GuiTest.xs,v 1.1 2007/10/23 11:38:02 pkaluski Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -14,6 +14,10 @@
  */
 
 #define WIN32_LEAN_AND_MEAN
+#define _WIN32_IE 0x0500
+#ifndef SIZE_T
+#	define SIZE_T DWORD
+#endif
 #include <windows.h>
 #include <commctrl.h>
 #include "dibsect.h"
@@ -52,6 +56,7 @@ UINT WM_TC_ISSEL = 0;
 UINT WM_TV_SELBYPATH = 0;
 UINT WM_TV_GETSELPATH = 0;
 UINT WM_INITMENUPOPUPX = WM_INITMENUPOPUP;  //Only needed to conform with SetHook()'s calling convention
+BOOL unicode_semantics = 0;
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
@@ -319,7 +324,7 @@ HHOOK SetHook(HWND hWnd, UINT &uMsg, char *lpMsgId)
 	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
 				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
 	
-	if (uMsg == NULL)
+	if (uMsg == 0)
 		uMsg = RegisterWindowMessage(lpMsgId);
 
 	return g_hHook;	
@@ -506,214 +511,6 @@ DWORD WaitForWindowInputIdle( HWND hwnd, DWORD milliseconds )
 }
       
 
-int cvtkey(
-	const char* s,
-	int i, 
-	int *key,
-    int *count, 
-	int* len,
-    int* letshift,
-    int* shift, 
-	int* letctrl,
-    int* ctrl, 
-	int* letalt,
-    int* alt, 
-	int* shiftlock
-	);
-
-
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-
-/*  Find the virtual keycode (Windows VK_* constants) given a 
- *  symbolic name.
- *  Returns 0 if not found.
- */
-int findvkey(const char* name, int* key) 
-{
-    /* symbol table record */
-    typedef struct tokentable {
-        char *token;
-        int vkey;
-    } tokentable;
-
-    /* global symbol table */
-    static tokentable tbl[]  = {
-        "BAC", VK_BACK,
-        "BS" , VK_BACK,
-        "BKS", VK_BACK,
-        "BRE", VK_CANCEL,
-        "CAP", VK_CAPITAL,
-        "DEL", VK_DELETE,
-        "DOW", VK_DOWN,
-        "END", VK_END,
-        "ENT", VK_RETURN,
-        "ESC", VK_ESCAPE,
-        "HEL", VK_HELP,
-        "HOM", VK_HOME,
-        "INS", VK_INSERT,
-        "LEF", VK_LEFT,
-        "NUM", VK_NUMLOCK,
-        "PGD", VK_NEXT,
-        "PGU", VK_PRIOR,
-        "PRT", VK_SNAPSHOT,
-        "RIG", VK_RIGHT,
-        "SCR", VK_SCROLL,
-        "TAB", VK_TAB,
-        "UP",  VK_UP,
-        "F1",  VK_F1,
-        "F2",  VK_F2,
-        "F3",  VK_F3,
-        "F4",  VK_F4,
-        "F5",  VK_F5,
-        "F6",  VK_F6,
-        "F7",  VK_F7,
-        "F8",  VK_F8,
-        "F9",  VK_F9,
-        "F10",  VK_F10,
-        "F11",  VK_F11,
-        "F12",  VK_F12,
-        "F13",  VK_F13,
-        "F14",  VK_F14,
-        "F15",  VK_F15,
-        "F16",  VK_F16,
-        "F17",  VK_F17,
-        "F18",  VK_F18,
-        "F19",  VK_F19,
-        "F20",  VK_F20,
-        "F21",  VK_F21,
-        "F22",  VK_F22,
-        "F23",  VK_F23,
-        "F24",  VK_F24,
-	"SPC",  VK_SPACE,
-	"SPA",  VK_SPACE,
-        "LWI",  VK_LWIN,
-        "RWI",  VK_RWIN,
-        "APP",  VK_APPS,
-    };
-    int i;
-    for (i=0;i<sizeof(tbl)/sizeof(tokentable);i++) {
-        if (strcmp(tbl[i].token, name)==0) {
-            *key=tbl[i].vkey;
-            return 1;
-	}
-    }
-    return 0;
-}
-
-/* Get a number from the input string */
-int GetNum(
-    const char*s ,
-    int i,
-    int* len
-    )
-{
-    int res;
-    int pos = 0;  
-    char* tmp = (char*)safemalloc(strlen(s)+1);
-    strcpy(tmp, s);
-    while (s[i]>='0' && s[i]<='9') {
-	tmp[pos++] = s[i++];
-	(*len)++;
-    }
-    tmp[pos] = NUL;
-    res = atoi(tmp);
-    safefree(tmp);
-    return res;
-}
-
-
-
-/* Process braced characters */
-void procbrace(
-	const char* s, 
-	int i,
-    int *key, 
-	int *len,
-    int *count, 
-	int *letshift,
-    int *letctrl,
-	int *letalt,
-    int *shift,
-	int *ctrl,
-    int *alt,
-	int *shiftlock)
-{
-    int j,k,m;
-	char* tmp = (char*)safemalloc(strlen(s)+1);
-    strcpy(tmp, s);
-
-    *count=1;
-	/* 3 cases: x, xxx, xxx ## */
-	/* if single character case */
-	if (s[i+2]=='}' || s[i+2]==' ') {
-		if (s[i+2]==' ') {      /* read count if present */
-			*count=GetNum(s,i+3,len);
-			(*len)++;
-		}
-		(*len)+=2;
-		/* convert quoted key */
-		*key= s[i+1];
-		/* convert key -- pass -1 to prevent special interp. */
-		cvtkey(s,-1,key,count,len,letshift,shift,
-			letctrl,ctrl,letalt,alt,shiftlock);
-    }
-    else {  /* multicharacter sequence */
-	
-		*letshift=FALSE;
-		*letctrl =FALSE;
-		*letalt  =FALSE;
-		
-		/* find next brace or space */
-		j=1;
-		m = 0;
-		while (s[i+j]!=' ' && s[i+j]!='}') {
-		  tmp[m++]= s[i+j];
-		  j++;
-		  (*len)++;
-		}
-		tmp[m]=NUL;
-		
-		if (s[i+j]==' ') {  /* read count */
-		  *count=GetNum(s,i+j+1,len);
-		  (*len)++;
-		}
-		(*len)++;
-		
-		/*check for special tokens*/
-		for (k=0;k<(int)strlen(tmp); k++)
-			tmp[k]=toupper(tmp[k]);
-		
-		/* chop token to 3 characters or less */
-		if (strlen(tmp)>3) 
-			tmp[3]=NUL;
-
-		/* handle pause specially */
-		if (strcmp(tmp,"PAU")==0) {
-            OutputDebugString("Found PAUSE\n");
-OutputDebugString(tmp);
-OutputDebugString("\n");
-			Sleep(*count);
-			*key=0;
-			safefree(tmp);
-			return;
-		}
-		
-		/* find entry in table */
-		*key=0;
-        findvkey(tmp, key);
-		/* if key=0 here then something is bad */
-	} /* end of token processing */
-
-	safefree(tmp);
-}
-
 /* Wrapper around kebyd_event */
 void KeyUp(UINT vk)
 {
@@ -725,61 +522,6 @@ void KeyDown(UINT vk)
 {
     BYTE scan=MapVirtualKey(vk, 0);
     keybd_event(vk, scan, 0, 0);
-}
-
-int cvtkey(
-    const char* s,
-    int i, 
-    int *key,
-    int *count, 
-    int* len,
-    int* letshift,
-    int* shift, 
-    int* letctrl,
-    int* ctrl, 
-    int* letalt,
-    int* alt, 
-    int* shiftlock)
-{
-    int rv;
-    char c;
-    int Result=FALSE;
-	
-    /* if i==-1 then supress special processing */
-    if (i!=-1) { 
-        *len=1;
-        *count=1;
-    }
-    if (i!=-1)
-        c=s[i];
-    else 
-        c=0;
-
-    /* scan for special character */
-    switch (c) {
-    case '{': 
-        procbrace(s,i,key,len,count,letshift,
-                  letctrl,letalt,shift,ctrl,alt,shiftlock);
-        if (*key==0)
-            return TRUE;
-        break;
-    case '~': *key=VK_RETURN; break;
-    case '+': *shift=TRUE; Result=TRUE; break;
-    case '^': *ctrl=TRUE; Result=TRUE; break;
-    case '%': *alt=TRUE; Result=TRUE; break;
-    case '(': *shiftlock=TRUE; Result=TRUE; break;
-    case ')': *shiftlock=FALSE; Result=TRUE; break;
-    default:
-        if (c==0)
-            c=(char)*key;
-        rv=VkKeyScan(c);  /* normal character */
-        *key=rv & 0xFF;
-        *letshift=((rv & 0x100)==0x100);
-        *letctrl =((rv & 0x200)==0x200);
-        *letalt  =((rv & 0x400)==0x400);
-    };
-
-    return Result;
 }
 
 
@@ -1242,70 +984,6 @@ MouseMoveWheel(dwChange)
 CODE:
     mouse_event(MOUSEEVENTF_WHEEL, 0, 0, (dwChange*WHEEL_DELTA), 0);
 
-void
-SendKeysImp(s, wait)
-     char* s
-     DWORD wait
-     PREINIT:
-	int i,j;
-	char c;
-	int key;
-	int count;
-
-	/* init */
-	int len=1;
-	int shiftlock=FALSE;
-	int letalt=FALSE;
-	int alt=FALSE;
-	int letctrl=FALSE;
-	int ctrl=FALSE;
-	int letshift=FALSE;
-	int shift=FALSE;
-	
-    CODE:
-     	
-	/* for each character in string */
-	for (i = 0; i < (int)strlen(s); i++) {
-            if (len!=1) {  /* skip characters on request */
-		len--;
-		continue;
-	    }
-	    c=s[i];
-		
-	    /* convert key */
-	    if (cvtkey(s,i,&key,&count,&len,&letshift,&shift,
-                       &letctrl,&ctrl,&letalt,&alt,&shiftlock))
-                continue;
-		
-            /* fake modifier keys */
-	    if (shift || letshift) 
-		KeyDown(VK_SHIFT);
-	    if (ctrl || letctrl)
-		KeyDown(VK_CONTROL);
-	    if (alt || letalt)
-		KeyDown(VK_MENU);
-		
-            /* do requested number of keystrokes */
-	    for (j=0; j<count; j++) {
-                KeyDown(key);
-		KeyUp(key);
-		Sleep(wait);
-            }
-
-            /* clear modifiers unless locked */
-	    if (alt || letalt && !shiftlock)
-                KeyUp(VK_MENU);
-	    if (ctrl || letctrl && !shiftlock)
-		KeyUp(VK_CONTROL);
-	    if (shift || letshift && !shiftlock)
-		KeyUp(VK_SHIFT);
-	    if (!shiftlock) {
-		alt=FALSE;
-		ctrl=FALSE;
-		shift=FALSE;
-	    }
-	}
-
 HWND
 GetDesktopWindow()
     CODE:
@@ -1323,16 +1001,22 @@ GetWindow(hwnd, uCmd)
     OUTPUT:
 	RETVAL
 
-
 SV*
 GetWindowText(hwnd)
     HWND hwnd
     CODE:
-//        SV* sv;
-        char text[255];
+        char text[512];
         int r;
-        r = GetWindowText(hwnd, text, 255);
-        RETVAL = newSVpv(text, r);
+	if ( unicode_semantics) {
+		WCHAR buf[256];
+        	r = GetWindowTextW(hwnd, buf, 255);
+        	r = WideCharToMultiByte(CP_UTF8, 0, buf, r, text, 511, NULL, NULL);
+        	RETVAL = newSVpvn(text, r);
+		SvUTF8_on( RETVAL);
+	} else {
+        	r = GetWindowText(hwnd, text, 255);
+        	RETVAL = newSVpvn(text, r);
+	}
     OUTPUT:
         RETVAL
 
@@ -1634,6 +1318,22 @@ CODE:
   AttachWin(hwnd, FALSE);
 OUTPUT:
   RETVAL        
+
+BOOL
+UnicodeSemantics(...)
+CODE:
+  switch( items) {
+  case 0:
+    break;
+  case 1:
+    unicode_semantics = SvTRUE( ST( 0));
+    break;
+  default:
+    croak("Format: UnicodeSemantics() or UnicodeSemantics(BOOL)");
+  }
+  RETVAL = unicode_semantics;
+OUTPUT:
+  RETVAL
     
 void 
 ScreenToNorm(x,y)
@@ -1778,29 +1478,6 @@ PPCODE:
     for (i = 0; i < nelems; i++) {
         XPUSHs(sv_2mortal(GetTextHelper(hWnd, i, LB_GETTEXTLEN, LB_GETTEXT)));
     }
-
-BOOL
-IsKeyPressed(name)
-    char* name;
-    CODE:
-    int vkey;
-    int found;
-    int len = strlen(name);
-    if (len >= 3) 
-        name[3]=NUL;
-    found = findvkey(name, &vkey);
-    if (found) {
-        OutputDebugString("Trying key\n");
-        RETVAL = GetAsyncKeyState(vkey);
-    } else if (strlen(name)==1 && (isdigit(*name) || isalpha(*name))) {
-        OutputDebugString("Trying alphanum\n");
-        RETVAL = GetAsyncKeyState(toupper(*name));
-    }else {
-        OutputDebugString("No key\n");
-        RETVAL = 0;
-    }
-    OUTPUT:
-        RETVAL
 
 
 HMENU
@@ -1982,6 +1659,22 @@ SendRawKey(vk, flags)
 CODE:
     BYTE scan = MapVirtualKey(vk, 0);
     keybd_event(vk, scan, flags, 0);
+
+int
+VkKeyScan(c)
+	int c;
+CODE:
+	RETVAL = VkKeyScan((char) c);
+OUTPUT:
+	RETVAL
+
+int
+GetAsyncKeyState(c)
+	int c;
+CODE:
+	RETVAL = GetAsyncKeyState(c);
+OUTPUT:
+	RETVAL
 
 HWND
 WindowFromPoint(x, y)
