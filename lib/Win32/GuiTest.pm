@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.40 2005/11/29 03:50:46 pkaluski Exp $
+# $Id: GuiTest.pm,v 1.1 2007/10/23 11:31:44 pkaluski Exp $
 #
 
 =head1 NAME
@@ -111,6 +111,7 @@ require AutoLoader;
         FindWindowLike
         FreeVirtualBuffer
         GetActiveWindow
+        GetAsyncKeyState
         GetCaretPos
         GetChildDepth
         GetChildWindows
@@ -194,6 +195,8 @@ require AutoLoader;
         TabCtrl_GetItemCount
         TabCtrl_SetCurFocus
         TabCtrl_SetCurSel
+	UnicodeSemantics
+	VkKeyScan
         WMGetText
         WMSetText
         WaitForReady
@@ -240,7 +243,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.50.5';
+$VERSION = '1.54';
 
 $debug = 0;
 
@@ -256,12 +259,11 @@ require "Win32/GuiTest/GuiTest.pc";
 
 When set enables the verbose mode.
 
-
 =item SendKeys($keys[,$delay])
 
 Sends keystrokes to the active window as if typed at the keyboard using the
-optional delay between keystrokes (default is 50 ms and should be OK for
-most uses). 
+optional delay between key-up and key-down messages (default is 25 ms and
+should be OK for most uses). 
 
 The keystrokes to send are specified in KEYS. There are several
 characters that have special meaning. This allows sending control codes 
@@ -273,7 +275,8 @@ and modifiers:
 	% means ALT
 
 The parens allow character grouping. You may group several characters, so
-that a specific keyboard modifier applies to all of them.
+that a specific keyboard modifier applies to all of them. Groups can
+be enclosed in groups.
 
 E.g. SendKeys("ABC") is equivalent to SendKeys("+(abc)")
 
@@ -315,22 +318,224 @@ sends a '+' and a '{'). You can also use them to specify certain named actions:
         {RWI}         Right Windows Key 
         {APP}         Open Context Menu Key
 
+or supply a number that will be treated as a VK code. Note that a single-digit
+number will be treated as a character, so prepend these with '0'.
+
 All these named actions take an optional integer argument, like in {RIGHT 5}. 
 For all of them, except PAUSE, the argument means a repeat count. For PAUSE
 it means the number of milliseconds SendKeys should pause before proceding.
 
 In this implementation, SendKeys always returns after sending the keystrokes.
 There is no way to tell if an application has processed those keys when the
-function returns. 
+function returns.
+
+Unicode characters in C<$keys> are translated into set of ALT+NUMPAD keystrokes.
+Note that not all applications can understand unicode input.
 
 =cut
 
-sub SendKeys {
-    my $keys  = shift;
-    my $delay = shift;
-    $delay = 50 unless defined($delay);
-    #print "<$delay>";
-    SendKeysImp($keys, $delay);
+my %vk = (
+	BAC    => VK_BACK(),
+	BS     => VK_BACK(),
+	BKS    => VK_BACK(),
+	BRE    => VK_CANCEL(),
+	CAP    => VK_CAPITAL(),
+	DEL    => VK_DELETE(),
+	DOW    => VK_DOWN(),
+	'END'  => VK_END(),
+	ENT    => VK_RETURN(),
+	ESC    => VK_ESCAPE(),
+	HEL    => VK_HELP(),
+	HOM    => VK_HOME(),
+	INS    => VK_INSERT(),
+	LEF    => VK_LEFT(),
+	NUM    => VK_NUMLOCK(),
+	PGD    => VK_NEXT(),
+	PGU    => VK_PRIOR(),
+	PRT    => VK_SNAPSHOT(),
+	RIG    => VK_RIGHT(),
+	SCR    => VK_SCROLL(),
+	TAB    => VK_TAB(),
+	UP     => VK_UP(),
+	F1     => VK_F1(),
+	F2     => VK_F2(),
+	F3     => VK_F3(),
+	F4     => VK_F4(),
+	F5     => VK_F5(),
+	F6     => VK_F6(),
+	F7     => VK_F7(),
+	F8     => VK_F8(),
+	F9     => VK_F9(),
+	F10    => VK_F10(),
+	F11    => VK_F11(),
+	F12    => VK_F12(),
+	F13    => VK_F13(),
+	F14    => VK_F14(),
+	F15    => VK_F15(),
+	F16    => VK_F16(),
+	F17    => VK_F17(),
+	F18    => VK_F18(),
+	F19    => VK_F19(),
+	F20    => VK_F20(),
+	F21    => VK_F21(),
+	F22    => VK_F22(),
+	F23    => VK_F23(),
+	F24    => VK_F24(),
+	SPC    => VK_SPACE(),
+	SPA    => VK_SPACE(),
+	LWI    => VK_LWIN(),
+	RWI    => VK_RWIN(),
+	APP    => VK_APPS(),
+);
+
+my %vk_flags = (
+	'+'            => VK_SHIFT(),
+	'%'            => VK_MENU(),
+	'^'            => VK_CONTROL(),
+);
+
+my @digits = (
+	VK_INSERT(), VK_END(), VK_DOWN(), VK_NEXT(), VK_LEFT(),
+	VK_CLEAR(), VK_RIGHT(), VK_HOME(), VK_UP(), VK_PRIOR(),
+);
+
+sub wrap_meta
+{
+	my @k = @vk_flags{ keys %{$_[0]} };
+	%{shift()} = ();
+	return 
+		( map { $_ => 0 } @k),
+		@_,
+		( map { $_ => KEYEVENTF_KEYUP() } @k)
+		;
+}
+
+sub alt_sequence
+{(
+	VK_MENU(),	0,
+	( map {
+		$digits[$_], 0,
+		$digits[$_], KEYEVENTF_KEYUP(),
+	} split '', ord shift),
+	VK_MENU(),	KEYEVENTF_KEYUP(),
+)}
+
+sub make_charcode
+{
+	my ( $flags, $c) = @_;
+	my $scan = VkKeyScan( ord $c );
+	$flags-> {'+'}++ if $scan & 0x100;
+	$flags-> {'^'}++ if $scan & 0x200;
+	$flags-> {'%'}++ if $scan & 0x400;
+	$scan &= 0xff;
+	return ( 
+		$scan, 0 , 
+		$scan, KEYEVENTF_KEYUP()
+	);
+}
+
+sub find_vkey
+{
+	my $c = shift;
+	if ( $c =~ /^\d+$/) {
+	      $c = 0 + $c;
+	} elsif ( $c =~ /^0x([a-f0-9]+)$/i) {
+	      $c = hex $1;
+	} else {
+		substr( $c, 3) = '' if length($c) > 3;
+		return undef unless exists $vk{$c};
+		$c = $vk{$c};
+	}
+	return $c;
+}
+
+sub parse_keys
+{
+	my $level = $_[1] || 0;
+	my ( @ret, %flags);
+	{
+		# grouping
+		$_[0] =~ m/\G\(/gcs and do {
+			push @ret, wrap_meta( \%flags, parse_keys( $_[0], $level + 1));
+			redo;
+		};
+		$level > 0 and $_[0] =~ m/\G\)/gcs and return @ret; # single ) is ok
+
+		# shift keys
+		$_[0] =~ m/\G([+^%])/gcs and do {
+			$flags{$1}++;
+			redo;
+		};
+
+		# single character
+		$_[0] =~ m/\G(?:\{(.)(?:\s(\d+))?\}|([^~{]))/gcs and do {
+			my $c   = defined($3) ? $3 : $1;
+			my $rep = defined($2) ? $2 : 1;
+			my @r   = ( utf8::is_utf8($c) and ord($c) > 0x7f) ?
+				alt_sequence( $c) :
+				make_charcode( \%flags, $c)
+				;
+			push @ret, (wrap_meta( \%flags, @r)) x $rep;
+			redo;
+		};
+
+		# enter
+		$_[0] =~ m/\G\~/gcs and do {
+			push @ret, wrap_meta(
+				\%flags,
+				VK_RETURN(), 0,
+				VK_RETURN(), KEYEVENTF_KEYUP(),
+			);
+			redo;
+		};
+
+		# virtual key
+		$_[0] =~ m/\G\{(\w+)(?:\s(\d+))?\}/gcs and do {
+			my $k;
+			my $c   = $1;
+			my $rep = defined($2) ? $2 : 1;
+			if ( $c =~ /^PAU/) {
+				push @ret, undef, sub { select(undef, undef, undef, $rep / 1000 ) };
+				%flags = ();
+				redo;
+			} elsif ( not defined( $k = find_vkey( $c))) {
+				warn "GuiTest: invalid virtual key {$c}\n";
+				%flags = ();
+				redo;
+			}
+			push @ret, (wrap_meta(
+				\%flags, 
+				$k, 0,
+				$k, KEYEVENTF_KEYUP()
+			)) x $rep;
+			redo;
+		};
+
+		# end
+		$_[0] =~ m/\G$/gcs and return @ret;
+
+		warn 
+			"GuiTest: cannot parse key sequence beginning at ", 
+			substr($_[0], pos($_[0])) ,
+			"\n";
+	};
+}
+
+sub SendKeys
+{
+	my ( $keys, $delay) = @_;
+	$delay = 25 unless defined $delay;
+	$delay /= 1000;
+	my @k = parse_keys($keys);
+	for ( my $i = 0; $i < @k; $i+=2) {
+		if ( defined $k[$i]) {
+			DbgShow("SendRawKey(@k[$i,$i+1])\n");
+			SendRawKey( @k[$i,$i+1]);
+			select(undef,undef,undef,$delay);
+		} else {
+			$k[$i+1]-> ();
+		}
+	}
 }
 
 =item SendMouse($command)
@@ -1124,6 +1329,8 @@ Selects an item in the combo box based off text (case insensitive).
 
 Fetch the contents of the list and combo boxes.
 
+=item GetAsyncKeyState($key)
+
 =item IsKeyPressed($key)
 
 Wrapper around the GetAsyncKeyState API function. Returns TRUE if the user presses the 
@@ -1132,6 +1339,22 @@ specified key.
     IsKeyPressed("ESC");
     IsKeyPressed("A");
     IsKeyPressed("DOWN"); 
+    IsKeyPressed( VK_DOWN);
+
+=cut
+
+sub IsKeyPressed
+{
+	my $c = shift;
+	if ( $c =~ /^.$/) {
+		$c = ord uc $c;	
+	} elsif ( not defined( $c = find_vkey( $c))) {
+		return 0;
+	}
+	return GetAsyncKeyState( $c);
+}
+
+=pod
 
 =item SendRawKey($virtualkey,$flags)
 
@@ -1147,6 +1370,8 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
        SendRawKey(VK_DOWN, KEYEVENTF_EXTENDEDKEY); 
        SendKeys "{PAUSE 200}";
    }
+
+=item VkKeyScan(int)
 
 =item C<GetListViewContents($handle)>
 
@@ -1433,6 +1658,30 @@ Destroys the contents of the DIB section.
 1;
 __END__
 
+=head1 UNICODE SUPPORT
+
+Currently (2007) there's no consensus about unicode input in Perl, so
+the module declares function C<UnicodeSemantics> that sets whether 
+information queried from windows should use A or W syscalls. The
+function that support this differentiation, and produce different
+results depending on value set to C<UnicodeSemantics> is:
+
+C<GetWindowText>, and all its callers, - FindWindowLike, WaitWindow,
+WaitWindowLike
+
+C<SendKeys> translated unicode characters into set of ALT+NUMPAD keystrokes.
+Note that not all applications can understand unicode input.
+
+=over
+
+=item UnicodeSemantics [BOOL]
+
+If a boolean parameter is set, changes the semantics flag for functions
+that return results of either A or W syscalls. If the parameter is
+not set, returns the current value of the flag.
+
+=back
+
 
 =head1 DEVELOPMENT
 
@@ -1520,14 +1769,6 @@ Here are a few items where help would be welcome.
  Possibly Java interfaces
  Retreive the list of the menu of a given window.
 
-=head1 VERSION
-
-    1.50.4
-
-=head1 CHANGES
-
-Moved to the CHANGES file.
-
 =cut
 
 =head1 COPYRIGHT
@@ -1549,6 +1790,8 @@ DibSect and some other pieces (see C<Changes> for details).
 
 Dennis K. Paulsen (ctrondlp@cpan.org) wrote various pieces (See C<Changes> for
 details).
+
+Dmitry Karasik (dmitry@karasik.eu.org) added support for unicode and cygwin/mingw.
 
 =head1 CREDITS
 
