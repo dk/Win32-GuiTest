@@ -29,9 +29,9 @@ eg/winbmp.pl
 eg/wptr.pl
 GuiTest.xs
 lib/win32/GuiTest.pm
-lib/win32/guitest/Examples.pm
-lib/win32/guitest/Cmd.pm
-lib/win32/guitest/GuiTest.pc
+lib/win32/GuiTest/Examples.pm
+lib/win32/GuiTest/Cmd.pm
+lib/win32/GuiTest/GuiTest.pc
 Makefile.PL
 MANIFEST			This list of files
 perlobject.map
