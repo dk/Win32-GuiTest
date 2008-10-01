@@ -1,5 +1,5 @@
 /* 
- *  $Id: GuiTest.xs,v 1.1 2007/10/23 11:38:02 pkaluski Exp $
+ *  $Id: GuiTest.xs,v 1.2 2008/10/01 11:27:45 int32 Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -565,10 +565,12 @@ Here is the function I have used in my own Perl modules to convert from screen c
 
 */
 
+#define SCREEN_TO_MICKEY(COORD,val) MulDiv((val)+1, 0x10000, GetSystemMetrics(SM_C ## COORD ## SCREEN))-1
+
 void ScreenToMouseplane(POINT *p)
 {
-    p->x = MulDiv(p->x, 0x10000, GetSystemMetrics(SM_CXSCREEN));
-    p->y = MulDiv(p->y, 0x10000, GetSystemMetrics(SM_CYSCREEN));
+    p->x = SCREEN_TO_MICKEY(X,p->x);
+    p->y = SCREEN_TO_MICKEY(Y,p->y);
 }
  
 
@@ -645,8 +647,8 @@ HWND PopupHandleGet(HWND hWnd, int x, int y, int wait) {
     g_popup = 0;
     if (SetHook(hWnd, WM_INITMENUPOPUPX, "WM_INITMENUPOPUP_RM") == NULL)
         return 0;
-    int mickey_x = MulDiv(x, 0x10000, GetSystemMetrics(SM_CXSCREEN));
-    int mickey_y = MulDiv(y, 0x10000, GetSystemMetrics(SM_CYSCREEN));
+    int mickey_x = SCREEN_TO_MICKEY(X,x);
+    int mickey_y = SCREEN_TO_MICKEY(Y,y);
     simple_mouse(MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE, mickey_x, mickey_y);
     simple_mouse(MOUSEEVENTF_RIGHTDOWN, 0, 0);
     simple_mouse(MOUSEEVENTF_RIGHTUP,   0, 0);
@@ -969,8 +971,8 @@ MouseMoveAbsPix(x,y)
     int x;
     int y;
 PREINIT:
-    int mickey_x = MulDiv(x, 0x10000, GetSystemMetrics(SM_CXSCREEN));
-    int mickey_y = MulDiv(y, 0x10000, GetSystemMetrics(SM_CYSCREEN));
+    int mickey_x = SCREEN_TO_MICKEY(X,x);
+    int mickey_y = SCREEN_TO_MICKEY(Y,y);
 CODE:
     simple_mouse(MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE, mickey_x, mickey_y);
 
@@ -1339,13 +1341,9 @@ void
 ScreenToNorm(x,y)
     int x;
     int y;
-    PREINIT:
-        int hor,ver;
     PPCODE:
-        hor = GetSystemMetrics(SM_CXSCREEN);
-        ver = GetSystemMetrics(SM_CYSCREEN);
-        x = MulDiv(x, 65536, hor);
-        y = MulDiv(y, 65536, ver);
+        x = SCREEN_TO_MICKEY(X,x);
+        y = SCREEN_TO_MICKEY(Y,y);
         XPUSHs(sv_2mortal(newSViv((IV)x)));
         XPUSHs(sv_2mortal(newSViv((IV)y)));    
 
@@ -1354,13 +1352,9 @@ void
 NormToScreen(x,y)
     int x;
     int y;
-    PREINIT:
-        int hor,ver;
     PPCODE:
-        hor = GetSystemMetrics(SM_CXSCREEN);
-        ver = GetSystemMetrics(SM_CYSCREEN);
-        x = MulDiv(x, hor, 65536);
-        y = MulDiv(y, ver, 65536);
+        x = MulDiv(x + 1, GetSystemMetrics(SM_CXSCREEN), 65536) - 1;
+        y = MulDiv(y + 1, GetSystemMetrics(SM_CYSCREEN), 65536) - 1;
         XPUSHs(sv_2mortal(newSViv((IV)x)));
         XPUSHs(sv_2mortal(newSViv((IV)y)));
 
