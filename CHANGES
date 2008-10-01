@@ -293,7 +293,12 @@
 1.54 Tue Oct 9 10:00 CEST 2007
      - SendKeys rewritten in Perl to allow more powerful grouping and to understand
        unicode.
+
 1.55 Tue Dec 15 22:00 CEST 2007
      - First attempts to make Win32::GuiTest object oriented. FindWindowLike
        modified (changes are backward compatible)
+
+1.56 Wed Oct  1 13:28:34 CEST 2008
+     - Allow 'make dist' and limited 'make test' on non-Win32 platforms
+     - Screen to mickey conversion patch by Tony Skelding
  
