@@ -1,8 +1,11 @@
 #!perl -w
-BEGIN { $| = 1; }
+BEGIN {
+	print "1..0 # Skip win32 required\n" and exit unless $^O =~ /win32|cygwin/i;
+	$| = 1;
+}
 
 # Do some tricks with the calculator
-# $Id: 02_calc.t,v 1.1 2007/10/23 12:22:48 pkaluski Exp $
+# $Id: 02_calc.t,v 1.2 2008/10/01 11:10:12 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);

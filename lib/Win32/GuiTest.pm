@@ -1,5 +1,5 @@
 #
-# $Id: GuiTest.pm,v 1.3 2007/12/15 21:43:45 pkaluski Exp $
+# $Id: GuiTest.pm,v 1.4 2008/10/01 11:10:12 int32 Exp $
 #
 
 =head1 NAME
@@ -94,7 +94,6 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $debug %EXPORT_TAGS);
 
 require Exporter;
 require DynaLoader;
-require AutoLoader;
 
 @ISA = qw(Exporter DynaLoader);
 # Items to export into callers namespace by default. Note: do not export
@@ -645,7 +644,7 @@ sub FindWindowLike {
     my $maxlevel;
     my $oo_mode = 0; # Object oriented mode
 
-    if( $_[ 0 ] eq "Win32::GuiTest" )  # Object
+    if( defined($_[0]) and $_[ 0 ] eq "Win32::GuiTest" )  # Object
     {
         shift(@_);
         %arg       = @_;
@@ -655,7 +654,7 @@ sub FindWindowLike {
         $ID        = $arg{ '-childid' }; # Control/Op. ID
         $maxlevel  = $arg{ '-maxlevel' };
         $oo_mode   = 1;
-    }elsif( ref( $_[ 0 ] eq "Win32::GuiTest::Window" ) )  # Object
+    }elsif( defined($_[0]) and ref( $_[ 0 ] eq "Win32::GuiTest::Window" ) )  # Object
     {
         shift(@_);
         %arg       = @_;
@@ -1693,10 +1692,6 @@ Destroys the contents of the DIB section.
 =cut
 
 
-# Preloaded methods go here.
-
-# Autoload methods go after =cut, and are processed by the autosplit program.
-
 package Win32::GuiTest::Window;
 
 sub new
@@ -1766,6 +1761,16 @@ To get the latest source code you need a CVS client and then do the following:
 
 See more detailed explanations here http://sourceforge.net/projects/winguitest/
 
+=head2 cygwin
+
+g++ needs to be installed
+
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+=head2 MSVC environment
 
 To setup a development environment for compiling the C++ code you can either buy
 Visual Studio with Visual C++ or you can download a few things free of charge from 

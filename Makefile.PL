@@ -1,17 +1,22 @@
 #!/usr/bin/perl
 #
-# $Id: Makefile.PL,v 1.1 2007/10/23 11:44:54 pkaluski Exp $
+# $Id: Makefile.PL,v 1.2 2008/10/01 11:10:12 int32 Exp $
 #
 
 use ExtUtils::MakeMaker;
 
 my $DEBUG = grep { m/^--debug$/ } @ARGV;
+my $can_compile = $^O =~ /win32|cygwin/i;
+
+warn "** This module can only work under Win32\n" unless $can_compile;
 
 my @make = (
 	NAME				=> 'Win32::GuiTest',
 	VERSION_FROM			=> 'lib/Win32/GuiTest.pm',
+	$can_compile ? (
 	OBJECT				=> 'GuiTest$(OBJ_EXT) DibSect$(OBJ_EXT)'  ,
 	XS				=> { 'GuiTest.xs' => 'GuiTest.cpp' },
+	) : ( C => [], XS => {},),
 	TYPEMAPS			=> ['perlobject.map' ],
 	( $DEBUG ? (
 		(( $^O =~ /cygwin/i) ? (

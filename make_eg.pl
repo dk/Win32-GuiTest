@@ -30,7 +30,7 @@ the distribution and take the files from the eg directory.
 END
 
 
-open(MAN, "<manifest");
+open(MAN, "<MANIFEST");
 my @manifest = <MAN>;
 close(MAN);
 
