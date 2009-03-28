@@ -5,7 +5,7 @@ BEGIN {
 }
 
 # Do some tricks with the calculator
-# $Id: 02_calc.t,v 1.2 2008/10/01 11:10:12 int32 Exp $
+# $Id: 02_calc.t,v 1.3 2009/03/28 22:36:34 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -43,7 +43,7 @@ SKIP: {
 	($edit) = FindWindowLike($calc, undef, "Edit|Static");
 	ok(defined $edit, "found editor") or skip "could not find Edit window", 1;
 	ok(IsWindow($edit), "Editor is a window");
-	is(WMGetText($edit), "1969. ", "1969 found");
+	ok(WMGetText($edit) =~ /^1969. $/, "1969 found");
 }
 
 #Find the Hex radio button
@@ -95,7 +95,7 @@ SKIP: {
 SKIP: {
 	skip "No Dec/bin/Oct/Hex button(s)", 9 if not ($dec and $bin and $oct and $hex);
 	PushButton("Dec"); sleep 1;
-	is(WMGetText($edit), "1969. ", "1969 in dec found");
+	ok(WMGetText($edit) =~ /^1969. $/, "1969 found");
 	ok(IsCheckedButton($dec));
 
 	PushButton("Hex"); sleep 1;
