@@ -4,7 +4,7 @@ BEGIN {
 	$| = 1;
 }
 
-# $Id: 05_which.t,v 1.2 2008/10/01 11:10:12 int32 Exp $
+# $Id: 05_which.t,v 1.3 2009/09/25 15:33:21 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -18,7 +18,6 @@ like(WhichExe("regedit"),  qr/regedit/i,  "regedit");
 # SZABGAB: What is this ?
 # like(WhichExe("winfile"),  qr/winfile/i,  "winfile");
 
-like(WhichExe("progman"),  qr/progman/i,  "progman");
 like(WhichExe("explorer"), qr/explorer/i, "explorer");
 
 # SZABGAB: is this really expected to give back the string ?
