@@ -1,5 +1,5 @@
 #!perl -w
-# $Id: makedist.pl,v 1.4 2004/07/21 22:21:46 szabgab Exp $
+# $Id: makedist.pl,v 1.5 2009/10/19 16:04:15 int32 Exp $
 
 # Compile everything (including things in the eg directory) and
 # generate the Win32::GuiTest distribution.
@@ -17,7 +17,7 @@ sub sys {
 
 unlink("makedist.log");
 sys("nmake clean") if -e "makefile";
-sys("perl make_eg.pl");
+sys("perl eg/make_eg.pl");
 sys("perl makefile.pl");
 sys("nmake");
 

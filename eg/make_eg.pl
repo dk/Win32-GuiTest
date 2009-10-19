@@ -36,7 +36,8 @@ close(MAN);
 
 foreach my $file (@manifest)  {
 	chomp $file;
-	next if $file !~ m{eg/.*\.pl};
+	next if $file !~ m{eg/(.*)\.pl};
+	next if $1 eq 'make_eg';
 
 	print $out "\n=head2 $file\n\n";
 	open my $fh, "<", $file;

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Id: Makefile.PL,v 1.2 2008/10/01 11:10:12 int32 Exp $
+# $Id: Makefile.PL,v 1.3 2009/10/19 16:04:15 int32 Exp $
 #
 
 use ExtUtils::MakeMaker;
@@ -54,7 +54,7 @@ sub distdir
 	$t . '
 
 my_create_predist:
-	$(PERL) make_eg.pl
+	$(PERL) eg/make_eg.pl
 	@pod2text lib/Win32/GuiTest.pm > README
 ';
 }
