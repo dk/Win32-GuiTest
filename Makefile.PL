@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 #
-# $Id: Makefile.PL,v 1.3 2009/10/19 16:04:15 int32 Exp $
+# $Id: Makefile.PL,v 1.4 2010/05/27 13:31:25 int32 Exp $
 #
 
+use Config;
 use ExtUtils::MakeMaker;
 
 my $DEBUG = grep { m/^--debug$/ } @ARGV;
@@ -27,8 +28,9 @@ my @make = (
 		))
 	) : ()),
 	(( $^O =~ /cygwin/i) ? (
+			CC              => 'g++',
 			LD		=> 'g++',
-			LDDLFLAGS	=> '-shared',
+			LDDLFLAGS	=> "-shared $Config{ccflags}",
 			LIBS		=> ['-L/usr/lib/w32api -lgdi32'],
 	) : ()),
 	ABSTRACT_FROM			=> 'lib/Win32/GuiTest.pm',
