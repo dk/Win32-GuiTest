@@ -4,7 +4,7 @@ BEGIN {
 	$| = 1;
 }
 
-# $Id: 01_basic.t,v 1.2 2008/10/01 11:10:12 int32 Exp $
+# $Id: 01_basic.t,v 1.3 2010/06/13 18:42:19 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -68,6 +68,7 @@ is(@waitwin, 1, "New notepad opened");
 is(@windows, 1, "same here");
 is($waitwin[0], $windows[0], "WindowIDs are identical");
 
+SetForegroundWindow($windows[0]);
 SendKeys(<<EOM, 10);
     This is a test message,
     but also a little demo for the

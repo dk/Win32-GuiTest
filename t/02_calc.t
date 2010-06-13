@@ -5,7 +5,7 @@ BEGIN {
 }
 
 # Do some tricks with the calculator
-# $Id: 02_calc.t,v 1.3 2009/03/28 22:36:34 int32 Exp $
+# $Id: 02_calc.t,v 1.4 2010/06/13 18:42:19 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -23,19 +23,25 @@ my $desk = GetDesktopWindow();
 # it is now really in scientific mode.
 {
 	system("cmd /c start calc");
-	my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$"); 
+	my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$|^CalcFrame"); 
 	# hmm, It seems the SciCalc is the name of the class for both the Standard and the 
 	# Scientific version of the calculator
-
+    
 	ok(IsWindow($calc));
 	SetForegroundWindow($calc);
+
+    if (GetClassName($calc) eq "CalcFrame") {
+    	print STDERR "# Windows 7 calculator is toooo weird!\n";
+        SendKeys("%{F4}");
+        exit;
+    }
 
 	MenuSelect("&View|&Scientific");
 	SendKeys("%{F4}");
 }
 
 system("cmd /c start calc");
-my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$"); 
+my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$|^CalcFrame"); 
 
 SendKeys("1969");
 my $edit;
