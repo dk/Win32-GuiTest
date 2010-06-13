@@ -5,7 +5,7 @@ BEGIN {
 }
 
 # Do some tricks with the calculator
-# $Id: 02_calc.t,v 1.4 2010/06/13 18:42:19 int32 Exp $
+# $Id: 02_calc.t,v 1.5 2010/06/13 18:45:09 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -13,6 +13,13 @@ use Test::More qw(no_plan);
 use Win32::GuiTest qw(:ALL);
 
 my $desk = GetDesktopWindow();
+
+# Make sure there are no existing Calc windows to interfere with testing
+{
+    my @calc_windows = FindWindowLike(0, "", "Calc");
+    BAIL_OUT('Please close existing Calculator windows before proceeding')
+        if @calc_windows;
+}
 
 # It seems that if the calculator opens as Standard then even if we 
 # select Scientific mode we cannot find the Hex button.

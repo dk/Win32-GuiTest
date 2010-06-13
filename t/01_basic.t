@@ -4,7 +4,7 @@ BEGIN {
 	$| = 1;
 }
 
-# $Id: 01_basic.t,v 1.3 2010/06/13 18:42:19 int32 Exp $
+# $Id: 01_basic.t,v 1.4 2010/06/13 18:45:09 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -31,6 +31,13 @@ ok(1);
 my $root = GetDesktopWindow();
 my @desks = grep { $_ == $root } @wins;
 ok(! @desks, "The desktop is not on the window list");
+
+# Make sure there are no existing Notepad windows to interfere with testing
+{
+    my @notepad_windows = FindWindowLike(0, "", "Notepad");
+    BAIL_OUT('Please close existing Notepad windows before proceeding')
+        if @notepad_windows;
+}
 
 # Create a notepad window and check we can find it
 system("cmd /c start notepad.exe README");
