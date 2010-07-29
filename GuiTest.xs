@@ -1,5 +1,5 @@
 /* 
- *  $Id: GuiTest.xs,v 1.2 2008/10/01 11:27:45 int32 Exp $
+ *  $Id: GuiTest.xs,v 1.3 2010/07/29 20:14:53 int32 Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -691,8 +691,8 @@ PPCODE:
         die( "VirtualAllocEx failed with error %d: %s",
                 dw, lpMsgBuf );
     }else{
-        XPUSHs( sv_2mortal( newSVuv( ( LONG )pBuffer ) ) );
-        XPUSHs( sv_2mortal( newSVuv( ( LONG )hProcess ) ) );
+        XPUSHs( sv_2mortal( newSVuv( ( UV )pBuffer ) ) );
+        XPUSHs( sv_2mortal( newSVuv( ( UV )hProcess ) ) );
     }
 
 
