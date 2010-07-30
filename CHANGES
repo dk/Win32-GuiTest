@@ -301,4 +301,9 @@
 1.56 Wed Oct  1 13:28:34 CEST 2008
      - Allow 'make dist' and limited 'make test' on non-Win32 platforms
      - Screen to mickey conversion patch by Tony Skelding
- 
+
+1.57 Jun 13 2010
+     - Build on strawberry perl
+
+1.58 
+     - Build on x64 systems 
