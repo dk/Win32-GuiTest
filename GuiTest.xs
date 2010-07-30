@@ -1,5 +1,5 @@
 /* 
- *  $Id: GuiTest.xs,v 1.3 2010/07/29 20:14:53 int32 Exp $
+ *  $Id: GuiTest.xs,v 1.4 2010/07/30 18:09:51 int32 Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -16,7 +16,9 @@
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_IE 0x0500
 #ifndef SIZE_T
-#	define SIZE_T DWORD
+#  ifndef __GNUC__
+#     define SIZE_T DWORD
+#  endif
 #endif
 #include <windows.h>
 #include <commctrl.h>
