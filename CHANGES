@@ -305,5 +305,6 @@
 1.57 Jun 13 2010
      - Build on strawberry perl
 
-1.58 
+1.58 Oct 31 2010
      - Build on x64 systems 
+     - Hooks fix by Oleg Prokhorov 
