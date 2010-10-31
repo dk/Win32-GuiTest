@@ -659,6 +659,15 @@ DEVELOPMENT
     See more detailed explanations here
     http://sourceforge.net/projects/winguitest/
 
+  cygwin
+    g++ needs to be installed
+
+      perl Makefile.PL
+      make
+      make test
+      make install
+
+  MSVC environment
     To setup a development environment for compiling the C++ code you can
     either buy Visual Studio with Visual C++ or you can download a few
     things free of charge from Microsoft. There might be other ways too we
