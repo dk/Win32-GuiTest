@@ -1,5 +1,5 @@
 /* 
- *  $Id: GuiTest.xs,v 1.5 2010/10/31 19:04:41 int32 Exp $
+ *  $Id: GuiTest.xs,v 1.6 2010/11/24 19:55:08 int32 Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -15,11 +15,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_IE 0x0500
-#ifndef SIZE_T
-#  ifndef __GNUC__
-#     define SIZE_T DWORD
-#  endif
-#endif
 #include <windows.h>
 #include <commctrl.h>
 #include "dibsect.h"
@@ -320,7 +315,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 
 // Sets up the hook, global control/hook handles, and registers appropriate
 // window message.
-HHOOK SetHook(HWND hWnd, UINT &uMsg, char *lpMsgId)
+HHOOK SetHook(HWND hWnd, UINT &uMsg, const char *lpMsgId)
 {
 	g_hWnd = hWnd;
 
