@@ -5,7 +5,7 @@ BEGIN {
 }
 
 # Do some tricks with the calculator
-# $Id: 02_calc.t,v 1.5 2010/06/13 18:45:09 int32 Exp $
+# $Id: 02_calc.t,v 1.6 2010/11/25 10:33:11 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -60,13 +60,15 @@ SKIP: {
 }
 
 #Find the Hex radio button
-my $hex;
-SKIP: {
-	($hex) = FindWindowLike($calc, "Hex");
-	ok(defined $hex, "hex found") or skip "could not find Hex", 2;
-	ok(IsWindow($hex), "Hex is a window");
-	ok(!IsCheckedButton($hex), "Hex is not checked");
+my ($hex) = FindWindowLike($calc, "Hex");
+ok(defined $hex, "hex found") or skip "could not find Hex", 2;
+unless (defined $hex) {
+	print STDERR "# couldn't switch to scientific mode!\n"; # see bug 63310
+	SendKeys("%{F4}");
+	exit;
 }
+ok(IsWindow($hex), "Hex is a window");
+ok(!IsCheckedButton($hex), "Hex is not checked");
 
 #Find the Bin, Oct and Dec radio buttons
 my $bin;
