@@ -1,5 +1,10 @@
 #!perl -w
 BEGIN {
+	print "1..0 # Skip this test is phased out\n";
+	exit;
+}
+
+BEGIN {
 	print "1..0 # Skip win32 required\n" and exit unless $^O =~ /win32|cygwin/i;
 	$| = 1;
 }
