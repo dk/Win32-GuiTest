@@ -35,6 +35,16 @@ my @make = (
 	) : ()),
 	ABSTRACT_FROM			=> 'lib/Win32/GuiTest.pm',
 	AUTHOR				=> 'Dennis K. Paulsen (ctrondlp@cpan.org), Ernesto Guisado (erngui@acm.org)',
+
+        META_MERGE        => {
+                resources => {
+                        repository => 'http://github.com/dk/Win32-GuiTest',
+                },
+                no_index  => {
+                        directory  => [qw(eg Recorder)],
+                        file       => [qw(Makefile.PL makedist.pl)],
+                },
+        },
 );
 
 
