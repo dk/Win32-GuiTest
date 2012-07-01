@@ -1,6 +1,8 @@
 package Win32::GuiTest::Examples;
 1;
 
+=encoding utf8
+
 =head1 NAME
 
 Win32::GuiTest::Examples - collection of the scripts from eg
