@@ -40,7 +40,7 @@ ok(! @desks, "The desktop is not on the window list");
 }
 
 # Create a notepad window and check we can find it
-system("cmd /c start notepad.exe README");
+system("cmd /c start notepad.exe \"README\"");
 my @waitwin = WaitWindowLike(0, "readme|README", "Notepad");
 is(@waitwin, 1, "There is one notepad open with README in it");
 my @windows = FindWindowLike(0, "readme|README", "Notepad");
