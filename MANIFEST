@@ -45,8 +45,6 @@ t/03_cpl.t
 t/04_std.t
 t/05_which.t
 t/06_sendkeys.t
-t/98_pod.t
-t/99_pod_coverage.t
 typemap
 eg/make_eg.pl
 META.yml                                 Module meta-data (added by MakeMaker)
