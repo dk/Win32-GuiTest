@@ -308,3 +308,6 @@
 1.58 Oct 31 2010
      - Build on x64 systems 
      - Hooks fix by Oleg Prokhorov 
+
+1.60 Jul 24 2012
+     - Fixes in tests and pod
