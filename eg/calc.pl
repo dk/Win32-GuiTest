@@ -11,6 +11,10 @@
 use strict;
 
 use Win32::GuiTest qw(:ALL);
+use Win32;
+
+warn "** Warning! calc.exe is very different on Windows 7, probably won't work\n"
+    if Win32::GetOSName =~ /Win7/;
 
 if (not @ARGV or 
     ($ARGV[0] ne "keyboard" and  $ARGV[0] ne "mouse")) {
