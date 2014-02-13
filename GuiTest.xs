@@ -3,7 +3,7 @@
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
- *  in Dr.Dobbs <http://www.ddj.com/ddj/1997/careers1/wil2.htm>
+ *  in Dr.Dobbs <http://www.drdobbs.com/keys-to-the-kingdom/184410429>
  *	
  *  Copyright (c) 1998-2002 by Ernesto Guisado <erngui@acm.org>
  *  Copyright (c) 2004 by Dennis K. Paulsen <ctrondlp@cpan.org>
