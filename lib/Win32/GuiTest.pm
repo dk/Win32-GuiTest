@@ -1849,7 +1849,7 @@ Here are a few items where help would be welcome.
 
 The SendKeys function is based on the Delphi sourcecode
 published by Al Williams  E<lt>http://www.al-williams.com/awc/E<gt> 
-in Dr.Dobbs  E<lt>http://www.ddj.com/ddj/1997/careers1/wil2.htmE<gt>.
+in Dr.Dobbs  E<lt>http://www.drdobbs.com/keys-to-the-kingdom/184410429E<gt>.
 
 Copyright (c) 1998-2002 Ernesto Guisado, (c) 2004 Dennis K. Paulsen. All rights 
 reserved. This program is free software; You may distribute it and/or modify it
