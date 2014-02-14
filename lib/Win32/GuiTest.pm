@@ -64,7 +64,7 @@ A nice way to drive Win32 programs from a test script is to use OLE Automation
 where SendKeys comes handy.
 
 Some time ago Al Williams published a Delphi version in Dr. Dobb's
-(http://www.ddj.com/ddj/1997/careers1/wil2.htm). I ported it to C and
+(http://www.drdobbs.com/keys-to-the-kingdom/184410429). I ported it to C and
 packaged it using h2xs...
 
 The tentative name for this module is Win32::GuiTest (mostly because I plan to
