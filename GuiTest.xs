@@ -1597,7 +1597,7 @@ CODE:
 	    if (GetMenuItemInfo(hm, mi, TRUE, &minfo) &&
                 minfo.fType == MFT_STRING &&
                 minfo.dwTypeData != NULL &&
-                strnicmp(minfo.dwTypeData, sitem, strlen(sitem)) == 0) {
+                strncasecmp(minfo.dwTypeData, sitem, strlen(sitem)) == 0) {
                 /* Got what we came for, so return index. */
                 RETVAL = mi;
                 break;
