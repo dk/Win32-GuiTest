@@ -18,6 +18,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "dibsect.h"
+#include "RSNDMSG.h"
 
 
 #ifdef __cplusplus
@@ -318,6 +319,10 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 HHOOK SetHook(HWND hWnd, UINT &uMsg, const char *lpMsgId)
 {
 	g_hWnd = hWnd;
+	if (! g_hDLL) {
+		g_hDLL=GetModuleHandle("GuiTest.dll");
+		fprintf(stderr,"had to get module handle: %x\n",g_hDLL);
+	}
 
 	// Give up rest of time slice, so g_hHook assignment and 
 	// SetWindowsHook will process.
@@ -336,51 +341,76 @@ HHOOK SetHook(HWND hWnd, UINT &uMsg, const char *lpMsgId)
 // The following several routines all inject "ourself" into a remote process
 // and performs some work.
 
-int GetLVItemText(HWND hWnd, int iItem, int iSubItem, char *lpString)
-{	
-	if (SetHook(hWnd, WM_LV_GETTEXT, "WM_LV_GETTEXT_RM") == NULL) {
-		*lpString = NUL;
-		return 0;
-	}
-	
-	// By the time SendMessage returns, 
-	// g_szBuffer already contains the text.
-	SendMessage(hWnd, WM_LV_GETTEXT, iItem, iSubItem );
-	lstrcpy(lpString, g_szBuffer);
-
-	return (int)strlen(lpString);
+int GetLVItemText(HWND hWnd, int iItem, int iColumn, char *lpString)
+{
+	char szItem[MAX_DATA_BUF+1] = "";
+	R_ListView_GetItemText(hWnd, iItem, iColumn, szItem, MAX_DATA_BUF);
+	lstrcpyn( lpString, szItem , sizeof(szItem));
+	return strlen(lpString);
 }
 
 BOOL SelLVItem(HWND hWnd, int iItem, BOOL bMulti)
 {
-	if (SetHook(hWnd, WM_LV_SELBYINDEX, "WM_LV_SELBYINDEX_RM") == NULL)
-		return FALSE;
-	
-	SendMessage(hWnd, WM_LV_SELBYINDEX, iItem, bMulti);
+	int iCount = ListView_GetItemCount(g_hWnd);
+	// Clear out any previous selections if needed
+	if (!bMulti && ListView_GetSelectedCount(hWnd) > 0) {
+		for (int i = 0; i < iCount; i++) {
+			R_ListView_SetItemState(hWnd, i, 0, LVIS_SELECTED);
+		}
+	}
+	// Select item
+	R_ListView_SetItemState(hWnd, iItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	g_bRetVal = ListView_EnsureVisible(g_hWnd, iItem, FALSE);
 
 	return g_bRetVal;
 }
 
 BOOL SelLVItemText(HWND hWnd, char *lpItem, BOOL bMulti)
 {
-	if (SetHook(hWnd, WM_LV_SELBYTEXT, "WM_LV_SELBYTEXT_RM") == NULL) 
-		return FALSE;
-	
+	BOOL RetVal=FALSE;
+	char szItem[MAX_DATA_BUF+1] = "";
+	int iCount = ListView_GetItemCount(hWnd);
+	// Clear out any previous selections if needed
+	if (!bMulti && ListView_GetSelectedCount(hWnd) > 0) {
+		for (int i = 0; i < iCount; i++) {
+			R_ListView_SetItemState(hWnd, i, 0, LVIS_SELECTED);
+		}
+	}
+	// Look for item
+	for (int i = 0; i < iCount; i++) {
+		R_ListView_GetItemText(hWnd, i, 0, szItem, MAX_DATA_BUF);
+		if (lstrcmpi(lpItem, szItem) == 0) {
+			// Found it, select it
+			R_ListView_SetItemState(hWnd, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+			RetVal = ListView_EnsureVisible(hWnd, i, FALSE);	
+			break;
+		}
+	}
 	lstrcpy(g_szBuffer, lpItem);
-	SendMessage(hWnd, WM_LV_SELBYTEXT, 0, bMulti);
 
-	return g_bRetVal;
+	return RetVal;
 }
 
 BOOL IsLVItemSel(HWND hWnd, char *lpItem)
 {
-	if (SetHook(hWnd, WM_LV_ISSEL, "WM_LV_ISSEL_RM") == NULL)
-		return FALSE;
+	BOOL RetVal = FALSE; // Assume false
+	char szItem[MAX_DATA_BUF+1] = "";
+	int iCount = ListView_GetItemCount(hWnd);
+	// Are there any selected?	
+	if (ListView_GetSelectedCount(hWnd) > 0) {
+		// Look for item
+		for (int i = 0; i < iCount; i++) {
+			R_ListView_GetItemText(hWnd, i, 0, szItem, MAX_DATA_BUF);
+			if (lstrcmpi(lpItem, szItem) == 0) {
+				// Found it, determine if currently selected
+				if (ListView_GetItemState(hWnd, i, LVIS_SELECTED) & LVIS_SELECTED) {
+					RetVal = TRUE;
+				}
+			}
+		}
+	}
 	
-	lstrcpy(g_szBuffer, lpItem);
-	SendMessage(hWnd, WM_LV_ISSEL, 0, 0);
-
-	return g_bRetVal;
+	return RetVal;
 }
 
 BOOL SelTVItemPath(HWND hWnd, char *lpPath)
@@ -452,6 +482,7 @@ int GetTCItemCount(HWND hWnd)
 {
 	return TabCtrl_GetItemCount(hWnd);
 }
+
 
 /*
  * Piotr Kaluski <pkaluski@piotrkaluski.com>
