@@ -1,10 +1,10 @@
-/* R_* macros, for Win32::GuiTest 
+/* R_* macros, for Win32::GuiTest
  * S Liddicott 2008
  * Licensed under the same terms as Win32::GuiTest
  *
  * I wrote these based on pauld3's May 2006 patch for Win32::GuiTest impementing GetLVItem.
  * Later Win32::GuiTest use HookWindowsProcEx but because I couldn't get windows hooking to work.
- * on my cygwin installation, I'm using this technique to query some windows controls 
+ * on my cygwin installation, I'm using this technique to query some windows controls
  *
  * NOTES:
  *   See R_ListView_SetItemState below, based on the windows macro ListView_SetItemState
@@ -52,7 +52,7 @@
 	result; \
 }
 
-/* Declares variables and opens needed handles. R_CLOSE must also be used 
+/* Declares variables and opens needed handles. R_CLOSE must also be used
  * invoke R_OPEN at the end of other variable declarations including after
  * R_DECL, but before other R_ macros */
 #define R_OPEN(hWnd) \
@@ -71,7 +71,7 @@
 #define R_DECL_PTR(var, size) \
 	DWORD copied##var= 0; \
 	LPVOID R_VAR(var) = NULL; \
-	DWORD R_VAR_SIZE(var) = size;	
+	DWORD R_VAR_SIZE(var) = size;
 
 /* compute name of var containing size */
 #define R_VAR_SIZE(var) _R_##var##_size
@@ -87,7 +87,7 @@
 
 /* copy var to remote buffer, allocating if needed */
 #define R_PUT(var) \
-	WriteProcessMemory(_R_hProcHnd, R_USE(var), (LPVOID)&(var), R_VAR_SIZE(var), &copied##var ); 
+	WriteProcessMemory(_R_hProcHnd, R_USE(var), (LPVOID)&(var), R_VAR_SIZE(var), &copied##var );
 
 /* fetch remote copy back, freeing remote buffer */
 #define R_GET(var) \

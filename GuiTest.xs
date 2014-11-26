@@ -1,10 +1,10 @@
-/* 
+/*
  *  $Id: GuiTest.xs,v 1.6 2010/11/24 19:55:08 int32 Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
- *  published by Al Williams <http://www.al-williams.com/awc/> 
+ *  published by Al Williams <http://www.al-williams.com/awc/>
  *  in Dr.Dobbs <http://www.drdobbs.com/keys-to-the-kingdom/184410429>
- *	
+ *
  *  Copyright (c) 1998-2002 by Ernesto Guisado <erngui@acm.org>
  *  Copyright (c) 2004 by Dennis K. Paulsen <ctrondlp@cpan.org>
  *
@@ -64,7 +64,7 @@ BOOL unicode_semantics SHARED_ATTR = 0;
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
-extern "C" BOOL WINAPI DllMain(HANDLE hModule, DWORD  ul_reason_for_call, 
+extern "C" BOOL WINAPI DllMain(HANDLE hModule, DWORD  ul_reason_for_call,
                       LPVOID lpReserved)
 {
 	switch (ul_reason_for_call)
@@ -135,19 +135,19 @@ int TabCtrl_GetItemText(HWND hwnd, int iItem, char *lpString, size_t sizeStr)
 	tcItem.pszText = lpString;
 	tcItem.cchTextMax = sizeStr;
 	tcItem.mask = TCIF_TEXT;
-	
+
 	assert(lpString != NULL);
-	*lpString = NUL;	
+	*lpString = NUL;
 	TabCtrl_GetItem(g_hWnd, iItem, &tcItem);
 
 	return (int)strlen(lpString);
 }
-		
+
 // Hook procedure, does most of the work for various 32bit custom control
 // routines
 #define pCW ((CWPSTRUCT*)lParam)
 LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
-{	
+{
 	//// List Views ////
 	if (pCW->message == WM_LV_GETTEXT) {
 		*g_szBuffer = NUL;
@@ -185,7 +185,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 			if (lstrcmpi(g_szBuffer, szItem) == 0) {
 				// Found it, select it
 				ListView_SetItemState(g_hWnd, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-				g_bRetVal = ListView_EnsureVisible(g_hWnd, i, FALSE);	
+				g_bRetVal = ListView_EnsureVisible(g_hWnd, i, FALSE);
 				break;
 			}
 		}
@@ -194,7 +194,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 		char szItem[MAX_DATA_BUF+1] = "";
 		int iCount = ListView_GetItemCount(g_hWnd);
 		g_bRetVal = FALSE; // Assume false
-		// Are there any selected?	
+		// Are there any selected?
 		if (ListView_GetSelectedCount(g_hWnd) > 0) {
 			// Look for item
 			for (int i = 0; i < iCount; i++) {
@@ -243,7 +243,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_TV_GETSELPATH) {
 		char szText[MAX_DATA_BUF+1] = "";
-		char szTmp[MAX_DATA_BUF+1] = "";	
+		char szTmp[MAX_DATA_BUF+1] = "";
 		TVITEM tvItem = {NUL};
 		HTREEITEM hItem = TreeView_GetSelection(g_hWnd);
 		*g_szBuffer = NUL;
@@ -268,7 +268,7 @@ LRESULT HookProc (int code, WPARAM wParam, LPARAM lParam)
 				lstrcpy(szTmp, szText);
 			}
 		} while (hItem);
-		lstrcpy(g_szBuffer, szTmp);	
+		lstrcpy(g_szBuffer, szTmp);
 		UnhookWindowsHookEx(g_hHook);
 	} else if (pCW->message == WM_TC_GETTEXT) {
 	//// Tab Control ////
@@ -324,18 +324,18 @@ HHOOK SetHook(HWND hWnd, UINT &uMsg, const char *lpMsgId)
 		fprintf(stderr,"had to get module handle: %x\n",g_hDLL);
 	}
 
-	// Give up rest of time slice, so g_hHook assignment and 
+	// Give up rest of time slice, so g_hHook assignment and
 	// SetWindowsHook will process.
 	Sleep(0);
 
 	// Hook the thread, that "owns" our control
 	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
 				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
-	
+
 	if (uMsg == 0)
 		uMsg = RegisterWindowMessage(lpMsgId);
 
-	return g_hHook;	
+	return g_hHook;
 }
 
 // The following several routines all inject "ourself" into a remote process
@@ -382,7 +382,7 @@ BOOL SelLVItemText(HWND hWnd, char *lpItem, BOOL bMulti)
 		if (lstrcmpi(lpItem, szItem) == 0) {
 			// Found it, select it
 			R_ListView_SetItemState(hWnd, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-			RetVal = ListView_EnsureVisible(hWnd, i, FALSE);	
+			RetVal = ListView_EnsureVisible(hWnd, i, FALSE);
 			break;
 		}
 	}
@@ -396,7 +396,7 @@ BOOL IsLVItemSel(HWND hWnd, char *lpItem)
 	BOOL RetVal = FALSE; // Assume false
 	char szItem[MAX_DATA_BUF+1] = "";
 	int iCount = ListView_GetItemCount(hWnd);
-	// Are there any selected?	
+	// Are there any selected?
 	if (ListView_GetSelectedCount(hWnd) > 0) {
 		// Look for item
 		for (int i = 0; i < iCount; i++) {
@@ -409,15 +409,15 @@ BOOL IsLVItemSel(HWND hWnd, char *lpItem)
 			}
 		}
 	}
-	
+
 	return RetVal;
 }
 
 BOOL SelTVItemPath(HWND hWnd, char *lpPath)
 {
-	if (SetHook(hWnd, WM_TV_SELBYPATH, "WM_TV_SELBYPATH_RM") == NULL)	
+	if (SetHook(hWnd, WM_TV_SELBYPATH, "WM_TV_SELBYPATH_RM") == NULL)
 		return FALSE;
-	
+
 	lstrcpy(g_szBuffer, lpPath);
 	SendMessage(hWnd, WM_TV_SELBYPATH, 0, 0);
 	return g_bRetVal;
@@ -427,7 +427,7 @@ int GetTVSelPath(HWND hWnd, char *lpPath)
 {
 	if (SetHook(hWnd, WM_TV_GETSELPATH, "WM_TV_GETSELPATH_RM") == NULL)
 		return FALSE;
-	
+
 	SendMessage(hWnd, WM_TV_GETSELPATH, 0, 0);
 	lstrcpy(lpPath, g_szBuffer);
 
@@ -435,12 +435,12 @@ int GetTVSelPath(HWND hWnd, char *lpPath)
 }
 
 int GetTCItemText(HWND hWnd, int iItem, char *lpString)
-{	
+{
 	if (SetHook(hWnd, WM_TC_GETTEXT, "WM_TC_GETTEXT_RM") == NULL) {
 		*lpString = NUL;
 		return 0;
 	}
-	
+
 	SendMessage(hWnd, WM_TC_GETTEXT, iItem, 0);
 	lstrcpy(lpString, g_szBuffer);
 
@@ -448,19 +448,19 @@ int GetTCItemText(HWND hWnd, int iItem, char *lpString)
 }
 
 BOOL SelTCItem(HWND hWnd, int iItem)
-{	
+{
 	if (SetHook(hWnd, WM_TC_SELBYINDEX, "WM_TC_SELBYINDEX_RM") == NULL)
 		return FALSE;
-	
+
 	SendMessage(hWnd, WM_TC_SELBYINDEX, iItem, 0);
 	return g_bRetVal;
 }
 
 BOOL SelTCItemText(HWND hWnd, char *szText)
-{	
+{
 	if (SetHook(hWnd, WM_TC_SELBYTEXT, "WM_TC_SELBYTEXT_RM") == NULL)
 		return FALSE;
-	
+
 	lstrcpy(g_szBuffer, szText);
 	SendMessage(hWnd, WM_TC_SELBYTEXT, 0, 0);
 	return g_bRetVal;
@@ -471,7 +471,7 @@ BOOL IsTCItemSel(HWND hWnd, char *lpItem)
 {
 	if (SetHook(hWnd, WM_TC_ISSEL, "WM_TC_ISSEL_RM") == NULL)
 		return FALSE;
-	
+
 	lstrcpy(g_szBuffer, lpItem);
 	SendMessage(hWnd, WM_TC_ISSEL, 0, 0);
 
@@ -486,18 +486,18 @@ int GetTCItemCount(HWND hWnd)
 
 /*
  * Piotr Kaluski <pkaluski@piotrkaluski.com>
- * 
+ *
  * WaitForWindowInputIdle is a wrapper for WaitForInputIdle Win32 function.
- * The function waits until the application is ready to accept input 
+ * The function waits until the application is ready to accept input
  * (keyboard keys, mouse clicks). It is useful, for actions, which take a long
  * time to complete. Instead of putting sleeps of arbitrary length, we can just
  * wait until the application is ready to respond. Original function takes
  * a process handle as an input. However, in GUI tests we more often operate
- * on windows then on applications. 
+ * on windows then on applications.
  * NOTE: Unfortunatelly, this function not always works, so before using
  * it, check that is works in your environment
- * 
- */ 
+ *
+ */
 DWORD WaitForWindowInputIdle( HWND hwnd, DWORD milliseconds )
 {
     DWORD pid = 0;
@@ -505,9 +505,9 @@ DWORD WaitForWindowInputIdle( HWND hwnd, DWORD milliseconds )
     HANDLE hProcess = OpenProcess( PROCESS_ALL_ACCESS, TRUE, pid );
     if( hProcess == NULL ){
         LPVOID lpMsgBuf;
-        DWORD dw = GetLastError(); 
+        DWORD dw = GetLastError();
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             dw,
@@ -521,9 +521,9 @@ DWORD WaitForWindowInputIdle( HWND hwnd, DWORD milliseconds )
     DWORD result = WaitForInputIdle( hProcess, milliseconds );
     if( result == WAIT_FAILED ){
         LPVOID lpMsgBuf;
-        DWORD dw = GetLastError(); 
+        DWORD dw = GetLastError();
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             dw,
@@ -540,10 +540,10 @@ DWORD WaitForWindowInputIdle( HWND hwnd, DWORD milliseconds )
     //        printf( "WaitForInputIdle returned after wait was satisfied" );
         }
     }
-            
+
     return result;
 }
-      
+
 
 /* Wrapper around kebyd_event */
 void KeyUp(UINT vk)
@@ -562,7 +562,7 @@ void KeyDown(UINT vk)
 typedef struct windowtable {
     int size;
     HWND* windows/*[1024]*/;
-} windowtable; 
+} windowtable;
 
 
 BOOL CALLBACK AddWindowChild(
@@ -585,16 +585,16 @@ BOOL CALLBACK AddWindowChild(
     return TRUE;
 }
 
-/* 
+/*
 
-Phill Wolf <pbwolf@bellatlantic.net> 
- 
-Although mouse_event is documented to take a unit of "pixels" when moving 
-to an absolute location, and "mickeys" when moving relatively, on my 
-system I can see that it takes "mickeys" in both cases.  Giving 
-mouse_event an absolute (x,y) position in pixels results in the cursor 
+Phill Wolf <pbwolf@bellatlantic.net>
+
+Although mouse_event is documented to take a unit of "pixels" when moving
+to an absolute location, and "mickeys" when moving relatively, on my
+system I can see that it takes "mickeys" in both cases.  Giving
+mouse_event an absolute (x,y) position in pixels results in the cursor
 going much closer to the top-left of the screen than is intended.
- 
+
 Here is the function I have used in my own Perl modules to convert from screen coordinates to mickeys.
 
 */
@@ -606,7 +606,7 @@ void ScreenToMouseplane(POINT *p)
     p->x = SCREEN_TO_MICKEY(X,p->x);
     p->y = SCREEN_TO_MICKEY(Y,p->y);
 }
- 
+
 
 /*  Same as mouse_event but without wheel and with time-out.
  */
@@ -642,18 +642,18 @@ GetTextHelper(HWND hwnd, int index, UINT lenmsg, UINT textmsg)
     if (text != 0) {
         SendMessage(hwnd, textmsg, index, (LPARAM)text);
         sv = newSVpv(text, len);
-        safefree(text);        
+        safefree(text);
     }
     return sv;
 }
 
 /*
  * Piotr Kaluski <pkaluski@piotrkaluski.com>
- * 
+ *
  * OpenProcessForWindow opens a process, which is an owner of a window
  * identified by hWnd.
- * 
- */ 
+ *
+ */
 HANDLE OpenProcessForWindow( HWND hWnd )
 {
     DWORD pid = 0;
@@ -661,9 +661,9 @@ HANDLE OpenProcessForWindow( HWND hWnd )
     HANDLE hProcess = OpenProcess( PROCESS_ALL_ACCESS, TRUE, pid );
     if( hProcess == NULL ){
         LPVOID lpMsgBuf;
-        DWORD dw = GetLastError(); 
+        DWORD dw = GetLastError();
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             dw,
@@ -693,7 +693,7 @@ HWND PopupHandleGet(HWND hWnd, int x, int y, int wait) {
 }
 
 
-MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest		
+MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest
 
 PROTOTYPES: DISABLE
 
@@ -709,13 +709,13 @@ AllocateVirtualBufferImp( hWnd, memSize )
     SIZE_T memSize
 PPCODE:
     HANDLE hProcess = OpenProcessForWindow( hWnd );
-	LPVOID pBuffer = VirtualAllocEx( hProcess, NULL, memSize, 
+	LPVOID pBuffer = VirtualAllocEx( hProcess, NULL, memSize,
 		           MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if( pBuffer == NULL ){
         LPVOID lpMsgBuf;
-        DWORD dw = GetLastError(); 
+        DWORD dw = GetLastError();
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             dw,
@@ -738,17 +738,17 @@ PPCODE:
 void
 FreeVirtualBufferImp( hProcess, pBuffer )
     LONG hProcess
-    LONG pBuffer 
+    LONG pBuffer
     PPCODE:
-	    BOOL result = VirtualFreeEx( ( HANDLE )hProcess, 
-                                     ( LPVOID )pBuffer, 
-                                       0, 
+	    BOOL result = VirtualFreeEx( ( HANDLE )hProcess,
+                                     ( LPVOID )pBuffer,
+                                       0,
                                        0x8000 );
         if( !result ){
             LPVOID lpMsgBuf;
-            DWORD dw = GetLastError(); 
+            DWORD dw = GetLastError();
             FormatMessage(
-                FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+                FORMAT_MESSAGE_ALLOCATE_BUFFER |
                 FORMAT_MESSAGE_FROM_SYSTEM,
                 NULL,
                 dw,
@@ -780,9 +780,9 @@ PPCODE:
                             &copied ) )
     {
         LPVOID lpMsgBuf;
-        DWORD dw = GetLastError(); 
+        DWORD dw = GetLastError();
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             dw,
@@ -793,7 +793,7 @@ PPCODE:
                 dw, lpMsgBuf );
     }else{
         XPUSHs( sv_2mortal( newSVpv( pLocBuff, memSize ) ) );
-        safefree( pLocBuff ); 
+        safefree( pLocBuff );
     }
 
 
@@ -802,7 +802,7 @@ PPCODE:
 #
 ######################################################################
 
-void 
+void
 WriteToVirtualBufferImp( hProcess, pVirtBuffer, value )
     LONG hProcess
     LONG pVirtBuffer
@@ -810,7 +810,7 @@ WriteToVirtualBufferImp( hProcess, pVirtBuffer, value )
 PPCODE:
     SIZE_T copied = 0;
     STRLEN memSize = 0;
-    char* pLocBuffer = SvPV( value, memSize ); 
+    char* pLocBuffer = SvPV( value, memSize );
     if( !WriteProcessMemory( ( HANDLE )hProcess,
                              ( LPVOID )pVirtBuffer,
                              pLocBuffer,
@@ -818,9 +818,9 @@ PPCODE:
                              &copied ) )
     {
         LPVOID lpMsgBuf;
-        DWORD dw = GetLastError(); 
+        DWORD dw = GetLastError();
         FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             dw,
@@ -1084,9 +1084,9 @@ GetWindowLong(hwnd, index)
         RETVAL = GetWindowLong(hwnd, index);
     OUTPUT:
         RETVAL
-        
-    
-BOOL 
+
+
+BOOL
 SetForegroundWindow(hWnd)
     HWND hWnd
     CODE:
@@ -1094,7 +1094,7 @@ SetForegroundWindow(hWnd)
     OUTPUT:
         RETVAL
 
-HWND 
+HWND
 SetFocus(hWnd)
     HWND hWnd
     CODE:
@@ -1118,7 +1118,7 @@ GetChildWindows(hWnd)
             XPUSHs(sv_2mortal(newSViv((IV)children.windows[i])));
         }
 	safefree(children.windows);
-        
+
 
 SV*
 WMGetText(hwnd)
@@ -1126,10 +1126,10 @@ WMGetText(hwnd)
     CODE:
 //        SV* sv;
         char* text;
-        int len = SendMessage(hwnd, WM_GETTEXTLENGTH, 0, 0L); 
+        int len = SendMessage(hwnd, WM_GETTEXTLENGTH, 0, 0L);
         text = (char*)safemalloc(len+1);
         if (text != 0) {
-            SendMessage(hwnd, WM_GETTEXT, (WPARAM)len + 1, (LPARAM)text); 
+            SendMessage(hwnd, WM_GETTEXT, (WPARAM)len + 1, (LPARAM)text);
             RETVAL = newSVpv(text, len);
             safefree(text);
         } else {
@@ -1183,7 +1183,7 @@ CODE:
   RETVAL = SendMessage(hwnd, msg, wParam, lParam);
 OUTPUT:
   RETVAL
-  
+
 int
 PostMessage(hwnd, msg, wParam, lParam)
   HWND hwnd
@@ -1228,7 +1228,7 @@ CODE:
     RETVAL = SendMessage(hwnd, BM_GETCHECK, 0, 0) == BST_INDETERMINATE;
 OUTPUT:
     RETVAL
-    
+
 BOOL
 IsWindow(hwnd)
     HWND hwnd
@@ -1282,7 +1282,7 @@ PPCODE:
   }
   AttachWin(hwnd, FALSE);
 
-HWND 
+HWND
 GetFocus(hwnd)
   HWND hwnd;
 CODE:
@@ -1292,7 +1292,7 @@ CODE:
 OUTPUT:
   RETVAL
 
-HWND 
+HWND
 GetActiveWindow(hwnd)
   HWND hwnd;
 CODE:
@@ -1302,7 +1302,7 @@ CODE:
 OUTPUT:
   RETVAL
 
-HWND 
+HWND
 GetForegroundWindow()
 CODE:
   RETVAL = GetForegroundWindow();
@@ -1353,7 +1353,7 @@ CODE:
   RETVAL = ShowWindow(hwnd, nCmdShow);
   AttachWin(hwnd, FALSE);
 OUTPUT:
-  RETVAL        
+  RETVAL
 
 BOOL
 UnicodeSemantics(...)
@@ -1370,8 +1370,8 @@ CODE:
   RETVAL = unicode_semantics;
 OUTPUT:
   RETVAL
-    
-void 
+
+void
 ScreenToNorm(x,y)
     int x;
     int y;
@@ -1379,10 +1379,10 @@ ScreenToNorm(x,y)
         x = SCREEN_TO_MICKEY(X,x);
         y = SCREEN_TO_MICKEY(Y,y);
         XPUSHs(sv_2mortal(newSViv((IV)x)));
-        XPUSHs(sv_2mortal(newSViv((IV)y)));    
+        XPUSHs(sv_2mortal(newSViv((IV)y)));
 
 
-void 
+void
 NormToScreen(x,y)
     int x;
     int y;
@@ -1402,7 +1402,7 @@ GetScreenRes()
         XPUSHs(sv_2mortal(newSViv((IV)hor)));
         XPUSHs(sv_2mortal(newSViv((IV)ver)));
 
-void 
+void
 GetWindowRect(hWnd)
     HWND hWnd;
     PREINIT:
@@ -1412,7 +1412,7 @@ GetWindowRect(hWnd)
         XPUSHs(sv_2mortal(newSViv((IV)rect.left)));
         XPUSHs(sv_2mortal(newSViv((IV)rect.top)));
         XPUSHs(sv_2mortal(newSViv((IV)rect.right)));
-        XPUSHs(sv_2mortal(newSViv((IV)rect.bottom))); 
+        XPUSHs(sv_2mortal(newSViv((IV)rect.bottom)));
 
 
 
@@ -1434,7 +1434,7 @@ GetListText(hwnd, index)
     OUTPUT:
         RETVAL
 
-void 
+void
 GetComboContents(hWnd)
     HWND hWnd;
 PPCODE:
@@ -1496,8 +1496,8 @@ CODE:
     }
 OUTPUT:
     RETVAL
-	
-void 
+
+void
 GetListContents(hWnd)
     HWND hWnd;
 PPCODE:
@@ -1535,13 +1535,13 @@ PPCODE:
 
     if (GetMenuItemInfo(hMenu, uItem, TRUE, &minfo)) {
         XPUSHs(sv_2mortal(newSVpv("type", 4)));
-       	if (minfo.fType == MFT_STRING) { 
+       	if (minfo.fType == MFT_STRING) {
             XPUSHs(sv_2mortal(newSVpv("string", 6)));
     	    int r;
     	    r = strlen(minfo.dwTypeData);
             XPUSHs(sv_2mortal(newSVpv("text", 4)));
             XPUSHs(sv_2mortal(newSVpv(minfo.dwTypeData, r)));
-	} else if (minfo.fType == MFT_SEPARATOR) { 
+	} else if (minfo.fType == MFT_SEPARATOR) {
             XPUSHs(sv_2mortal(newSVpv("separator", 9)));
 	} else {
             XPUSHs(sv_2mortal(newSVpv("unknown", 7)));
@@ -1562,7 +1562,7 @@ PPCODE:
 #    XPUSHs(sv_2mortal(newSVpv("type", 4)));
 
 
-int 
+int
 GetMenuItemCount(hMenu)
     HMENU hMenu;
 CODE:
@@ -1570,7 +1570,7 @@ CODE:
 OUTPUT:
     RETVAL
 
-    
+
 int
 GetMenuItemIndex(hm, sitem)
     HMENU hm;
@@ -1624,7 +1624,7 @@ CODE:
     RETVAL = GetMenuItemID(hMenu, nPos);
 OUTPUT:
     RETVAL
- 
+
 HMENU
 GetMenu(hWnd)
     HWND hWnd;
@@ -1633,7 +1633,7 @@ CODE:
 OUTPUT:
     RETVAL
 
- 
+
 BOOL
 SetWindowPos(hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags)
   HWND hWnd;
@@ -1680,7 +1680,7 @@ TabCtrl_GetItemCount(hWnd)
     OUTPUT:
         RETVAL
 
-void 
+void
 SendRawKey(vk, flags)
     UINT vk;
     DWORD flags;
@@ -1720,11 +1720,11 @@ OUTPUT:
 
 #####################################################################
 # Waits for input idle for the application, which owns the window
-# hWnd. It is a wrapper around WaitForInputIdle Win32 API. 
+# hWnd. It is a wrapper around WaitForInputIdle Win32 API.
 # Does not always work as expected, seams to be not that reliable
 # mechanism. But it's better then nothing and there are still some
 # cases when it works
-# 
+#
 ######################################################################
 
 DWORD
@@ -1807,7 +1807,7 @@ CODE:
 OUTPUT:
 RETVAL
 
-bool 
+bool
 DibSect::Invert()
 CODE:
 	RETVAL = THIS->Invert();
@@ -1815,21 +1815,21 @@ OUTPUT:
 RETVAL
 
 
-bool 
+bool
 DibSect::ToGrayScale()
 CODE:
 	RETVAL = THIS->ToGrayScale();
 OUTPUT:
 RETVAL
 
-bool 
+bool
 DibSect::Destroy()
 CODE:
 	RETVAL = THIS->Destroy();
 OUTPUT:
 RETVAL
 
-bool 
+bool
 DibSect::ToClipboard()
 CODE:
 	RETVAL = THIS->ToClipboard();
