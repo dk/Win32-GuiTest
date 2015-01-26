@@ -69,7 +69,7 @@
 	R_DECL_PTR(var, sizeof(var))
 
 #define R_DECL_PTR(var, size) \
-	DWORD copied##var= 0; \
+	SIZE_T copied##var= 0; \
 	LPVOID R_VAR(var) = NULL; \
 	DWORD R_VAR_SIZE(var) = size;
 

@@ -737,11 +737,11 @@ PPCODE:
 
 void
 FreeVirtualBufferImp( hProcess, pBuffer )
-    LONG hProcess
-    LONG pBuffer
+    HANDLE hProcess
+    LPVOID pBuffer
     PPCODE:
-	    BOOL result = VirtualFreeEx( ( HANDLE )hProcess,
-                                     ( LPVOID )pBuffer,
+	    BOOL result = VirtualFreeEx( hProcess,
+                                     pBuffer,
                                        0,
                                        0x8000 );
         if( !result ){
@@ -767,14 +767,14 @@ FreeVirtualBufferImp( hProcess, pBuffer )
 
 void
 ReadFromVirtualBufferImp( hProcess, pVirtBuffer, memSize )
-    LONG hProcess
-    LONG pVirtBuffer
+    HANDLE hProcess
+    LPVOID pVirtBuffer
     SIZE_T memSize
 PPCODE:
     SIZE_T copied = 0;
     char *pLocBuff = ( char *)safemalloc( memSize + 1 );
-    if( !ReadProcessMemory( ( HANDLE ) hProcess,
-                            ( LPVOID )pVirtBuffer,
+    if( !ReadProcessMemory( hProcess,
+                            pVirtBuffer,
                             pLocBuff,
                             memSize,
                             &copied ) )
@@ -804,15 +804,15 @@ PPCODE:
 
 void
 WriteToVirtualBufferImp( hProcess, pVirtBuffer, value )
-    LONG hProcess
-    LONG pVirtBuffer
+    HANDLE hProcess
+    LPVOID pVirtBuffer
     SV* value
 PPCODE:
     SIZE_T copied = 0;
     STRLEN memSize = 0;
     char* pLocBuffer = SvPV( value, memSize );
-    if( !WriteProcessMemory( ( HANDLE )hProcess,
-                             ( LPVOID )pVirtBuffer,
+    if( !WriteProcessMemory( hProcess,
+                             pVirtBuffer,
                              pLocBuffer,
                              memSize,
                              &copied ) )
