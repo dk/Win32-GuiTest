@@ -10,6 +10,9 @@ my $DEBUG = grep { m/^--debug$/ } @ARGV;
 my $can_compile = $^O =~ /win32|cygwin/i;
 
 warn "** This module can only work under Win32\n" unless $can_compile;
+	
+# generate Win32/GuiTest/Examples.pm
+do 'eg/make_eg.pl';
 
 my @make = (
 	NAME				=> 'Win32::GuiTest',
@@ -66,7 +69,6 @@ sub distdir
 	$t . '
 
 my_create_predist:
-	$(PERL) eg/make_eg.pl
 	@pod2text lib/Win32/GuiTest.pm > README
 ';
 }
