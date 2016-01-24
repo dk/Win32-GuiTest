@@ -34,6 +34,10 @@
 #define MAX_DATA_BUF 1024
 #define NUL '\0'
 
+#ifdef _MSC_VER
+#define strncasecmp _strnicmp
+#endif
+
 HINSTANCE g_hDLL = NULL;
 
 #if defined (__GNUC__)
