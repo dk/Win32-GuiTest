@@ -144,6 +144,7 @@ require DynaLoader;
         IsCheckedButton
         IsChild
         IsGrayedButton
+	IsIconic
         IsKeyPressed
         IsListViewItemSel
         IsTabItemSel
@@ -152,16 +153,19 @@ require DynaLoader;
         IsWindowStyle
         IsWindowStyleEx
         IsWindowVisible
+	IsZoomed
         MenuSelect
         MouseClick
         MouseMoveAbsPix
         MouseMoveWheel
         NormToScreen
+	OpenIcon
         PostMessage
         PushButton
         PushChildButton
         PushChildById
         ReadFromVirtualBuffer
+	RestoreWindow
         ScreenToClient
         ScreenToNorm
         SelComboItem
@@ -242,7 +246,7 @@ require DynaLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.63';
+$VERSION = '1.64';
 
 $debug = 0;
 
@@ -1254,6 +1258,26 @@ returns them too until the tree ends.
 Using the corresponding library function (see MSDN) it returns true
 if the second window is an immediate child or a descendant window of
 the first window.
+
+=item BOOL IsIconic(hWnd) *
+
+Using the corresponding library function (see MSDN) it returns true
+if the window is minimised (iconic state).
+
+=item BOOL OpenIcon(hWnd) *
+
+Using the corresponding library function (see MSDN) it opens iconised window
+and returns result true if successful.
+
+=item BOOL IsZoomed(hWnd) *
+
+Using the corresponding library function (see MSDN) it returns true
+if the window is maximised.
+
+=item BOOL RestoreWindow(hWnd) *
+
+Makes window into its restore state (SW_RESTORE), returns true
+if successful.
 
 =item $depth = GetChildDepth(hAncestor,hChild)
 
