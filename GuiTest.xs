@@ -1764,6 +1764,29 @@ CODE:
 OUTPUT:
     RETVAL
 
+bool
+GetWindowPlacement(hWnd, svwndpl)
+    HWND hWnd;
+    SV *svwndpl;
+PREINIT:
+    WINDOWPLACEMENT wndpl;
+CODE:
+    if (!(SvROK(svwndpl) && (svwndpl = SvRV(svwndpl)) ))
+	croak("Second argument to GetWindowPlacement(...) must be a reference to scalar");
+    RETVAL = GetWindowPlacement(hWnd, &wndpl);
+    sv_setpvn(svwndpl, (const char *)&wndpl, sizeof(WINDOWPLACEMENT));
+OUTPUT:
+    RETVAL
+
+bool
+SetWindowPlacement(hWnd, wndpl)
+    HWND hWnd;
+    WINDOWPLACEMENT wndpl;
+CODE:
+    RETVAL = SetWindowPlacement(hWnd, &wndpl);
+OUTPUT:
+    RETVAL
+
 #####################################################################
 # Waits for input idle for the application, which owns the window
 # hWnd. It is a wrapper around WaitForInputIdle Win32 API.

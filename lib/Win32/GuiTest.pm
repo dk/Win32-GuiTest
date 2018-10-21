@@ -26,7 +26,7 @@ Win32::GuiTest - Perl GUI Test Utilities.
     // it first might help with various compilation problems.
     vcvars32.bat 
 
-    perl makefile.pl
+    perl Makefile.PL
     nmake
     nmake test
     nmake install
@@ -141,6 +141,8 @@ require DynaLoader;
         GetWindowLong
         GetWindowRect
         GetWindowText
+        GetWindowPlacement
+        SetWindowPlacement
         IsCheckedButton
         IsChild
         IsGrayedButton
@@ -1278,6 +1280,24 @@ if the window is maximised.
 
 Makes window into its restore state (SW_RESTORE), returns true
 if successful.
+
+=item BOOL GetWindowPlacement(hWnd, \WINDOWPLACEMENT)
+
+Using the corresponding library function (see MSDN) it returns true
+if the call to GetWindowPlacement is succesful. Scalar reference should be
+passed as second argument, where WINDOWPLACEMENT structure will be copied,
+which then could be used in consequent calls to SetWindowPlacement, or other.
+
+=item BOOL SetWindowPlacement(hWnd, WINDOWPLACEMENT)
+
+Using the corresponding library function (see MSDN) it returns true
+if the call to SetWindowPlacement is succesful. WINDOWPLACEMENT should be obtained
+previously by calls to GetWindowPlacement:
+
+  Win32::GuiTest::GetWindowPlacement($w,\my $wpl);
+  sleep 5; # time passes
+  Win32::GuiTest::SetWindowPlacement($w,$wpl);
+
 
 =item $depth = GetChildDepth(hAncestor,hChild)
 

@@ -2,6 +2,7 @@ BOOL			T_IV
 LONG			T_IV
 HANDLE			T_IV
 HWND                    T_IV
+WINDOWPLACEMENT		T_WINDOWPLACEMENT
 HMENU                   T_IV
 HKEY			T_IV
 SECURITY_INFORMATION	T_UV
@@ -19,6 +20,11 @@ DibSect *         O_OBJECT
 INPUT
 T_UV
 	$var = ($type)SvUV($arg)
+T_WINDOWPLACEMENT
+    if (SvTYPE($arg)==SVt_PV)
+	memcpy(&$var,SvPV_nolen($arg), sizeof(WINDOWPLACEMENT));
+    else
+	croak(\"$var should be WiNDOWPLACEMENT, perl scalar\")
 
 #############################################################################
 OUTPUT
