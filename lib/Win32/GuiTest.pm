@@ -1293,7 +1293,13 @@ Returns following hash reference:
 		rcNormalPosition => [$x0,$y0,$x1,$y1],
 		rcDevice => [$x0,$y0,$x1,$y1],
 	}
-which then could be modified and used in consequent calls to SetWindowPlacement.
+which then could be modified and used in consequent calls to SetWindowPlacement:
+
+      my $h = Win32::GuiTest::GetWindowPlacement($w);
+      $h->{rcNormalPosition}->[0] += 50;
+      $h->{rcNormalPosition}->[2] += 50;
+      Win32::GuiTest::SetWindowPlacement($w,$h);
+
 Uses _GetWindowPlacement internally.
 
 =item BOOL SetWindowPlacement(hWnd, $hashref);
@@ -1314,7 +1320,7 @@ Using the corresponding library function (see MSDN) it returns true
 if the call to SetWindowPlacement is succesful. WINDOWPLACEMENT should be obtained
 previously by calls to GetWindowPlacement:
 
-  Win32::GuiTest::i_GetWindowPlacement($w,\my $wpl);
+  Win32::GuiTest::_GetWindowPlacement($w,\my $wpl);
   sleep 5; # time passes
   Win32::GuiTest::_SetWindowPlacement($w,$wpl);
 
