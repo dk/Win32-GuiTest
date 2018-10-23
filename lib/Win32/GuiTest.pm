@@ -1281,23 +1281,91 @@ if the window is maximised.
 Makes window into its restore state (SW_RESTORE), returns true
 if successful.
 
-=item BOOL GetWindowPlacement(hWnd, \WINDOWPLACEMENT)
+=item my $hashref = GetWindowPlacement(hWnd);
+
+Returns following hash reference:
+	{
+		length => $length, # == 44
+		flags => $flags,
+		showCmd => $showCmd,
+		ptMinPosition => [$x0,$y0],
+		ptMaxPosition => [$x1,$y1],
+		rcNormalPosition => [$x0,$y0,$x1,$y1],
+		rcDevice => [$x0,$y0,$x1,$y1],
+	}
+which then could be modified and used in consequent calls to SetWindowPlacement.
+Uses _GetWindowPlacement internally.
+
+=item BOOL SetWindowPlacement(hWnd, $hashref);
+
+Uses _SetWindowPlacement internally.
+
+=item BOOL _GetWindowPlacement(hWnd, \WINDOWPLACEMENT)
 
 Using the corresponding library function (see MSDN) it returns true
-if the call to GetWindowPlacement is succesful. Scalar reference should be
+if the call to GetWindowPlacement is succesful. Scalar reference is
 passed as second argument, where WINDOWPLACEMENT structure will be copied,
 which then could be used in consequent calls to SetWindowPlacement, or other.
+You should better use higher level function GetWindowPlacement.
 
-=item BOOL SetWindowPlacement(hWnd, WINDOWPLACEMENT)
+=item BOOL _SetWindowPlacement(hWnd, WINDOWPLACEMENT)
 
 Using the corresponding library function (see MSDN) it returns true
 if the call to SetWindowPlacement is succesful. WINDOWPLACEMENT should be obtained
 previously by calls to GetWindowPlacement:
 
-  Win32::GuiTest::GetWindowPlacement($w,\my $wpl);
+  Win32::GuiTest::i_GetWindowPlacement($w,\my $wpl);
   sleep 5; # time passes
-  Win32::GuiTest::SetWindowPlacement($w,$wpl);
+  Win32::GuiTest::_SetWindowPlacement($w,$wpl);
 
+You should better use higher level function SetWindowPlacement.
+
+=cut
+
+sub GetWindowPlacement
+{
+	my $hwnd = shift;
+	if (_GetWindowPlacement($hwnd, \my $wndpl)) {
+		# https://docs.microsoft.com/en-us/windows/desktop/api/winuser/ns-winuser-tagwindowplacement
+		# WINDOWPLACEMENT structure:
+		#   UINT  length;
+		#   UINT  flags;
+		#   UINT  showCmd;
+		#   POINT ptMinPosition;
+		#   POINT ptMaxPosition;
+		#   RECT  rcNormalPosition;
+		#   RECT  rcDevice;
+		my ($length, $flags, $showCmd, $ptMinPosition, $ptMaxPosition,
+			$rcNormalPosition, $rcDevice) = unpack('LLLa8a8a16a16', $wndpl);
+		return {
+			length => $length, # == 44
+			flags => $flags,
+			showCmd => $showCmd,
+			ptMinPosition => [unpack('ll',$ptMinPosition)],
+			ptMaxPosition => [unpack('ll',$ptMaxPosition)],
+			rcNormalPosition => [unpack('llll',$rcNormalPosition)],
+			rcDevice => [unpack('llll',$rcDevice)],
+		};
+	}
+	undef;
+}
+
+sub SetWindowPlacement
+{
+	my ($hwnd, $href) = @_;
+	my $wndpl = pack('LLLl12',
+			    $href->{length}, # == 44
+			    $href->{flags},
+			    $href->{showCmd},
+			    @{$href->{ptMinPosition}},
+			    @{$href->{ptMaxPosition}},
+			    @{$href->{rcNormalPosition}},
+			    @{$href->{rcDevice}},
+		    );
+	return _SetWindowPlacement($hwnd, $wndpl);
+}
+
+=pod
 
 =item $depth = GetChildDepth(hAncestor,hChild)
 

@@ -1765,7 +1765,7 @@ OUTPUT:
     RETVAL
 
 bool
-GetWindowPlacement(hWnd, svwndpl)
+_GetWindowPlacement(hWnd, svwndpl)
     HWND hWnd;
     SV *svwndpl;
 PREINIT:
@@ -1779,7 +1779,7 @@ OUTPUT:
     RETVAL
 
 bool
-SetWindowPlacement(hWnd, wndpl)
+_SetWindowPlacement(hWnd, wndpl)
     HWND hWnd;
     WINDOWPLACEMENT wndpl;
 CODE:
