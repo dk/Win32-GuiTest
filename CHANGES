@@ -314,3 +314,6 @@
 
 1.63 Jan 29 2016
      - Minor accumulated fixes
+
+1.64 Oct 20 2018
+     - add more MSDN functions: IsIconic, IsZoomed, OpenIcon, plus RestoreWindow

@@ -1721,6 +1721,71 @@ CODE:
 OUTPUT:
     RETVAL
 
+int
+IsIconic(hWnd)
+    HWND hWnd;
+CODE:
+    RETVAL = IsIconic(hWnd);
+OUTPUT:
+    RETVAL
+
+int
+IsZoomed(hWnd)
+    HWND hWnd;
+CODE:
+    RETVAL = IsZoomed(hWnd);
+OUTPUT:
+    RETVAL
+
+int
+OpenIcon(hWnd)
+    HWND hWnd;
+CODE:
+    RETVAL = OpenIcon(hWnd);
+OUTPUT:
+    RETVAL
+
+int
+RestoreWindow(hWnd)
+    HWND hWnd;
+PREINIT:
+    WINDOWPLACEMENT wndpl;
+CODE:
+    if (GetWindowPlacement(hWnd, &wndpl)) {
+	wndpl.showCmd = SW_RESTORE;
+	if (SetWindowPlacement(hWnd, &wndpl)) {
+	    RETVAL = 1;
+	} else {
+	    RETVAL = 0;
+	}
+    } else {
+	RETVAL = 1; /* error */
+    }
+OUTPUT:
+    RETVAL
+
+bool
+_GetWindowPlacement(hWnd, svwndpl)
+    HWND hWnd;
+    SV *svwndpl;
+PREINIT:
+    WINDOWPLACEMENT wndpl;
+CODE:
+    if (!(SvROK(svwndpl) && (svwndpl = SvRV(svwndpl)) ))
+	croak("Second argument to GetWindowPlacement(...) must be a reference to scalar");
+    RETVAL = GetWindowPlacement(hWnd, &wndpl);
+    sv_setpvn(svwndpl, (const char *)&wndpl, sizeof(WINDOWPLACEMENT));
+OUTPUT:
+    RETVAL
+
+bool
+_SetWindowPlacement(hWnd, wndpl)
+    HWND hWnd;
+    WINDOWPLACEMENT wndpl;
+CODE:
+    RETVAL = SetWindowPlacement(hWnd, &wndpl);
+OUTPUT:
+    RETVAL
 
 #####################################################################
 # Waits for input idle for the application, which owns the window
