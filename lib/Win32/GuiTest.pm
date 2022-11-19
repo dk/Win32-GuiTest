@@ -387,10 +387,18 @@ my %vk = (
 	APP    => VK_APPS(),
 );
 
-my %vk_flags = (
-	'+'            => VK_SHIFT(),
-	'%'            => VK_MENU(),
-	'^'            => VK_CONTROL(),
+# VK_FLAGS order has no normative, though based on
+# https://superuser.com/questions/1238058/key-combination-order
+# http://msdn.microsoft.com/en-us/library/ms971323.aspx#atg_keyboardshortcuts_windows_shortcut_keys
+# The recommended order seems to be: CTRL - ALT - SHIFT - WIN - [key].
+# where:
+# CTRL  <=> VK_CONTROL
+# ALT   <=> VK_MENU
+# SHIFT <=> VK_SHIFT
+my @vk_flags = (
+	[ '^'            => VK_CONTROL() ],
+	[ '%'            => VK_MENU() ],
+	[ '+'            => VK_SHIFT() ],
 );
 
 my @digits = (
@@ -400,12 +408,24 @@ my @digits = (
 
 sub wrap_meta
 {
-	my @k = @vk_flags{ keys %{$_[0]} };
+	#
+	# Perl sort is using globals, so we want to avoid it.
+	# This is why we loop on vk_flags that is in an already correct order.
+	#
+	my @k;
+	foreach my $vk (@vk_flags) {
+		my ($meta, $vk) = @{$vk};
+		foreach my $key (keys %{$_[0]}) {
+			if ($key eq $meta) {
+				push(@k, $vk);
+			}
+		}
+	}
 	%{shift()} = ();
 	return 
 		( map { $_ => 0 } @k),
 		@_,
-		( map { $_ => KEYEVENTF_KEYUP() } @k)
+		( map { $_ => KEYEVENTF_KEYUP() } reverse @k)
 		;
 }
 
