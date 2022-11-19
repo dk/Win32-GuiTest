@@ -44,31 +44,26 @@ sub cmpkeyset
 
 # string -> raw keys
 ok( cmpkeyset('a', 
-	ord('A'), 0, 
-	ord('A'), KEYEVENTF_KEYUP,
+	vkey2keys('a'), # Note: low bit of VkKeyScan('a') returns the value of ord('A')
 ), 'lowercase character key');
 ok( cmpkeyset('B', 
 	VK_SHIFT, 0, 
-	ord('B'), 0, 
-	ord('B'), KEYEVENTF_KEYUP,
+	vkey2keys('b'), # Note: low bit of VkKeyScan('b') returns the value of ord('B')
 	VK_SHIFT, KEYEVENTF_KEYUP,
 ), 'uppercase character key');
 ok( cmpkeyset('+c', 
 	VK_SHIFT, 0, 
-	ord('C'), 0, 
-	ord('C'), KEYEVENTF_KEYUP,
+	vkey2keys('c'), # Note: low bit of VkKeyScan('c') returns the value of ord('C')
 	VK_SHIFT, KEYEVENTF_KEYUP,
 ), 'shift+character key');
 ok( cmpkeyset('^9', 
-	VK_CONTROL, 0, 
-	ord('9'), 0, 
-	ord('9'), KEYEVENTF_KEYUP,
+	VK_CONTROL, 0,
+	vkey2keys('9'),
 	VK_CONTROL, KEYEVENTF_KEYUP,
 ), 'control+character key');
 ok( cmpkeyset('%a', 
 	VK_MENU, 0, 
-	ord('A'), 0, 
-	ord('A'), KEYEVENTF_KEYUP,
+	vkey2keys('a'), # Note: low bit of VkKeyScan('a') returns the value of ord('A')
 	VK_MENU, KEYEVENTF_KEYUP,
 ), 'alt+character key');
 
@@ -126,11 +121,34 @@ sub vkey2key
 	my $r = VkKeyScan(ord(shift));
 	my $v = '0' . ($r & 0xff); # in case of 1-digit code
 	my $m = '';
-	$m .= '+' if $r & 0x100;
-	$m .= '^' if $r & 0x200;
-	$m .= '%' if $r & 0x400;
+	$m .= '^' if $r & 0x200; # CTRL
+	$m .= '%' if $r & 0x400; # ALT
+	$m .= '+' if $r & 0x100; # SHIFT
 	return "${m}{$v}";
 }
+
+sub vkey2keys
+{
+	my $key = shift;
+	my $scan = VkKeyScan(ord($key));
+	my $low = $scan;
+	$low &= 0x00ff;
+	my $high = $scan;
+	$high &= 0xff00;
+	my @k;
+
+	push(@k, VK_CONTROL(), 0) if $high & 0x200; # CTRL
+	push(@k, VK_MENU(), 0)    if $high & 0x400; # ALT
+	push(@k, VK_SHIFT(), 0)   if $high & 0x100; # SHIFT
+	push(@k, $low, 0);
+	push(@k, $low, KEYEVENTF_KEYUP());
+	push(@k, VK_SHIFT(), KEYEVENTF_KEYUP())   if $high & 0x100; # SHIFT
+	push(@k, VK_MENU(), KEYEVENTF_KEYUP())    if $high & 0x400; # ALT
+	push(@k, VK_CONTROL(), KEYEVENTF_KEYUP()) if $high & 0x200; # CTRL
+
+	return @k;
+}
+
 
 # escaped keys
 ok( cmpkeysets( "{{}", vkey2key('{')), 'escaped {');
